@@ -23,12 +23,12 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          dependencies: '"hard"'
           extra-packages: |
             any::pkgdown
             any::roxygen2
             any::knitr
             any::rmarkdown
-          needs: website
 
       - name: Document
         run: roxygen2::roxygenise()

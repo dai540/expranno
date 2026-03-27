@@ -21,13 +21,13 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          dependencies: '"hard"'
           extra-packages: |
             any::rcmdcheck
             any::roxygen2
             any::knitr
             any::rmarkdown
             any::testthat
-          needs: check
 
       - name: Document
         run: roxygen2::roxygenise()
