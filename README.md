@@ -73,6 +73,30 @@ BiocManager::install(c(
 ))
 ```
 
+Then load the package:
+
+```r
+library(expranno)
+```
+
+## Citation
+
+If you use `expranno`, cite the package as:
+
+> Dai (2026). *expranno: Expression Annotation, Metadata Integration,
+> Deconvolution, and Signature Analysis*. R package.
+> <https://dai540.github.io/expranno/>
+
+You can also retrieve the citation from R:
+
+```r
+citation("expranno")
+```
+
+## Author
+
+`expranno` is developed and maintained by Dai Dai.
+
 ## Workflow Overview
 
 The main wrapper is `run_expranno()`. It orchestrates the whole pipeline

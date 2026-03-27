@@ -137,12 +137,31 @@
 <span>  <span class="st">"immunedeconv"</span>,</span>
 <span>  <span class="st">"GSVA"</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Then load the package:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dai540/expranno" class="external-link">expranno</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h2>
+<p>If you use <code>expranno</code>, cite the package as:</p>
+<blockquote>
+<p>Dai (2026). <em>expranno: Expression Annotation, Metadata Integration, Deconvolution, and Signature Analysis</em>. R package. <a href="https://dai540.github.io/expranno/" class="uri">https://dai540.github.io/expranno/</a></p>
+</blockquote>
+<p>You can also retrieve the citation from R:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"expranno"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a>
+</h2>
+<p><code>expranno</code> is developed and maintained by Dai Dai.</p>
 </div>
 <div class="section level2">
 <h2 id="workflow-overview">Workflow Overview<a class="anchor" aria-label="anchor" href="#workflow-overview"></a>
 </h2>
 <p>The main wrapper is <code><a href="reference/run_expranno.html">run_expranno()</a></code>. It orchestrates the whole pipeline from raw inputs to saved outputs.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">meta</span>,</span>
@@ -158,10 +177,10 @@
 <div class="section level2">
 <h2 id="input-contract">Input Contract<a class="anchor" aria-label="anchor" href="#input-contract"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_expranno_data.html">example_expranno_data</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><code>expr</code> must be a gene-by-sample table.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">demo</span><span class="op">$</span><span class="va">expr</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
@@ -183,7 +202,7 @@
 </tbody>
 </table>
 <p><code>meta</code> must be a sample metadata table.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">demo</span><span class="op">$</span><span class="va">meta</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
@@ -220,7 +239,7 @@
 <div class="section level2">
 <h2 id="minimal-example">Minimal Example<a class="anchor" aria-label="anchor" href="#minimal-example"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_expranno_data.html">example_expranno_data</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
@@ -330,7 +349,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Daiki User.</p>
+  <p>Developed by Dai Dai.</p>
 </div>
 
 <div class="pkgdown-footer-right">

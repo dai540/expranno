@@ -25,7 +25,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Daiki User \email{daik54015@gmail.com} [copyright holder]
+\strong{Maintainer}: Dai Dai \email{daik54015@gmail.com}
 
 }
 \keyword{internal}

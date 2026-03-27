@@ -4,14 +4,14 @@ Title: Expression Annotation, Metadata Integration, Deconvolution, and Signature
 Version: 2.00
 Authors@R: c(
     person(
-      given = "Daiki",
-      family = "User",
-      role = c("aut", "cre", "cph"),
+      given = "Dai",
+      family = "Dai",
+      role = c("aut", "cre"),
       email = "daik54015@gmail.com"
     )
   )
-Author: Daiki User [aut, cre, cph]
-Maintainer: Daiki User <daik54015@gmail.com>
+Author: Dai Dai [aut, cre]
+Maintainer: Dai Dai <daik54015@gmail.com>
 Description: Provides a reproducible RNA-seq workflow that starts from an
     expression matrix with Ensembl gene identifiers and sample metadata,
     annotates genes for human and mouse with a coverage-first hybrid strategy,
