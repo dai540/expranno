@@ -1,0 +1,24 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://example.com/expranno/404.html</loc></url>
+<url><loc>https://example.com/expranno/articles/case-study-human-rnaseq.html</loc></url>
+<url><loc>https://example.com/expranno/articles/case-study-mouse-rnaseq.html</loc></url>
+<url><loc>https://example.com/expranno/articles/case-study-toy-rnaseq.html</loc></url>
+<url><loc>https://example.com/expranno/articles/getting-started.html</loc></url>
+<url><loc>https://example.com/expranno/articles/index.html</loc></url>
+<url><loc>https://example.com/expranno/articles/theory-and-design.html</loc></url>
+<url><loc>https://example.com/expranno/authors.html</loc></url>
+<url><loc>https://example.com/expranno/index.html</loc></url>
+<url><loc>https://example.com/expranno/LICENSE-text.html</loc></url>
+<url><loc>https://example.com/expranno/reference/annotate_expr.html</loc></url>
+<url><loc>https://example.com/expranno/reference/example_expranno_data.html</loc></url>
+<url><loc>https://example.com/expranno/reference/expranno-package.html</loc></url>
+<url><loc>https://example.com/expranno/reference/index.html</loc></url>
+<url><loc>https://example.com/expranno/reference/merge_expr_meta.html</loc></url>
+<url><loc>https://example.com/expranno/reference/read_genesets.html</loc></url>
+<url><loc>https://example.com/expranno/reference/run_cell_deconvolution.html</loc></url>
+<url><loc>https://example.com/expranno/reference/run_expranno.html</loc></url>
+<url><loc>https://example.com/expranno/reference/run_signature_analysis.html</loc></url>
+<url><loc>https://example.com/expranno/reference/validate_expr.html</loc></url>
+<url><loc>https://example.com/expranno/reference/validate_meta.html</loc></url>
+</urlset>
+

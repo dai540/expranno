@@ -1,0 +1,12 @@
+pandoc: 3.6.3
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  case-study-human-rnaseq: case-study-human-rnaseq.html
+  case-study-mouse-rnaseq: case-study-mouse-rnaseq.html
+  getting-started: getting-started.html
+  theory-and-design: theory-and-design.html
+last_built: 2026-03-27T02:27Z
+urls:
+  reference: https://dai540.github.io/expranno/reference
+  article: https://dai540.github.io/expranno/articles
