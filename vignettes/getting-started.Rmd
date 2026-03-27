@@ -1,0 +1,189 @@
+---
+title: "Getting Started with expranno"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with expranno}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r}
+library(expranno)
+demo <- example_expranno_data()
+```
+
+`expranno` expects:
+
+- an expression matrix-like data frame with `gene_id` in the first column
+- sample columns after `gene_id`
+- a metadata table with `sample` in the first column
+
+<style>
+.mermaid {
+  margin: 1.5rem auto 2rem auto;
+  max-width: 980px;
+  padding: 0.75rem;
+  background: #f7f9fc;
+  border: 1px solid #d9e4ef;
+  border-radius: 16px;
+}
+</style>
+<pre class="mermaid">
+flowchart TB
+  subgraph inputs["Inputs"]
+    expr["expr<br/>gene x sample table"]
+    meta["meta<br/>sample x metadata table"]
+  end
+
+  subgraph core["Core workflow"]
+    validate["Validate<br/>check required columns"]
+    annotate["Annotation<br/>normalize Ensembl IDs<br/>hybrid human or mouse mapping"]
+    report["Coverage report<br/>annotation_rate by field"]
+    merge["Merge<br/>combine expr_anno and meta"]
+  end
+
+  subgraph outputs["Saved outputs"]
+    expranno["expr_anno.csv"]
+    merged["expr_meta_merged.csv"]
+  end
+
+  subgraph downstream["Downstream analyses"]
+    deconv["Deconvolution<br/>immunedeconv<br/>one CSV per method"]
+    signature["Signature<br/>GSVA or ssGSEA<br/>one CSV per method"]
+  end
+
+  expr --> validate
+  meta --> validate
+  validate --> annotate
+  annotate --> expranno
+  annotate --> report
+  expranno --> merge
+  meta --> merge
+  merge --> merged
+  merged --> deconv
+  merged --> signature
+
+  classDef input fill:#eef5fb,stroke:#315c86,color:#17324d,stroke-width:1.5px;
+  classDef process fill:#ffffff,stroke:#315c86,color:#17324d,stroke-width:1.5px;
+  classDef output fill:#eaf6ef,stroke:#3c7a57,color:#17324d,stroke-width:1.5px;
+
+  class expr,meta input;
+  class validate,annotate,report,merge,deconv,signature process;
+  class expranno,merged output;
+</pre>
+<script src="../deps/mermaid/mermaid.min.js"></script>
+<script>
+if (window.mermaid) {
+  window.mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: "loose",
+    theme: "base",
+    themeVariables: {
+      primaryColor: "#ffffff",
+      primaryTextColor: "#17324d",
+      primaryBorderColor: "#315c86",
+      lineColor: "#315c86",
+      secondaryColor: "#eef5fb",
+      tertiaryColor: "#eaf6ef",
+      clusterBkg: "#f7f9fc",
+      clusterBorder: "#cfddeb",
+      fontFamily: "Lato, Arial, sans-serif"
+    },
+    flowchart: {
+      curve: "basis",
+      htmlLabels: true
+    }
+  });
+  window.mermaid.run({ querySelector: ".mermaid" });
+}
+</script>
+
+## The workflow at a glance
+
+The workflow is easiest to read in four checkpoints:
+
+1. validate the input contract
+2. annotate genes and inspect coverage
+3. merge expression with metadata
+4. run Deconvolution or Signature analyses from the merged table
+
+## Pick a species
+
+Use `species = "human"` for `ENSG...` input IDs and `species = "mouse"`
+for `ENSMUSG...` input IDs. If IDs are clean Ensembl IDs, `species = "auto"`
+can infer this for you.
+
+```{r}
+human_demo <- example_expranno_data("human")
+mouse_demo <- example_expranno_data("mouse")
+
+head(human_demo$expr$gene_id)
+head(mouse_demo$expr$gene_id)
+```
+
+## Pick an annotation engine
+
+`expranno` exposes five annotation modes:
+
+- `"hybrid"`: recommended production mode
+- `"biomart"`: use only `biomaRt`
+- `"orgdb"`: use only `org.Hs.eg.db` or `org.Mm.eg.db`
+- `"ensdb"`: use only `EnsDb`
+- `"none"`: skip annotation lookup and keep the normalized IDs only
+
+`"hybrid"` is the default because it is the most coverage-oriented mode.
+It uses a cascade:
+
+1. `biomaRt`
+2. species-specific `orgdb`
+3. species-specific `EnsDb`
+
+For lightweight docs and tests, the examples below use `"none"`.
+
+```{r}
+annotated <- annotate_expr(
+  expr = demo$expr,
+  meta = demo$meta,
+  species = "human",
+  annotation_engine = "none"
+)
+
+merged <- merge_expr_meta(
+  expr_anno = annotated$expr_anno,
+  meta = annotated$meta_checked
+)
+```
+
+The all-in-one wrapper is `run_expranno()`.
+
+```{r}
+result <- run_expranno(
+  expr = demo$expr,
+  meta = demo$meta,
+  species = "human",
+  annotation_engine = "none",
+  output_dir = tempdir(),
+  run_deconvolution = FALSE,
+  run_signature = FALSE
+)
+
+result
+```
+
+## What to inspect after a run
+
+For a production analysis with `"hybrid"`, the first things to check are:
+
+- `expr_anno.csv`
+- the annotation coverage report from `annotate_expr()`
+- `expr_meta_merged.csv`
+
+If `symbol` coverage is weak, downstream Deconvolution and Signature
+methods will usually be the first places where the problem appears.

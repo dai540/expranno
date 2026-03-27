@@ -1,0 +1,147 @@
+---
+title: "Case Study: Mouse RNA-seq Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Case Study: Mouse RNA-seq Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(expranno)
+demo <- example_expranno_data("mouse")
+mock_expr_anno <- data.frame(
+  gene_id_raw = c("ENSMUSG00000059552.8", "ENSMUSG00000064341.1", "ENSMUSG00000017167.15"),
+  gene_id = c("ENSMUSG00000059552", "ENSMUSG00000064341", "ENSMUSG00000017167"),
+  symbol = c("Trp53", "mt-Nd1", "Egfr"),
+  gene_name = c(
+    "transformation related protein 53",
+    "mitochondrially encoded NADH dehydrogenase 1",
+    "epidermal growth factor receptor"
+  ),
+  annotation_status = c("annotated", "annotated", "annotated"),
+  stringsAsFactors = FALSE
+)
+mock_report <- data.frame(
+  field = c("symbol", "gene_name", "entrez_id", "biotype"),
+  annotation_rate = c(1.00, 1.00, 0.67, 1.00)
+)
+```
+
+## Goal
+
+This case study shows the same workflow for mouse RNA-seq data. The key
+difference is that the species and mouse annotation backends need to be
+set correctly.
+
+## Step 1: Input tables
+
+```{r}
+demo$expr
+demo$meta
+```
+
+## Step 2: Validate the input contract
+
+```{r}
+validate_expr(demo$expr)
+validate_meta(demo$meta)
+```
+
+## Step 3: Choose an annotation engine
+
+For mouse data, the recommended production choice is:
+
+- `annotation_engine = "hybrid"`
+
+That setting tries:
+
+1. `biomaRt`
+2. `org.Mm.eg.db`
+3. optional `EnsDb.Mmusculus.v79`
+
+This matters because mouse Ensembl IDs begin with `ENSMUSG`, and the
+symbol mapping must come from mouse-specific resources. As in the human
+article, a small mock output is shown below so the docs can display a
+nonzero coverage example without heavy annotation backends.
+
+```{r}
+anno <- annotate_expr(
+  expr = demo$expr,
+  meta = demo$meta,
+  species = "mouse",
+  annotation_engine = "none"
+)
+
+anno$expr_anno
+```
+
+## Step 4: Inspect `expr_anno.csv`
+
+```{r}
+mock_expr_anno
+```
+
+For mouse data, this is where you check that the normalized IDs still
+follow the expected `ENSMUSG...` pattern and that downstream annotation
+fields were filled when a real backend is used.
+
+## Step 5: Inspect the annotation report
+
+```{r}
+mock_report
+```
+
+## Step 6: How to read annotation coverage
+
+For mouse annotation, the report helps answer three questions quickly:
+
+1. was `symbol` coverage high enough for downstream tools?
+2. were `gene_name` and `entrez_id` filled as expected?
+3. do the fields look consistent with mouse-specific resources?
+
+In this mock example, the key symbol and gene name fields are fully
+covered, while `entrez_id` is only partially covered. That is a useful
+signal: the annotation is good enough for symbol-based Deconvolution and
+Signature workflows, but not every identifier family is equally complete.
+
+If the report is unexpectedly weak, check:
+
+- `species = "mouse"`
+- mouse annotation backends are installed
+- the input IDs are real mouse Ensembl gene IDs
+
+## Step 7: Merge annotated expression with metadata
+
+```{r}
+merged <- merge_expr_meta(
+  expr_anno = anno$expr_anno,
+  meta = anno$meta_checked
+)
+
+merged
+```
+
+## Step 8: Inspect a simple sample summary
+
+```{r}
+aggregate(expression ~ sample + group, data = merged, FUN = mean)
+```
+
+## Step 9: Prepare signature inputs
+
+```{r}
+geneset_path <- system.file("extdata", "hallmark_demo.gmt", package = "expranno")
+read_genesets(geneset_path)
+```
+
+## Mouse workflow takeaway
+
+The structure is the same as the human case study, but the species must
+be set to `"mouse"` and the annotation backend needs mouse-compatible
+resources. The annotation report is the fastest way to confirm that the
+species-specific mapping worked.

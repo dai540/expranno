@@ -1,0 +1,47 @@
+Package: expranno
+Type: Package
+Title: Expression Annotation, Metadata Integration, Deconvolution, and Signature Analysis
+Version: 2.00
+Authors@R: c(
+    person(
+      given = "Daiki",
+      family = "User",
+      role = c("aut", "cre", "cph"),
+      email = "daiki@example.com"
+    )
+  )
+Author: Daiki User [aut, cre, cph]
+Maintainer: Daiki User <daiki@example.com>
+Description: Provides a reproducible RNA-seq workflow that starts from an
+    expression matrix with Ensembl gene identifiers and sample metadata,
+    annotates genes for human and mouse with a coverage-first hybrid strategy,
+    aligns and merges expression with metadata, reports annotation coverage,
+    runs cell deconvolution through immunedeconv, and computes pathway or
+    signature scores with GSVA or ssGSEA using user-supplied gene set
+    databases.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends:
+    R (>= 4.2.0)
+Imports:
+    stats,
+    utils
+Suggests:
+    AnnotationDbi,
+    biomaRt,
+    ensembldb,
+    EnsDb.Hsapiens.v86,
+    EnsDb.Mmusculus.v79,
+    GSVA,
+    immunedeconv,
+    knitr,
+    org.Hs.eg.db,
+    org.Mm.eg.db,
+    pkgdown,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Config/Needs/website: pkgdown
+VignetteBuilder: knitr

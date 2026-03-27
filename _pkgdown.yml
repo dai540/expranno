@@ -1,0 +1,55 @@
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+development:
+  mode: unreleased
+
+url: https://example.com/expranno
+
+home:
+  title: expranno
+  description: Expression annotation, metadata integration, Deconvolution, and Signature analysis for human and mouse RNA-seq data.
+  sidebar:
+    html: pkgdown/home-sidebar.html
+
+navbar:
+  structure:
+    left: [intro, reference, articles]
+    right: [search]
+  components:
+    intro:
+      text: Get Started
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+
+reference:
+  - title: Main workflows
+    contents:
+      - run_expranno
+      - annotate_expr
+      - merge_expr_meta
+      - run_cell_deconvolution
+      - run_signature_analysis
+  - title: Input helpers
+    contents:
+      - validate_expr
+      - validate_meta
+      - read_genesets
+      - example_expranno_data
+articles:
+  - title: Core tutorials
+    navbar: Core
+    contents:
+      - getting-started
+  - title: Theory and design
+    navbar: Design
+    contents:
+      - theory-and-design
+  - title: Case studies
+    navbar: Case Studies
+    contents:
+      - case-study-human-rnaseq
+      - case-study-mouse-rnaseq

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="460" viewBox="0 0 1120 460">
+  <defs>
+    <style>
+      .bg { fill: #f7f9fc; }
+      .title { font-family: Arial, sans-serif; font-size: 30px; font-weight: 700; fill: #17324d; }
+      .subtitle { font-family: Arial, sans-serif; font-size: 16px; fill: #5a748d; }
+      .card { fill: #ffffff; stroke: #2f5f8a; stroke-width: 2.4; rx: 20; ry: 20; }
+      .badge { fill: #e9f2fb; }
+      .step { font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; fill: #5f7892; }
+      .head { font-family: Arial, sans-serif; font-size: 22px; font-weight: 700; fill: #17324d; }
+      .body { font-family: Arial, sans-serif; font-size: 15px; fill: #365877; }
+      .file { font-family: Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #24496e; }
+      .arrow { stroke: #2f5f8a; stroke-width: 3.4; fill: none; stroke-linecap: round; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2f5f8a"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1120" height="460" class="bg"/>
+  <text x="560" y="52" text-anchor="middle" class="title">expranno workflow</text>
+  <text x="560" y="80" text-anchor="middle" class="subtitle">A simple path from expression input to annotated tables, Deconvolution results, and Signature scores</text>
+
+  <rect x="40" y="150" width="190" height="170" class="card"/>
+  <rect x="40" y="150" width="190" height="42" class="badge"/>
+  <text x="64" y="176" class="step">STEP 1</text>
+  <text x="135" y="224" text-anchor="middle" class="head">Input</text>
+  <text x="135" y="252" text-anchor="middle" class="body">Expression table</text>
+  <text x="135" y="274" text-anchor="middle" class="body">Sample metadata</text>
+  <text x="135" y="304" text-anchor="middle" class="file">expr + meta</text>
+
+  <rect x="255" y="150" width="190" height="170" class="card"/>
+  <rect x="255" y="150" width="190" height="42" class="badge"/>
+  <text x="279" y="176" class="step">STEP 2</text>
+  <text x="350" y="224" text-anchor="middle" class="head">Annotation</text>
+  <text x="350" y="252" text-anchor="middle" class="body">Normalize IDs</text>
+  <text x="350" y="274" text-anchor="middle" class="body">Map genes</text>
+  <text x="350" y="304" text-anchor="middle" class="file">expr_anno.csv</text>
+
+  <rect x="470" y="150" width="190" height="170" class="card"/>
+  <rect x="470" y="150" width="190" height="42" class="badge"/>
+  <text x="494" y="176" class="step">STEP 3</text>
+  <text x="565" y="224" text-anchor="middle" class="head">Integration</text>
+  <text x="565" y="252" text-anchor="middle" class="body">Join expression</text>
+  <text x="565" y="274" text-anchor="middle" class="body">with metadata</text>
+  <text x="565" y="304" text-anchor="middle" class="file">expr_meta_merged.csv</text>
+
+  <rect x="685" y="150" width="190" height="170" class="card"/>
+  <rect x="685" y="150" width="190" height="42" class="badge"/>
+  <text x="709" y="176" class="step">STEP 4</text>
+  <text x="780" y="224" text-anchor="middle" class="head">Deconvolution</text>
+  <text x="780" y="252" text-anchor="middle" class="body">Estimate cell types</text>
+  <text x="780" y="274" text-anchor="middle" class="body">with immunedeconv</text>
+  <text x="780" y="304" text-anchor="middle" class="file">cell_deconv_*.csv</text>
+
+  <rect x="900" y="150" width="190" height="170" class="card"/>
+  <rect x="900" y="150" width="190" height="42" class="badge"/>
+  <text x="924" y="176" class="step">STEP 5</text>
+  <text x="995" y="224" text-anchor="middle" class="head">Signature</text>
+  <text x="995" y="252" text-anchor="middle" class="body">Score pathways</text>
+  <text x="995" y="274" text-anchor="middle" class="body">with GSVA or ssGSEA</text>
+  <text x="995" y="304" text-anchor="middle" class="file">signature_*.csv</text>
+
+  <path d="M230 235 H255" class="arrow"/>
+  <path d="M445 235 H470" class="arrow"/>
+  <path d="M660 235 H685" class="arrow"/>
+  <path d="M875 235 H900" class="arrow"/>
+</svg>
