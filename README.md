@@ -46,15 +46,21 @@ than a single-source annotation pass.
 Install from GitHub:
 
 ```r
-# install.packages("pak")
+install.packages("pak")
 pak::pak("dai540/expranno")
 ```
 
-Local install:
+Or:
 
 ```r
-# install.packages("pak")
-# pak::pak("path/to/expranno")
+install.packages("remotes")
+remotes::install_github("dai540/expranno")
+```
+
+Or install from a source tarball:
+
+```r
+install.packages("path/to/expranno_2.00.tar.gz", repos = NULL, type = "source")
 ```
 
 Optional backends:
