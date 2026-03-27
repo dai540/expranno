@@ -3,9 +3,9 @@ template:
   bootswatch: flatly
 
 development:
-  mode: unreleased
+  mode: release
 
-url: https://example.com/expranno
+url: https://dai540.github.io/expranno
 
 home:
   title: expranno
@@ -13,10 +13,17 @@ home:
   sidebar:
     html: pkgdown/home-sidebar.html
 
+repo:
+  url:
+    home: https://github.com/dai540/expranno
+    source: https://github.com/dai540/expranno/blob/main
+    issue: https://github.com/dai540/expranno/issues/
+    user: https://github.com/
+
 navbar:
   structure:
     left: [intro, reference, articles]
-    right: [search]
+    right: [github, search]
   components:
     intro:
       text: Get Started
@@ -24,6 +31,10 @@ navbar:
     reference:
       text: Reference
       href: reference/index.html
+    github:
+      icon: fa-github
+      href: https://github.com/dai540/expranno
+      aria-label: GitHub repository
 
 reference:
   - title: Main workflows

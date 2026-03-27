@@ -15,8 +15,17 @@ The package uses a coverage-first annotation strategy that can combine
 \code{biomaRt}, \code{org.*.eg.db}, and optional \code{EnsDb} packages, and it returns
 a compact annotation coverage report to support downstream quality checks.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/dai540/expranno}
+  \item \url{https://dai540.github.io/expranno/}
+  \item Report bugs at \url{https://github.com/dai540/expranno/issues}
+}
+
+}
 \author{
-\strong{Maintainer}: Daiki User \email{daiki@example.com} [copyright holder]
+\strong{Maintainer}: Daiki User \email{daik54015@gmail.com} [copyright holder]
 
 }
 \keyword{internal}

@@ -18,7 +18,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="expranno">
 <meta name="description" content="Expression annotation, metadata integration, Deconvolution, and Signature analysis for human and mouse RNA-seq data.">
 <meta property="og:description" content="Expression annotation, metadata integration, Deconvolution, and Signature analysis for human and mouse RNA-seq data.">
-<meta property="og:image" content="https://example.com/expranno/logo.svg">
+<meta property="og:image" content="https://dai540.github.io/expranno/logo.svg">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">expranno</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">2.00</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.00</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,6 +56,7 @@
 </li>
       </ul>
 <ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/dai540/expranno" aria-label="GitHub repository"><span class="fa fa-github"></span></a></li>
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
@@ -71,6 +72,7 @@
 <img src="logo.svg" class="logo" alt=""><h1 id="expranno-">expranno <a class="anchor" aria-label="anchor" href="#expranno-"></a>
 </h1>
 </div>
+<p><a href="https://dai540.github.io/expranno/"><img src="https://img.shields.io/badge/docs-pkgdown-315c86" alt="pkgdown"></a> <a href="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a></p>
 <p><code>expranno</code> is an R package for RNA-seq workflows that start from an expression matrix and sample metadata, then move through gene annotation, metadata integration, Deconvolution, and Signature analysis.</p>
 <p>The package is designed for human and mouse expression matrices where:</p>
 <ul>
@@ -97,84 +99,10 @@
 <li>optional <code>EnsDb</code> packages</li>
 </ul>
 <p>This makes it possible to recover more symbols, names, and identifiers than a single-source annotation pass.</p>
-<style>
-.mermaid {
-  margin: 1.5rem auto 2rem auto;
-  max-width: 980px;
-  padding: 0.75rem;
-  background: #f7f9fc;
-  border: 1px solid #d9e4ef;
-  border-radius: 16px;
-}
-</style>
-<pre class="mermaid">
-flowchart TB
-  subgraph inputs["Inputs"]
-    expr["expr<br>gene x sample table"]
-    meta["meta<br>sample x metadata table"]
-  end
-
-  subgraph core["Core workflow"]
-    validate["Validate<br>check required columns"]
-    annotate["Annotation<br>normalize Ensembl IDs<br>hybrid human or mouse mapping"]
-    report["Coverage report<br>annotation_rate by field"]
-    merge["Merge<br>combine expr_anno and meta"]
-  end
-
-  subgraph outputs["Saved outputs"]
-    expranno["expr_anno.csv"]
-    merged["expr_meta_merged.csv"]
-  end
-
-  subgraph downstream["Downstream analyses"]
-    deconv["Deconvolution<br>immunedeconv<br>one CSV per method"]
-    signature["Signature<br>GSVA or ssGSEA<br>one CSV per method"]
-  end
-
-  expr --&gt; validate
-  meta --&gt; validate
-  validate --&gt; annotate
-  annotate --&gt; expranno
-  annotate --&gt; report
-  expranno --&gt; merge
-  meta --&gt; merge
-  merge --&gt; merged
-  merged --&gt; deconv
-  merged --&gt; signature
-
-  classDef input fill:#eef5fb,stroke:#315c86,color:#17324d,stroke-width:1.5px;
-  classDef process fill:#ffffff,stroke:#315c86,color:#17324d,stroke-width:1.5px;
-  classDef output fill:#eaf6ef,stroke:#3c7a57,color:#17324d,stroke-width:1.5px;
-
-  class expr,meta input;
-  class validate,annotate,report,merge,deconv,signature process;
-  class expranno,merged output;
-</pre>
-<script src="docs/deps/mermaid/mermaid.min.js"></script><script>
-if (window.mermaid) {
-  window.mermaid.initialize({
-    startOnLoad: true,
-    securityLevel: "loose",
-    theme: "base",
-    themeVariables: {
-      primaryColor: "#ffffff",
-      primaryTextColor: "#17324d",
-      primaryBorderColor: "#315c86",
-      lineColor: "#315c86",
-      secondaryColor: "#eef5fb",
-      tertiaryColor: "#eaf6ef",
-      clusterBkg: "#f7f9fc",
-      clusterBorder: "#cfddeb",
-      fontFamily: "Lato, Arial, sans-serif"
-    },
-    flowchart: {
-      curve: "basis",
-      htmlLabels: true
-    }
-  });
-  window.mermaid.run({ querySelector: ".mermaid" });
-}
-</script><p><code>expranno</code> does this in a simple analysis sequence:</p>
+<div class="float">
+<img src="reference/figures/workflow-overview.svg" alt="expranno workflow"><div class="figcaption">expranno workflow</div>
+</div>
+<p><code>expranno</code> does this in a simple analysis sequence:</p>
 <ol style="list-style-type: decimal">
 <li>validate <code>expr</code> and <code>meta</code>
 </li>
@@ -188,12 +116,16 @@ if (window.mermaid) {
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Local install:</p>
+<p>Install from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pak</span><span class="op">(</span><span class="st">"dai540/expranno"</span><span class="op">)</span></span></code></pre></div>
+<p>Local install:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="co"># pak::pak("path/to/expranno")</span></span></code></pre></div>
 <p>Optional backends:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"biomaRt"</span>,</span>
 <span>  <span class="st">"AnnotationDbi"</span>,</span>
@@ -210,7 +142,7 @@ if (window.mermaid) {
 <h2 id="workflow-overview">Workflow Overview<a class="anchor" aria-label="anchor" href="#workflow-overview"></a>
 </h2>
 <p>The main wrapper is <code><a href="reference/run_expranno.html">run_expranno()</a></code>. It orchestrates the whole pipeline from raw inputs to saved outputs.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">meta</span>,</span>
@@ -226,10 +158,10 @@ if (window.mermaid) {
 <div class="section level2">
 <h2 id="input-contract">Input Contract<a class="anchor" aria-label="anchor" href="#input-contract"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_expranno_data.html">example_expranno_data</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><code>expr</code> must be a gene-by-sample table.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">demo</span><span class="op">$</span><span class="va">expr</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
@@ -251,7 +183,7 @@ if (window.mermaid) {
 </tbody>
 </table>
 <p><code>meta</code> must be a sample metadata table.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">demo</span><span class="op">$</span><span class="va">meta</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
@@ -288,7 +220,7 @@ if (window.mermaid) {
 <div class="section level2">
 <h2 id="minimal-example">Minimal Example<a class="anchor" aria-label="anchor" href="#minimal-example"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_expranno_data.html">example_expranno_data</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
@@ -345,10 +277,11 @@ if (window.mermaid) {
 <p>The package website includes:</p>
 <ul>
 <li>a getting started article</li>
-<li>a step-by-step case study tutorial</li>
+<li>human and mouse step-by-step case studies</li>
 <li>a theory and design article</li>
 <li>a function reference</li>
 </ul>
+<p>Website: <a href="https://dai540.github.io/expranno/" class="uri">https://dai540.github.io/expranno/</a></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="pkgdown-sidebar-section pkgdown-sidebar-section-title">

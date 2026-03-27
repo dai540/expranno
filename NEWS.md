@@ -1,5 +1,7 @@
 # expranno 2.00
 
+- Prepared GitHub-facing README, GitHub Actions, and pkgdown deployment
+  for the public `dai540/expranno` repository.
 - Redesigned the website workflow figure with a cleaner mermaid-based
   layout that separates inputs, core processing, outputs, and downstream
   analyses.

@@ -1,5 +1,9 @@
 # expranno <img src="man/figures/expranno-logo.svg" align="right" height="88" alt="expranno logo" />
 
+[![pkgdown](https://img.shields.io/badge/docs-pkgdown-315c86)](https://dai540.github.io/expranno/)
+[![R-CMD-check](https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 `expranno` is an R package for RNA-seq workflows that start from an
 expression matrix and sample metadata, then move through gene annotation,
 metadata integration, Deconvolution, and Signature analysis.
@@ -27,85 +31,7 @@ coverage-first strategy that can combine:
 This makes it possible to recover more symbols, names, and identifiers
 than a single-source annotation pass.
 
-<style>
-.mermaid {
-  margin: 1.5rem auto 2rem auto;
-  max-width: 980px;
-  padding: 0.75rem;
-  background: #f7f9fc;
-  border: 1px solid #d9e4ef;
-  border-radius: 16px;
-}
-</style>
-<pre class="mermaid">
-flowchart TB
-  subgraph inputs["Inputs"]
-    expr["expr<br/>gene x sample table"]
-    meta["meta<br/>sample x metadata table"]
-  end
-
-  subgraph core["Core workflow"]
-    validate["Validate<br/>check required columns"]
-    annotate["Annotation<br/>normalize Ensembl IDs<br/>hybrid human or mouse mapping"]
-    report["Coverage report<br/>annotation_rate by field"]
-    merge["Merge<br/>combine expr_anno and meta"]
-  end
-
-  subgraph outputs["Saved outputs"]
-    expranno["expr_anno.csv"]
-    merged["expr_meta_merged.csv"]
-  end
-
-  subgraph downstream["Downstream analyses"]
-    deconv["Deconvolution<br/>immunedeconv<br/>one CSV per method"]
-    signature["Signature<br/>GSVA or ssGSEA<br/>one CSV per method"]
-  end
-
-  expr --> validate
-  meta --> validate
-  validate --> annotate
-  annotate --> expranno
-  annotate --> report
-  expranno --> merge
-  meta --> merge
-  merge --> merged
-  merged --> deconv
-  merged --> signature
-
-  classDef input fill:#eef5fb,stroke:#315c86,color:#17324d,stroke-width:1.5px;
-  classDef process fill:#ffffff,stroke:#315c86,color:#17324d,stroke-width:1.5px;
-  classDef output fill:#eaf6ef,stroke:#3c7a57,color:#17324d,stroke-width:1.5px;
-
-  class expr,meta input;
-  class validate,annotate,report,merge,deconv,signature process;
-  class expranno,merged output;
-</pre>
-<script src="docs/deps/mermaid/mermaid.min.js"></script>
-<script>
-if (window.mermaid) {
-  window.mermaid.initialize({
-    startOnLoad: true,
-    securityLevel: "loose",
-    theme: "base",
-    themeVariables: {
-      primaryColor: "#ffffff",
-      primaryTextColor: "#17324d",
-      primaryBorderColor: "#315c86",
-      lineColor: "#315c86",
-      secondaryColor: "#eef5fb",
-      tertiaryColor: "#eaf6ef",
-      clusterBkg: "#f7f9fc",
-      clusterBorder: "#cfddeb",
-      fontFamily: "Lato, Arial, sans-serif"
-    },
-    flowchart: {
-      curve: "basis",
-      htmlLabels: true
-    }
-  });
-  window.mermaid.run({ querySelector: ".mermaid" });
-}
-</script>
+![expranno workflow](man/figures/workflow-overview.svg)
 
 `expranno` does this in a simple analysis sequence:
 
@@ -116,6 +42,13 @@ if (window.mermaid) {
 5. run Signature analysis and save one score table per method
 
 ## Installation
+
+Install from GitHub:
+
+```r
+# install.packages("pak")
+pak::pak("dai540/expranno")
+```
 
 Local install:
 
@@ -253,6 +186,8 @@ The practical checklist is:
 The package website includes:
 
 - a getting started article
-- a step-by-step case study tutorial
+- human and mouse step-by-step case studies
 - a theory and design article
 - a function reference
+
+Website: <https://dai540.github.io/expranno/>

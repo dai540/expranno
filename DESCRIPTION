@@ -7,11 +7,11 @@ Authors@R: c(
       given = "Daiki",
       family = "User",
       role = c("aut", "cre", "cph"),
-      email = "daiki@example.com"
+      email = "daik54015@gmail.com"
     )
   )
 Author: Daiki User [aut, cre, cph]
-Maintainer: Daiki User <daiki@example.com>
+Maintainer: Daiki User <daik54015@gmail.com>
 Description: Provides a reproducible RNA-seq workflow that starts from an
     expression matrix with Ensembl gene identifiers and sample metadata,
     annotates genes for human and mouse with a coverage-first hybrid strategy,
@@ -45,3 +45,5 @@ Suggests:
 Config/testthat/edition: 3
 Config/Needs/website: pkgdown
 VignetteBuilder: knitr
+URL: https://github.com/dai540/expranno, https://dai540.github.io/expranno/
+BugReports: https://github.com/dai540/expranno/issues

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">expranno workflow overview</title>
+  <desc id="desc">Workflow from expression and metadata inputs through annotation, integration, deconvolution, and signature analysis.</desc>
+  <defs>
+    <style>
+      .label { font: 700 24px 'Segoe UI', Arial, sans-serif; fill: #17324d; }
+      .small { font: 500 16px 'Segoe UI', Arial, sans-serif; fill: #315c86; }
+      .box { fill: #ffffff; stroke: #315c86; stroke-width: 2.2; rx: 18; ry: 18; }
+      .input { fill: #eef5fb; }
+      .output { fill: #eaf6ef; }
+      .arrow { stroke: #315c86; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .chip { fill: #dbe9f6; stroke: #315c86; stroke-width: 1.6; rx: 12; ry: 12; }
+      .chiptext { font: 600 15px 'Segoe UI', Arial, sans-serif; fill: #17324d; }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M1,1 L11,6 L1,11" fill="none" stroke="#315c86" stroke-width="2"/>
+    </marker>
+  </defs>
+
+  <rect x="40" y="86" width="180" height="130" class="box input"/>
+  <text x="130" y="132" text-anchor="middle" class="label">Input</text>
+  <text x="130" y="164" text-anchor="middle" class="small">expr</text>
+  <text x="130" y="188" text-anchor="middle" class="small">gene_id + samples</text>
+  <text x="130" y="228" text-anchor="middle" class="small">meta</text>
+  <text x="130" y="252" text-anchor="middle" class="small">sample + metadata</text>
+
+  <rect x="270" y="86" width="200" height="130" class="box"/>
+  <text x="370" y="132" text-anchor="middle" class="label">Annotation</text>
+  <text x="370" y="166" text-anchor="middle" class="small">normalize Ensembl IDs</text>
+  <text x="370" y="190" text-anchor="middle" class="small">human or mouse mapping</text>
+  <rect x="310" y="228" width="120" height="34" class="chip"/>
+  <text x="370" y="250" text-anchor="middle" class="chiptext">expr_anno.csv</text>
+
+  <rect x="520" y="86" width="200" height="130" class="box"/>
+  <text x="620" y="132" text-anchor="middle" class="label">Coverage</text>
+  <text x="620" y="166" text-anchor="middle" class="small">symbol and gene_name</text>
+  <text x="620" y="190" text-anchor="middle" class="small">annotation rate by field</text>
+  <rect x="560" y="228" width="120" height="34" class="chip"/>
+  <text x="620" y="250" text-anchor="middle" class="chiptext">report table</text>
+
+  <rect x="770" y="86" width="200" height="130" class="box"/>
+  <text x="870" y="132" text-anchor="middle" class="label">Integration</text>
+  <text x="870" y="166" text-anchor="middle" class="small">join expr_anno with meta</text>
+  <text x="870" y="190" text-anchor="middle" class="small">long-format analysis table</text>
+  <rect x="800" y="228" width="140" height="34" class="chip"/>
+  <text x="870" y="250" text-anchor="middle" class="chiptext">expr_meta_merged.csv</text>
+
+  <rect x="1000" y="46" width="160" height="110" class="box output"/>
+  <text x="1080" y="92" text-anchor="middle" class="label">Deconvolution</text>
+  <text x="1080" y="124" text-anchor="middle" class="small">one CSV per method</text>
+
+  <rect x="1000" y="182" width="160" height="110" class="box output"/>
+  <text x="1080" y="228" text-anchor="middle" class="label">Signature</text>
+  <text x="1080" y="260" text-anchor="middle" class="small">GSVA or ssGSEA</text>
+
+  <path d="M220 151 H258" class="arrow" marker-end="url(#arrow)"/>
+  <path d="M470 151 H508" class="arrow" marker-end="url(#arrow)"/>
+  <path d="M720 151 H758" class="arrow" marker-end="url(#arrow)"/>
+  <path d="M970 138 C985 138, 988 116, 1000 101" class="arrow" marker-end="url(#arrow)"/>
+  <path d="M970 164 C985 164, 988 222, 1000 237" class="arrow" marker-end="url(#arrow)"/>
+</svg>

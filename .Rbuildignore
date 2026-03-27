@@ -3,3 +3,4 @@
 ^pkgdown$
 ^README\.md$
 ^NEWS\.md$
+^\.github$
