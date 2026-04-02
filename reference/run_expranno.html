@@ -11,7 +11,7 @@ returns all outputs in one structured object."><meta property="og:image" content
 
     <a class="navbar-brand me-2" href="../index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.00</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,10 +65,18 @@ returns all outputs in one structured object.</p>
 <span>  output_dir <span class="op">=</span> <span class="st">"."</span>,</span>
 <span>  run_deconvolution <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  deconv_methods <span class="op">=</span> <span class="st">"all_except_cibersort"</span>,</span>
+<span>  expr_scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"count"</span>, <span class="st">"abundance"</span>, <span class="st">"log"</span><span class="op">)</span>,</span>
+<span>  duplicate_strategy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"sum"</span>, <span class="st">"mean"</span>, <span class="st">"max"</span>, <span class="st">"first"</span><span class="op">)</span>,</span>
+<span>  deconv_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  run_signature <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  geneset_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gene_sets <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  signature_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gsva"</span>, <span class="st">"ssgsea"</span>, <span class="st">"both"</span><span class="op">)</span>,</span>
+<span>  signature_kcdf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"Gaussian"</span>, <span class="st">"Poisson"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  signature_min_size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  signature_max_size <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  gsva_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ssgsea_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -105,6 +113,21 @@ returns all outputs in one structured object.</p>
 <dd><p>Either <code>"all_except_cibersort"</code> or an explicit vector.</p></dd>
 
 
+<dt id="arg-expr-scale">expr_scale<a class="anchor" aria-label="anchor" href="#arg-expr-scale"></a></dt>
+<dd><p>Expression scale used to choose duplicate-symbol handling.</p></dd>
+
+
+<dt id="arg-duplicate-strategy">duplicate_strategy<a class="anchor" aria-label="anchor" href="#arg-duplicate-strategy"></a></dt>
+<dd><p>Strategy used when multiple rows map to the same
+symbol. <code>"auto"</code> uses <code>"sum"</code> for counts and <code>"mean"</code> otherwise.</p></dd>
+
+
+<dt id="arg-deconv-args">deconv_args<a class="anchor" aria-label="anchor" href="#arg-deconv-args"></a></dt>
+<dd><p>Optional named list of additional arguments passed to
+<code><a href="run_cell_deconvolution.html">run_cell_deconvolution()</a></code>, including method-specific values such as
+<code>indications</code>.</p></dd>
+
+
 <dt id="arg-run-signature">run_signature<a class="anchor" aria-label="anchor" href="#arg-run-signature"></a></dt>
 <dd><p>Whether to run GSVA or ssGSEA.</p></dd>
 
@@ -119,6 +142,28 @@ returns all outputs in one structured object.</p>
 
 <dt id="arg-signature-method">signature_method<a class="anchor" aria-label="anchor" href="#arg-signature-method"></a></dt>
 <dd><p>One of <code>"gsva"</code>, <code>"ssgsea"</code>, or <code>"both"</code>.</p></dd>
+
+
+<dt id="arg-signature-kcdf">signature_kcdf<a class="anchor" aria-label="anchor" href="#arg-signature-kcdf"></a></dt>
+<dd><p>Kernel choice passed to <code><a href="run_signature_analysis.html">run_signature_analysis()</a></code>.</p></dd>
+
+
+<dt id="arg-signature-min-size">signature_min_size<a class="anchor" aria-label="anchor" href="#arg-signature-min-size"></a></dt>
+<dd><p>Minimum gene-set size after ID matching.</p></dd>
+
+
+<dt id="arg-signature-max-size">signature_max_size<a class="anchor" aria-label="anchor" href="#arg-signature-max-size"></a></dt>
+<dd><p>Maximum gene-set size after ID matching.</p></dd>
+
+
+<dt id="arg-gsva-args">gsva_args<a class="anchor" aria-label="anchor" href="#arg-gsva-args"></a></dt>
+<dd><p>Optional named list of extra arguments passed to
+<code>GSVA::gsvaParam()</code>.</p></dd>
+
+
+<dt id="arg-ssgsea-args">ssgsea_args<a class="anchor" aria-label="anchor" href="#arg-ssgsea-args"></a></dt>
+<dd><p>Optional named list of extra arguments passed to
+<code>GSVA::ssgseaParam()</code>.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

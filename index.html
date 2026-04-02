@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.00</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -126,7 +126,7 @@
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"dai540/expranno"</span><span class="op">)</span></span></code></pre></div>
 <p>Or install from a source tarball:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"path/to/expranno_2.00.tar.gz"</span>, repos <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"path/to/expranno_2.0.1.tar.gz"</span>, repos <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span></code></pre></div>
 <p>Optional backends:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -170,12 +170,18 @@
 <span>  meta <span class="op">=</span> <span class="va">meta</span>,</span>
 <span>  species <span class="op">=</span> <span class="st">"human"</span>,</span>
 <span>  annotation_engine <span class="op">=</span> <span class="st">"hybrid"</span>,</span>
+<span>  expr_scale <span class="op">=</span> <span class="st">"abundance"</span>,</span>
+<span>  duplicate_strategy <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"results"</span>,</span>
 <span>  run_deconvolution <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  deconv_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>indications <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"SKCM"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">expr</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1L</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  run_signature <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  geneset_file <span class="op">=</span> <span class="st">"hallmark.gmt"</span>,</span>
-<span>  signature_method <span class="op">=</span> <span class="st">"both"</span></span>
+<span>  signature_method <span class="op">=</span> <span class="st">"both"</span>,</span>
+<span>  signature_kcdf <span class="op">=</span> <span class="st">"Gaussian"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p><code>deconv_args</code> is available for method-specific <code>immunedeconv</code> arguments. This is especially important for <code>timer</code> and <code>consensus_tme</code>, which require an <code>indications</code> vector.</p>
+<p><code>expr_scale</code> and <code>duplicate_strategy</code> control how duplicated symbols are collapsed before downstream analyses. The default <code>"auto"</code> strategy uses <code>"sum"</code> for count-like data and <code>"mean"</code> for abundance or log-scale data.</p>
 </div>
 <div class="section level2">
 <h2 id="input-contract">Input Contract<a class="anchor" aria-label="anchor" href="#input-contract"></a>
@@ -292,6 +298,7 @@
 <li>confirm merged sample labels line up with the expected <code>meta</code> rows</li>
 <li>use the merged table as the common input for Deconvolution and Signature analyses</li>
 </ul>
+<p>For signature scoring, also confirm that <code>signature_kcdf</code> matches the expression scale you are using. Count-like inputs usually call for <code>"Poisson"</code>, while continuous log-scale inputs are usually better matched by <code>"Gaussian"</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>

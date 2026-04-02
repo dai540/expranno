@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.00</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -229,6 +229,26 @@ sample-level joins:</p>
 </ul>
 </div>
 <div class="section level2">
+<h2 id="duplicate-symbol-strategy">Duplicate symbol strategy<a class="anchor" aria-label="anchor" href="#duplicate-symbol-strategy"></a>
+</h2>
+<p>Many downstream methods operate on gene symbols rather than Ensembl
+IDs, so duplicated symbols have to be collapsed after annotation.
+<code>expranno</code> now exposes that choice directly instead of
+silently summing everything.</p>
+<ul>
+<li>for count-like matrices, the default <code>"auto"</code> rule uses
+<code>"sum"</code>
+</li>
+<li>for abundance-like or log-scale matrices, the default
+<code>"auto"</code> rule uses <code>"mean"</code>
+</li>
+</ul>
+<p>This matters because summing TPM-like or log-scale values is usually
+not a good default. If a project needs a different rule, the strategy
+can be set explicitly to <code>"sum"</code>, <code>"mean"</code>,
+<code>"max"</code>, or <code>"first"</code>.</p>
+</div>
+<div class="section level2">
 <h2 id="downstream-analyses">Downstream analyses<a class="anchor" aria-label="anchor" href="#downstream-analyses"></a>
 </h2>
 <p>After annotation and merging, the package supports:</p>
@@ -239,6 +259,14 @@ sample-level joins:</p>
 </ul>
 <p>Both are designed to write explicit CSV outputs so that results are
 easy to inspect outside R.</p>
+<p>For deconvolution, <code>expranno</code> forwards method-specific
+arguments to <code>immunedeconv</code>. This is important for methods
+such as <code>timer</code> and <code>consensus_tme</code>, which require
+an <code>indications</code> vector.</p>
+<p>For signature scoring, <code>expranno</code> now uses the current
+GSVA parameter-object workflow (<code>gsvaParam()</code> /
+<code>ssgseaParam()</code>) when that API is available, while keeping a
+legacy fallback for older GSVA versions.</p>
 </div>
 <div class="section level2">
 <h2 id="recommended-order-of-inspection">Recommended order of inspection<a class="anchor" aria-label="anchor" href="#recommended-order-of-inspection"></a>

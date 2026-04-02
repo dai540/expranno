@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.00</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -255,6 +255,51 @@ coverage-oriented mode. It uses a cascade:</p>
 <span><span class="co">#&gt;   merged rows: 9</span></span>
 <span><span class="co">#&gt;   deconvolution runs: 0</span></span>
 <span><span class="co">#&gt;   signature runs: 0</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="control-duplicate-symbols-and-score-kernels">Control duplicate symbols and score kernels<a class="anchor" aria-label="anchor" href="#control-duplicate-symbols-and-score-kernels"></a>
+</h2>
+<p>Downstream methods usually operate on gene symbols, so duplicated
+symbols have to be collapsed. <code>expranno</code> now makes that rule
+explicit.</p>
+<ul>
+<li>
+<code>expr_scale = "count"</code> usually pairs with
+<code>duplicate_strategy = "sum"</code>
+</li>
+<li>
+<code>expr_scale = "abundance"</code> or <code>"log"</code> usually
+pairs with <code>duplicate_strategy = "mean"</code>
+</li>
+</ul>
+<p>For signature scoring, <code>signature_kcdf</code> should also match
+the expression scale:</p>
+<ul>
+<li>use <code>"Poisson"</code> for count-like input</li>
+<li>use <code>"Gaussian"</code> for continuous log-scale input</li>
+<li>use <code>"auto"</code> if you want GSVA to choose</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="method-specific-deconvolution-arguments">Method-specific deconvolution arguments<a class="anchor" aria-label="anchor" href="#method-specific-deconvolution-arguments"></a>
+</h2>
+<p>Some <code>immunedeconv</code> methods require extra arguments. In
+particular, <code>timer</code> and <code>consensus_tme</code> need an
+<code>indications</code> vector with one tumor type per sample.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
+<span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
+<span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
+<span>  species <span class="op">=</span> <span class="st">"human"</span>,</span>
+<span>  annotation_engine <span class="op">=</span> <span class="st">"hybrid"</span>,</span>
+<span>  output_dir <span class="op">=</span> <span class="st">"results"</span>,</span>
+<span>  run_deconvolution <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  deconv_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>indications <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SKCM"</span>, <span class="st">"SKCM"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  run_signature <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  geneset_file <span class="op">=</span> <span class="st">"hallmark.gmt"</span>,</span>
+<span>  signature_method <span class="op">=</span> <span class="st">"both"</span>,</span>
+<span>  signature_kcdf <span class="op">=</span> <span class="st">"Gaussian"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="what-to-inspect-after-a-run">What to inspect after a run<a class="anchor" aria-label="anchor" href="#what-to-inspect-after-a-run"></a>
