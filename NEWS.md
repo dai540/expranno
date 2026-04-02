@@ -1,3 +1,16 @@
+# expranno 2.0.1
+
+- Switched signature scoring to the current GSVA parameter-object API
+  when available, with a legacy fallback for older GSVA releases.
+- Added `expr_scale` and `duplicate_strategy` controls so duplicate
+  symbols are no longer silently summed for all expression types.
+- Added `deconv_args` support in the main wrapper and explicit handling
+  of indication-specific `immunedeconv` methods such as `timer` and
+  `consensus_tme`.
+- Expanded tests and documentation around duplicate handling,
+  deconvolution method requirements, and signature-scoring kernel
+  choices.
+
 # expranno 2.00
 
 - Prepared GitHub-facing README, GitHub Actions, and pkgdown deployment

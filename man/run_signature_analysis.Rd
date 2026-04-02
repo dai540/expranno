@@ -10,6 +10,13 @@ run_signature_analysis(
   gene_sets = NULL,
   method = c("gsva", "ssgsea", "both"),
   gene_column = "symbol",
+  expr_scale = c("auto", "count", "abundance", "log"),
+  duplicate_strategy = c("auto", "sum", "mean", "max", "first"),
+  kcdf = c("auto", "Gaussian", "Poisson", "none"),
+  min_size = 1,
+  max_size = Inf,
+  gsva_args = list(),
+  ssgsea_args = list(),
   output_dir = NULL,
   prefix = "signature_"
 )
@@ -24,6 +31,23 @@ run_signature_analysis(
 \item{method}{One of \code{"gsva"}, \code{"ssgsea"}, or \code{"both"}.}
 
 \item{gene_column}{Symbol column to use.}
+
+\item{expr_scale}{Expression scale. This affects duplicate symbol handling.}
+
+\item{duplicate_strategy}{Strategy used when multiple rows map to the same
+symbol. \code{"auto"} uses \code{"sum"} for counts and \code{"mean"} otherwise.}
+
+\item{kcdf}{Kernel choice passed to \code{GSVA::gsvaParam()}.}
+
+\item{min_size}{Minimum gene-set size after ID matching.}
+
+\item{max_size}{Maximum gene-set size after ID matching.}
+
+\item{gsva_args}{Optional named list of extra arguments passed to
+\code{GSVA::gsvaParam()}.}
+
+\item{ssgsea_args}{Optional named list of extra arguments passed to
+\code{GSVA::ssgseaParam()}.}
 
 \item{output_dir}{Optional output directory.}
 

@@ -12,10 +12,18 @@ run_expranno(
   output_dir = ".",
   run_deconvolution = TRUE,
   deconv_methods = "all_except_cibersort",
+  expr_scale = c("auto", "count", "abundance", "log"),
+  duplicate_strategy = c("auto", "sum", "mean", "max", "first"),
+  deconv_args = list(),
   run_signature = TRUE,
   geneset_file = NULL,
   gene_sets = NULL,
   signature_method = c("gsva", "ssgsea", "both"),
+  signature_kcdf = c("auto", "Gaussian", "Poisson", "none"),
+  signature_min_size = 1,
+  signature_max_size = Inf,
+  gsva_args = list(),
+  ssgsea_args = list(),
   verbose = TRUE
 )
 }
@@ -34,6 +42,15 @@ run_expranno(
 
 \item{deconv_methods}{Either \code{"all_except_cibersort"} or an explicit vector.}
 
+\item{expr_scale}{Expression scale used to choose duplicate-symbol handling.}
+
+\item{duplicate_strategy}{Strategy used when multiple rows map to the same
+symbol. \code{"auto"} uses \code{"sum"} for counts and \code{"mean"} otherwise.}
+
+\item{deconv_args}{Optional named list of additional arguments passed to
+\code{\link[=run_cell_deconvolution]{run_cell_deconvolution()}}, including method-specific values such as
+\code{indications}.}
+
 \item{run_signature}{Whether to run GSVA or ssGSEA.}
 
 \item{geneset_file}{Optional GMT path.}
@@ -41,6 +58,18 @@ run_expranno(
 \item{gene_sets}{Optional named list of gene sets.}
 
 \item{signature_method}{One of \code{"gsva"}, \code{"ssgsea"}, or \code{"both"}.}
+
+\item{signature_kcdf}{Kernel choice passed to \code{\link[=run_signature_analysis]{run_signature_analysis()}}.}
+
+\item{signature_min_size}{Minimum gene-set size after ID matching.}
+
+\item{signature_max_size}{Maximum gene-set size after ID matching.}
+
+\item{gsva_args}{Optional named list of extra arguments passed to
+\code{GSVA::gsvaParam()}.}
+
+\item{ssgsea_args}{Optional named list of extra arguments passed to
+\code{GSVA::ssgseaParam()}.}
 
 \item{verbose}{Whether to emit progress messages.}
 }

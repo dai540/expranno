@@ -60,6 +60,13 @@ user-supplied gene set database.</p>
 <span>  gene_sets <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gsva"</span>, <span class="st">"ssgsea"</span>, <span class="st">"both"</span><span class="op">)</span>,</span>
 <span>  gene_column <span class="op">=</span> <span class="st">"symbol"</span>,</span>
+<span>  expr_scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"count"</span>, <span class="st">"abundance"</span>, <span class="st">"log"</span><span class="op">)</span>,</span>
+<span>  duplicate_strategy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"sum"</span>, <span class="st">"mean"</span>, <span class="st">"max"</span>, <span class="st">"first"</span><span class="op">)</span>,</span>
+<span>  kcdf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"Gaussian"</span>, <span class="st">"Poisson"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  min_size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  max_size <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  gsva_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ssgsea_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  prefix <span class="op">=</span> <span class="st">"signature_"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -89,6 +96,37 @@ user-supplied gene set database.</p>
 <dd><p>Symbol column to use.</p></dd>
 
 
+<dt id="arg-expr-scale">expr_scale<a class="anchor" aria-label="anchor" href="#arg-expr-scale"></a></dt>
+<dd><p>Expression scale. This affects duplicate symbol handling.</p></dd>
+
+
+<dt id="arg-duplicate-strategy">duplicate_strategy<a class="anchor" aria-label="anchor" href="#arg-duplicate-strategy"></a></dt>
+<dd><p>Strategy used when multiple rows map to the same
+symbol. <code>"auto"</code> uses <code>"sum"</code> for counts and <code>"mean"</code> otherwise.</p></dd>
+
+
+<dt id="arg-kcdf">kcdf<a class="anchor" aria-label="anchor" href="#arg-kcdf"></a></dt>
+<dd><p>Kernel choice passed to <code>GSVA::gsvaParam()</code>.</p></dd>
+
+
+<dt id="arg-min-size">min_size<a class="anchor" aria-label="anchor" href="#arg-min-size"></a></dt>
+<dd><p>Minimum gene-set size after ID matching.</p></dd>
+
+
+<dt id="arg-max-size">max_size<a class="anchor" aria-label="anchor" href="#arg-max-size"></a></dt>
+<dd><p>Maximum gene-set size after ID matching.</p></dd>
+
+
+<dt id="arg-gsva-args">gsva_args<a class="anchor" aria-label="anchor" href="#arg-gsva-args"></a></dt>
+<dd><p>Optional named list of extra arguments passed to
+<code>GSVA::gsvaParam()</code>.</p></dd>
+
+
+<dt id="arg-ssgsea-args">ssgsea_args<a class="anchor" aria-label="anchor" href="#arg-ssgsea-args"></a></dt>
+<dd><p>Optional named list of extra arguments passed to
+<code>GSVA::ssgseaParam()</code>.</p></dd>
+
+
 <dt id="arg-output-dir">output_dir<a class="anchor" aria-label="anchor" href="#arg-output-dir"></a></dt>
 <dd><p>Optional output directory.</p></dd>
 
@@ -107,7 +145,7 @@ user-supplied gene set database.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Daiki User.</p>
+  <p>Developed by Dai Dai.</p>
 </div>
 
 <div class="pkgdown-footer-right">

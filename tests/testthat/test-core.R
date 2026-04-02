@@ -62,3 +62,64 @@ test_that("read_genesets parses GMT files", {
   expect_identical(names(sets), c("pathway_a", "pathway_b"))
   expect_identical(sets[[1]], c("TP53", "EGFR"))
 })
+
+test_that("duplicate symbol handling depends on expression scale", {
+  expr_anno <- data.frame(
+    gene_id_raw = c("ENSG1.1", "ENSG2.1", "ENSG3.1"),
+    gene_id = c("ENSG1", "ENSG2", "ENSG3"),
+    symbol = c("TP53", "TP53", "EGFR"),
+    sample_a = c(10, 20, 5),
+    sample_b = c(2, 4, 7),
+    stringsAsFactors = FALSE
+  )
+
+  count_matrix <- expranno:::collapse_symbol_matrix(
+    expr_anno,
+    expr_scale = "count",
+    duplicate_strategy = "auto"
+  )
+  abundance_matrix <- expranno:::collapse_symbol_matrix(
+    expr_anno,
+    expr_scale = "abundance",
+    duplicate_strategy = "auto"
+  )
+  first_matrix <- expranno:::collapse_symbol_matrix(
+    expr_anno,
+    expr_scale = "count",
+    duplicate_strategy = "first"
+  )
+
+  expect_equal(count_matrix["TP53", "sample_a"], 30)
+  expect_equal(abundance_matrix["TP53", "sample_a"], 15)
+  expect_equal(first_matrix["TP53", "sample_a"], 10)
+})
+
+test_that("indication-specific deconvolution methods are handled explicitly", {
+  expect_identical(
+    expranno:::sanitize_deconvolution_methods(
+      methods = c("timer", "quantiseq"),
+      auto_discovered = TRUE,
+      verbose = FALSE
+    ),
+    "quantiseq"
+  )
+
+  expect_error(
+    expranno:::sanitize_deconvolution_methods(
+      methods = c("timer", "quantiseq"),
+      auto_discovered = FALSE,
+      verbose = FALSE
+    ),
+    "require `indications`"
+  )
+
+  expect_identical(
+    expranno:::sanitize_deconvolution_methods(
+      methods = c("timer", "quantiseq"),
+      indications = c("SKCM", "SKCM"),
+      auto_discovered = FALSE,
+      verbose = FALSE
+    ),
+    c("timer", "quantiseq")
+  )
+})

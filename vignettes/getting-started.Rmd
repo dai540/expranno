@@ -177,6 +177,43 @@ result <- run_expranno(
 result
 ```
 
+## Control duplicate symbols and score kernels
+
+Downstream methods usually operate on gene symbols, so duplicated symbols
+have to be collapsed. `expranno` now makes that rule explicit.
+
+- `expr_scale = "count"` usually pairs with `duplicate_strategy = "sum"`
+- `expr_scale = "abundance"` or `"log"` usually pairs with `duplicate_strategy = "mean"`
+
+For signature scoring, `signature_kcdf` should also match the expression
+scale:
+
+- use `"Poisson"` for count-like input
+- use `"Gaussian"` for continuous log-scale input
+- use `"auto"` if you want GSVA to choose
+
+## Method-specific deconvolution arguments
+
+Some `immunedeconv` methods require extra arguments. In particular,
+`timer` and `consensus_tme` need an `indications` vector with one tumor
+type per sample.
+
+```{r, eval = FALSE}
+run_expranno(
+  expr = demo$expr,
+  meta = demo$meta,
+  species = "human",
+  annotation_engine = "hybrid",
+  output_dir = "results",
+  run_deconvolution = TRUE,
+  deconv_args = list(indications = c("SKCM", "SKCM")),
+  run_signature = TRUE,
+  geneset_file = "hallmark.gmt",
+  signature_method = "both",
+  signature_kcdf = "Gaussian"
+)
+```
+
 ## What to inspect after a run
 
 For a production analysis with `"hybrid"`, the first things to check are:

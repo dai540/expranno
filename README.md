@@ -60,7 +60,7 @@ remotes::install_github("dai540/expranno")
 Or install from a source tarball:
 
 ```r
-install.packages("path/to/expranno_2.00.tar.gz", repos = NULL, type = "source")
+install.packages("path/to/expranno_2.0.1.tar.gz", repos = NULL, type = "source")
 ```
 
 Optional backends:
@@ -114,13 +114,25 @@ result <- expranno::run_expranno(
   meta = meta,
   species = "human",
   annotation_engine = "hybrid",
+  expr_scale = "abundance",
+  duplicate_strategy = "mean",
   output_dir = "results",
   run_deconvolution = TRUE,
+  deconv_args = list(indications = rep("SKCM", ncol(expr) - 1L)),
   run_signature = TRUE,
   geneset_file = "hallmark.gmt",
-  signature_method = "both"
+  signature_method = "both",
+  signature_kcdf = "Gaussian"
 )
 ```
+
+`deconv_args` is available for method-specific `immunedeconv` arguments.
+This is especially important for `timer` and `consensus_tme`, which
+require an `indications` vector.
+
+`expr_scale` and `duplicate_strategy` control how duplicated symbols are
+collapsed before downstream analyses. The default `"auto"` strategy uses
+`"sum"` for count-like data and `"mean"` for abundance or log-scale data.
 
 ## Input Contract
 
@@ -210,6 +222,11 @@ The practical checklist is:
 - confirm `gene_name` coverage tracks with `symbol`
 - confirm merged sample labels line up with the expected `meta` rows
 - use the merged table as the common input for Deconvolution and Signature analyses
+
+For signature scoring, also confirm that `signature_kcdf` matches the
+expression scale you are using. Count-like inputs usually call for
+`"Poisson"`, while continuous log-scale inputs are usually better matched
+by `"Gaussian"`.
 
 ## Documentation
 

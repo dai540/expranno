@@ -124,6 +124,19 @@ sample-level joins:
 
 - `expr_meta_merged.csv`
 
+## Duplicate symbol strategy
+
+Many downstream methods operate on gene symbols rather than Ensembl IDs,
+so duplicated symbols have to be collapsed after annotation. `expranno`
+now exposes that choice directly instead of silently summing everything.
+
+- for count-like matrices, the default `"auto"` rule uses `"sum"`
+- for abundance-like or log-scale matrices, the default `"auto"` rule uses `"mean"`
+
+This matters because summing TPM-like or log-scale values is usually not a
+good default. If a project needs a different rule, the strategy can be
+set explicitly to `"sum"`, `"mean"`, `"max"`, or `"first"`.
+
 ## Downstream analyses
 
 After annotation and merging, the package supports:
@@ -133,6 +146,14 @@ After annotation and merging, the package supports:
 
 Both are designed to write explicit CSV outputs so that results are easy
 to inspect outside R.
+
+For deconvolution, `expranno` forwards method-specific arguments to
+`immunedeconv`. This is important for methods such as `timer` and
+`consensus_tme`, which require an `indications` vector.
+
+For signature scoring, `expranno` now uses the current GSVA
+parameter-object workflow (`gsvaParam()` / `ssgseaParam()`) when that API
+is available, while keeping a legacy fallback for older GSVA versions.
 
 ## Recommended order of inspection
 

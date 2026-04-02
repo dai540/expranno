@@ -9,9 +9,12 @@ run_cell_deconvolution(
   species = c("auto", "human", "mouse"),
   methods = "all_except_cibersort",
   gene_column = "symbol",
+  expr_scale = c("auto", "count", "abundance", "log"),
+  duplicate_strategy = c("auto", "sum", "mean", "max", "first"),
   output_dir = NULL,
   prefix = "cell_deconv_",
-  verbose = TRUE
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{
@@ -24,11 +27,20 @@ explicit method names.}
 
 \item{gene_column}{Gene symbol column to use for deconvolution.}
 
+\item{expr_scale}{Expression scale. This affects duplicate symbol handling
+and triggers a warning for \code{expr_scale = "log"}.}
+
+\item{duplicate_strategy}{Strategy used when multiple rows map to the same
+symbol. \code{"auto"} uses \code{"sum"} for counts and \code{"mean"} otherwise.}
+
 \item{output_dir}{Optional directory to write one CSV per method.}
 
 \item{prefix}{File name prefix for output CSV files.}
 
 \item{verbose}{Whether to emit progress messages.}
+
+\item{...}{Additional arguments forwarded to \code{immunedeconv}, including
+method-specific values such as \code{indications}.}
 }
 \value{
 A named list of deconvolution result tables.

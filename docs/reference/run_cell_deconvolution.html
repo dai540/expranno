@@ -59,9 +59,12 @@ available methods except CIBERSORT-family methods are executed.</p>
 <span>  species <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"human"</span>, <span class="st">"mouse"</span><span class="op">)</span>,</span>
 <span>  methods <span class="op">=</span> <span class="st">"all_except_cibersort"</span>,</span>
 <span>  gene_column <span class="op">=</span> <span class="st">"symbol"</span>,</span>
+<span>  expr_scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"count"</span>, <span class="st">"abundance"</span>, <span class="st">"log"</span><span class="op">)</span>,</span>
+<span>  duplicate_strategy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"sum"</span>, <span class="st">"mean"</span>, <span class="st">"max"</span>, <span class="st">"first"</span><span class="op">)</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  prefix <span class="op">=</span> <span class="st">"cell_deconv_"</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -86,6 +89,16 @@ explicit method names.</p></dd>
 <dd><p>Gene symbol column to use for deconvolution.</p></dd>
 
 
+<dt id="arg-expr-scale">expr_scale<a class="anchor" aria-label="anchor" href="#arg-expr-scale"></a></dt>
+<dd><p>Expression scale. This affects duplicate symbol handling
+and triggers a warning for <code>expr_scale = "log"</code>.</p></dd>
+
+
+<dt id="arg-duplicate-strategy">duplicate_strategy<a class="anchor" aria-label="anchor" href="#arg-duplicate-strategy"></a></dt>
+<dd><p>Strategy used when multiple rows map to the same
+symbol. <code>"auto"</code> uses <code>"sum"</code> for counts and <code>"mean"</code> otherwise.</p></dd>
+
+
 <dt id="arg-output-dir">output_dir<a class="anchor" aria-label="anchor" href="#arg-output-dir"></a></dt>
 <dd><p>Optional directory to write one CSV per method.</p></dd>
 
@@ -96,6 +109,11 @@ explicit method names.</p></dd>
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Whether to emit progress messages.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments forwarded to <code>immunedeconv</code>, including
+method-specific values such as <code>indications</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -108,7 +126,7 @@ explicit method names.</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Daiki User.</p>
+  <p>Developed by Dai Dai.</p>
 </div>
 
 <div class="pkgdown-footer-right">

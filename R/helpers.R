@@ -101,6 +101,26 @@ write_if_requested <- function(x, output_file = NULL, row.names = FALSE) {
   invisible(x)
 }
 
+known_annotation_columns <- function() {
+  c(
+    "gene_id_raw", "gene_id", "symbol", "gene_name", "entrez_id", "biotype",
+    "chromosome", "start", "end", "strand", "annotation_source",
+    "annotation_status", "symbol_source", "gene_name_source", "entrez_id_source",
+    "biotype_source", "chromosome_source", "start_source", "end_source",
+    "strand_source"
+  )
+}
+
+sample_columns_from_expr_anno <- function(expr_anno) {
+  setdiff(names(expr_anno), known_annotation_columns())
+}
+
+numeric_expression_matrix <- function(expr_anno, sample_cols, keep) {
+  expr_mat <- as.matrix(expr_anno[keep, sample_cols, drop = FALSE])
+  mode(expr_mat) <- "numeric"
+  expr_mat
+}
+
 merge_fill <- function(base, incoming, field) {
   if (!field %in% names(incoming)) {
     return(base)
@@ -116,25 +136,86 @@ merge_fill <- function(base, incoming, field) {
   base
 }
 
-collapse_symbol_matrix <- function(expr_anno, gene_column = "symbol") {
+normalize_expr_scale <- function(expr_scale, expr_matrix = NULL) {
+  expr_scale <- match.arg(expr_scale, c("auto", "count", "abundance", "log"))
+  if (expr_scale != "auto" || is.null(expr_matrix)) {
+    return(expr_scale)
+  }
+
+  values <- as.numeric(expr_matrix)
+  values <- values[is.finite(values)]
+  if (length(values) == 0L) {
+    return("abundance")
+  }
+
+  if (all(values >= 0) && all(abs(values - round(values)) < 1e-8)) {
+    return("count")
+  }
+  if (any(values < 0)) {
+    return("log")
+  }
+  "abundance"
+}
+
+resolve_duplicate_strategy <- function(duplicate_strategy, expr_scale, expr_matrix = NULL) {
+  duplicate_strategy <- match.arg(
+    duplicate_strategy,
+    c("auto", "sum", "mean", "max", "first")
+  )
+  if (duplicate_strategy != "auto") {
+    return(duplicate_strategy)
+  }
+
+  normalized_scale <- normalize_expr_scale(expr_scale = expr_scale, expr_matrix = expr_matrix)
+  if (identical(normalized_scale, "count")) {
+    return("sum")
+  }
+  "mean"
+}
+
+aggregate_duplicate_rows <- function(expr_matrix, gene_ids, duplicate_strategy) {
+  if (identical(duplicate_strategy, "first")) {
+    keep <- !duplicated(gene_ids)
+    out <- expr_matrix[keep, , drop = FALSE]
+    rownames(out) <- gene_ids[keep]
+    return(out)
+  }
+
+  aggregate_fun <- switch(
+    duplicate_strategy,
+    sum = base::sum,
+    mean = base::mean,
+    max = base::max,
+    stop(sprintf("Unsupported duplicate strategy: %s", duplicate_strategy), call. = FALSE)
+  )
+
+  aggregated <- stats::aggregate(expr_matrix, by = list(gene = gene_ids), FUN = aggregate_fun)
+  rownames(aggregated) <- aggregated$gene
+  as.matrix(aggregated[, -1, drop = FALSE])
+}
+
+collapse_symbol_matrix <- function(
+    expr_anno,
+    gene_column = "symbol",
+    expr_scale = c("auto", "count", "abundance", "log"),
+    duplicate_strategy = c("auto", "sum", "mean", "max", "first")) {
   if (!gene_column %in% names(expr_anno)) {
     stop(sprintf("`expr_anno` does not contain `%s`.", gene_column), call. = FALSE)
   }
 
-  known_annotation <- c(
-    "gene_id_raw", "gene_id", "symbol", "gene_name", "entrez_id", "biotype",
-    "chromosome", "start", "end", "strand", "annotation_source",
-    "annotation_status", "symbol_source", "gene_name_source", "entrez_id_source",
-    "biotype_source", "chromosome_source", "start_source", "end_source",
-    "strand_source"
-  )
-  sample_cols <- setdiff(names(expr_anno), known_annotation)
+  sample_cols <- sample_columns_from_expr_anno(expr_anno)
   keep <- !is.na(expr_anno[[gene_column]]) & expr_anno[[gene_column]] != ""
-  expr_mat <- as.matrix(expr_anno[keep, sample_cols, drop = FALSE])
-  mode(expr_mat) <- "numeric"
-  aggregated <- stats::aggregate(expr_mat, by = list(gene = expr_anno[[gene_column]][keep]), FUN = sum)
-  rownames(aggregated) <- aggregated$gene
-  as.matrix(aggregated[, -1, drop = FALSE])
+  expr_mat <- numeric_expression_matrix(expr_anno, sample_cols = sample_cols, keep = keep)
+  strategy <- resolve_duplicate_strategy(
+    duplicate_strategy = duplicate_strategy,
+    expr_scale = expr_scale,
+    expr_matrix = expr_mat
+  )
+  aggregate_duplicate_rows(
+    expr_matrix = expr_mat,
+    gene_ids = expr_anno[[gene_column]][keep],
+    duplicate_strategy = strategy
+  )
 }
 
 default_annotation_fields <- function() {

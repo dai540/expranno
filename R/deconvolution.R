@@ -21,11 +21,49 @@ detect_deconvolution_methods <- function() {
   found[!grepl("cibersort", found, ignore.case = TRUE)]
 }
 
-run_one_deconvolution <- function(matrix_input, method, species) {
-  if (species == "mouse" && exists("deconvolute_mouse", where = asNamespace("immunedeconv"), inherits = FALSE)) {
-    return(immunedeconv::deconvolute_mouse(matrix_input, method = method))
+indication_required_methods <- function() {
+  c("timer", "consensus_tme")
+}
+
+sanitize_deconvolution_methods <- function(methods, indications = NULL, auto_discovered = FALSE, verbose = TRUE) {
+  required <- indication_required_methods()
+  needs_indications <- methods[tolower(methods) %in% required]
+  has_indications <- !is.null(indications)
+
+  if (length(needs_indications) == 0L || has_indications) {
+    return(methods)
   }
-  immunedeconv::deconvolute(matrix_input, method = method)
+
+  if (!auto_discovered) {
+    stop(
+      paste0(
+        "The following methods require `indications`: ",
+        paste(needs_indications, collapse = ", "),
+        ". Supply them through `run_cell_deconvolution(..., indications = ...)` ",
+        "or `run_expranno(..., deconv_args = list(indications = ...))`."
+      ),
+      call. = FALSE
+    )
+  }
+
+  kept <- methods[!(tolower(methods) %in% required)]
+  if (isTRUE(verbose)) {
+    message(
+      sprintf(
+        "Skipping indication-specific methods without `indications`: %s",
+        paste(needs_indications, collapse = ", ")
+      )
+    )
+  }
+  kept
+}
+
+run_one_deconvolution <- function(matrix_input, method, species, ...) {
+  args <- c(list(matrix_input), list(method = method), list(...))
+  if (species == "mouse" && exists("deconvolute_mouse", where = asNamespace("immunedeconv"), inherits = FALSE)) {
+    return(do.call(getExportedValue("immunedeconv", "deconvolute_mouse"), args))
+  }
+  do.call(getExportedValue("immunedeconv", "deconvolute"), args)
 }
 
 #' Run immune deconvolution
@@ -38,9 +76,15 @@ run_one_deconvolution <- function(matrix_input, method, species) {
 #' @param methods Either `"all_except_cibersort"` or a character vector of
 #'   explicit method names.
 #' @param gene_column Gene symbol column to use for deconvolution.
+#' @param expr_scale Expression scale. This affects duplicate symbol handling
+#'   and triggers a warning for `expr_scale = "log"`.
+#' @param duplicate_strategy Strategy used when multiple rows map to the same
+#'   symbol. `"auto"` uses `"sum"` for counts and `"mean"` otherwise.
 #' @param output_dir Optional directory to write one CSV per method.
 #' @param prefix File name prefix for output CSV files.
 #' @param verbose Whether to emit progress messages.
+#' @param ... Additional arguments forwarded to `immunedeconv`, including
+#'   method-specific values such as `indications`.
 #'
 #' @return A named list of deconvolution result tables.
 #' @export
@@ -49,21 +93,48 @@ run_cell_deconvolution <- function(
     species = c("auto", "human", "mouse"),
     methods = "all_except_cibersort",
     gene_column = "symbol",
+    expr_scale = c("auto", "count", "abundance", "log"),
+    duplicate_strategy = c("auto", "sum", "mean", "max", "first"),
     output_dir = NULL,
     prefix = "cell_deconv_",
-    verbose = TRUE) {
+    verbose = TRUE,
+    ...) {
   require_namespace("immunedeconv", reason = "immune deconvolution")
 
   species <- match.arg(species)
   if (species == "auto") {
     species <- resolve_species("auto", expr_anno$gene_id)
   }
+  expr_scale <- match.arg(expr_scale)
+  duplicate_strategy <- match.arg(duplicate_strategy)
 
-  matrix_input <- collapse_symbol_matrix(expr_anno, gene_column = gene_column)
+  if (identical(expr_scale, "log")) {
+    warning(
+      "Deconvolution methods generally expect non-log expression values. ",
+      "Consider providing counts or abundance-like values instead.",
+      call. = FALSE
+    )
+  }
 
-  if (is.character(methods) && length(methods) == 1L && methods == "all_except_cibersort") {
+  matrix_input <- collapse_symbol_matrix(
+    expr_anno,
+    gene_column = gene_column,
+    expr_scale = expr_scale,
+    duplicate_strategy = duplicate_strategy
+  )
+
+  extra_args <- list(...)
+  auto_discovered <- is.character(methods) && length(methods) == 1L && methods == "all_except_cibersort"
+
+  if (auto_discovered) {
     methods <- detect_deconvolution_methods()
   }
+  methods <- sanitize_deconvolution_methods(
+    methods = methods,
+    indications = extra_args$indications,
+    auto_discovered = auto_discovered,
+    verbose = verbose
+  )
   if (length(methods) == 0L) {
     stop("No immunedeconv methods were discovered.", call. = FALSE)
   }
@@ -78,7 +149,13 @@ run_cell_deconvolution <- function(
       message(sprintf("Running deconvolution method: %s", method))
     }
     out <- tryCatch(
-      run_one_deconvolution(matrix_input, method = method, species = species),
+      do.call(
+        run_one_deconvolution,
+        c(
+          list(matrix_input = matrix_input, method = method, species = species),
+          extra_args
+        )
+      ),
       error = function(e) {
         data.frame(
           method = method,
