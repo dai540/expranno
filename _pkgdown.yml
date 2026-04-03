@@ -41,11 +41,13 @@ reference:
     contents:
       - run_expranno
       - annotate_expr
+      - benchmark_annotation_engines
       - merge_expr_meta
       - run_cell_deconvolution
       - run_signature_analysis
   - title: Input helpers
     contents:
+      - as_expranno_input
       - validate_expr
       - validate_meta
       - read_genesets
@@ -59,6 +61,7 @@ articles:
     navbar: Design
     contents:
       - theory-and-design
+      - benchmarking-and-reproducibility
   - title: Case studies
     navbar: Case Studies
     contents:

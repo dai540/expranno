@@ -1,7 +1,7 @@
 Package: expranno
 Type: Package
 Title: Expression Annotation, Metadata Integration, Deconvolution, and Signature Analysis
-Version: 2.0.2
+Version: 2.1.0
 Authors@R: c(
     person(
       given = "Dai",
@@ -30,6 +30,7 @@ Imports:
     utils
 Suggests:
     AnnotationDbi,
+    AnnotationFilter,
     biomaRt,
     ensembldb,
     EnsDb.Hsapiens.v86,
@@ -41,6 +42,9 @@ Suggests:
     org.Mm.eg.db,
     pkgdown,
     rmarkdown,
+    S4Vectors,
+    SingleCellExperiment,
+    SummarizedExperiment,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Config/Needs/website: pkgdown

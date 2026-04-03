@@ -6,10 +6,16 @@
 \usage{
 run_expranno(
   expr,
-  meta,
+  meta = NULL,
   species = c("auto", "human", "mouse"),
   annotation_engine = c("hybrid", "biomart", "orgdb", "ensdb", "none"),
   output_dir = ".",
+  biomart_version = 102,
+  biomart_host = NULL,
+  biomart_mirror = NULL,
+  assay_name = NULL,
+  gene_id_col = NULL,
+  sample_col = "sample",
   run_deconvolution = TRUE,
   deconv_methods = "all_except_cibersort",
   expr_scale = c("auto", "count", "abundance", "log"),
@@ -24,19 +30,39 @@ run_expranno(
   signature_max_size = Inf,
   gsva_args = list(),
   ssgsea_args = list(),
+  run_benchmark = FALSE,
+  benchmark_engines = c("none", "biomart", "orgdb", "ensdb", "hybrid"),
+  save_session_info = TRUE,
   verbose = TRUE
 )
 }
 \arguments{
-\item{expr}{Expression table with \code{gene_id} in the first column.}
+\item{expr}{Expression table with \code{gene_id} in the first column, or a
+\code{SummarizedExperiment}-like object.}
 
-\item{meta}{Metadata table with \code{sample} in the first column.}
+\item{meta}{Metadata table with \code{sample} in the first column. Leave \code{NULL}
+when \code{expr} is a \code{SummarizedExperiment}.}
 
 \item{species}{Either \code{"auto"}, \code{"human"}, or \code{"mouse"}.}
 
 \item{annotation_engine}{Annotation backend strategy.}
 
 \item{output_dir}{Output directory.}
+
+\item{biomart_version}{Fixed Ensembl release used by the \code{biomaRt} backend.}
+
+\item{biomart_host}{Optional explicit Ensembl host.}
+
+\item{biomart_mirror}{Optional Ensembl mirror name.}
+
+\item{assay_name}{Optional assay name when \code{expr} is a
+\code{SummarizedExperiment}.}
+
+\item{gene_id_col}{Optional row-data column containing Ensembl IDs when
+\code{expr} is a \code{SummarizedExperiment}.}
+
+\item{sample_col}{Metadata column to use as \code{sample} when \code{expr} is a
+\code{SummarizedExperiment}.}
 
 \item{run_deconvolution}{Whether to run \code{immunedeconv}.}
 
@@ -71,13 +97,22 @@ symbol. \code{"auto"} uses \code{"sum"} for counts and \code{"mean"} otherwise.}
 \item{ssgsea_args}{Optional named list of extra arguments passed to
 \code{GSVA::ssgseaParam()}.}
 
+\item{run_benchmark}{Whether to run \code{\link[=benchmark_annotation_engines]{benchmark_annotation_engines()}} on the
+same inputs.}
+
+\item{benchmark_engines}{Annotation engines to benchmark when
+\code{run_benchmark = TRUE}.}
+
+\item{save_session_info}{Whether to write \code{session_info.txt}.}
+
 \item{verbose}{Whether to emit progress messages.}
 }
 \value{
 An \code{expranno_result} object.
 }
 \description{
-This wrapper annotates genes, writes \code{expr_anno.csv}, merges expression with
-metadata, optionally runs immune deconvolution and signature scoring, and
-returns all outputs in one structured object.
+This wrapper annotates genes, writes \code{expr_anno.csv}, writes provenance and
+ambiguity reports, merges expression with metadata, optionally runs
+deconvolution and signature scoring, optionally benchmarks annotation
+engines, and returns all outputs in one structured object.
 }

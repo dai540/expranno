@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,7 @@
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Design</h6></li>
     <li><a class="dropdown-item" href="articles/theory-and-design.html">Theory and Design</a></li>
+    <li><a class="dropdown-item" href="articles/benchmarking-and-reproducibility.html">Benchmarking and Reproducibility</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Case Studies</h6></li>
     <li><a class="dropdown-item" href="articles/case-study-human-rnaseq.html">Case Study: Human RNA-seq Workflow</a></li>
@@ -74,6 +75,7 @@
 </div>
 <p><a href="https://dai540.github.io/expranno/"><img src="https://img.shields.io/badge/docs-pkgdown-315c86" alt="pkgdown"></a> <a href="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a></p>
 <p><code>expranno</code> is an R package for RNA-seq workflows that start from an expression matrix and sample metadata, then move through gene annotation, metadata integration, Deconvolution, and Signature analysis.</p>
+<p>It is intentionally a downstream orchestration layer rather than a full RNA-seq pipeline. Alignment, counting, QC, and differential expression stay outside the package. The goal here is to take an existing Ensembl-ID expression matrix and make it annotation-aware, metadata-aligned, and ready for deconvolution or signature scoring.</p>
 <p>The package is designed for human and mouse expression matrices where:</p>
 <ul>
 <li>the first column of <code>expr</code> is <code>gene_id</code>
@@ -92,13 +94,14 @@
 </ul>
 <p>Rather than forcing a single annotation backend, <code>expranno</code> uses a coverage-first strategy that can combine:</p>
 <ul>
-<li><code>biomaRt</code></li>
+<li>
+<code>biomaRt</code> with a fixed Ensembl release (<code>v102</code> by default)</li>
 <li>
 <code>org.Hs.eg.db</code> or <code>org.Mm.eg.db</code>
 </li>
 <li>optional <code>EnsDb</code> packages</li>
 </ul>
-<p>This makes it possible to recover more symbols, names, and identifiers than a single-source annotation pass.</p>
+<p>This makes it possible to recover more symbols, names, and identifiers than a single-source annotation pass, while still recording which backend filled each field.</p>
 <div class="float">
 <img src="reference/figures/workflow-overview.svg" alt="expranno workflow"><div class="figcaption">expranno workflow</div>
 </div>
@@ -107,6 +110,8 @@
 <li>validate <code>expr</code> and <code>meta</code>
 </li>
 <li>annotate genes and write <code>expr_anno.csv</code>
+</li>
+<li>save <code>annotation_report.csv</code>, <code>annotation_ambiguity.csv</code>, and <code>annotation_provenance.csv</code>
 </li>
 <li>merge expression and metadata into <code>expr_meta_merged.csv</code>
 </li>
@@ -126,7 +131,7 @@
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"dai540/expranno"</span><span class="op">)</span></span></code></pre></div>
 <p>Or install from a source tarball:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"path/to/expranno_2.0.2.tar.gz"</span>, repos <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"path/to/expranno_2.1.0.tar.gz"</span>, repos <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span></code></pre></div>
 <p>Optional backends:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -170,6 +175,7 @@
 <span>  meta <span class="op">=</span> <span class="va">meta</span>,</span>
 <span>  species <span class="op">=</span> <span class="st">"human"</span>,</span>
 <span>  annotation_engine <span class="op">=</span> <span class="st">"hybrid"</span>,</span>
+<span>  biomart_version <span class="op">=</span> <span class="fl">102</span>,</span>
 <span>  expr_scale <span class="op">=</span> <span class="st">"abundance"</span>,</span>
 <span>  duplicate_strategy <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"results"</span>,</span>
@@ -181,6 +187,7 @@
 <span>  signature_kcdf <span class="op">=</span> <span class="st">"Gaussian"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><code>deconv_args</code> is available for method-specific <code>immunedeconv</code> arguments. This is especially important for <code>timer</code> and <code>consensus_tme</code>, which require an <code>indications</code> vector.</p>
+<p><code><a href="reference/annotate_expr.html">annotate_expr()</a></code> and <code><a href="reference/run_expranno.html">run_expranno()</a></code> also accept <code>SummarizedExperiment</code>-like inputs. If your assay and metadata already live in a Bioconductor container, use <code>assay_name</code> and <code>gene_id_col</code> to coerce them into the package contract without manual CSV reshaping.</p>
 <p><code>expr_scale</code> and <code>duplicate_strategy</code> control how duplicated symbols are collapsed before downstream analyses. The default <code>"auto"</code> strategy uses <code>"sum"</code> for count-like data and <code>"mean"</code> for abundance or log-scale data.</p>
 </div>
 <div class="section level2">
@@ -240,9 +247,11 @@
 <ul>
 <li><code><a href="reference/run_expranno.html">run_expranno()</a></code></li>
 <li><code><a href="reference/annotate_expr.html">annotate_expr()</a></code></li>
+<li><code><a href="reference/benchmark_annotation_engines.html">benchmark_annotation_engines()</a></code></li>
 <li><code><a href="reference/merge_expr_meta.html">merge_expr_meta()</a></code></li>
 <li><code><a href="reference/run_cell_deconvolution.html">run_cell_deconvolution()</a></code></li>
 <li><code><a href="reference/run_signature_analysis.html">run_signature_analysis()</a></code></li>
+<li><code><a href="reference/as_expranno_input.html">as_expranno_input()</a></code></li>
 </ul>
 </div>
 <div class="section level2">
@@ -267,14 +276,19 @@
 <p><code>expranno</code> is designed to write analysis-ready CSV files with stable names.</p>
 <ul>
 <li><code>expr_anno.csv</code></li>
+<li><code>annotation_report.csv</code></li>
+<li><code>annotation_ambiguity.csv</code></li>
+<li><code>annotation_provenance.csv</code></li>
 <li><code>expr_meta_merged.csv</code></li>
 <li><code>cell_deconv_&lt;method&gt;.csv</code></li>
 <li><code>signature_gsva.csv</code></li>
 <li><code>signature_ssgsea.csv</code></li>
+<li><code>session_info.txt</code></li>
 </ul>
 <p>The high-level wrapper is <code><a href="reference/run_expranno.html">run_expranno()</a></code>, but the package also exposes smaller steps:</p>
 <ul>
 <li><code><a href="reference/annotate_expr.html">annotate_expr()</a></code></li>
+<li><code><a href="reference/benchmark_annotation_engines.html">benchmark_annotation_engines()</a></code></li>
 <li><code><a href="reference/merge_expr_meta.html">merge_expr_meta()</a></code></li>
 <li><code><a href="reference/run_cell_deconvolution.html">run_cell_deconvolution()</a></code></li>
 <li><code><a href="reference/run_signature_analysis.html">run_signature_analysis()</a></code></li>
@@ -286,14 +300,19 @@
 <p>After a real run with <code>annotation_engine = "hybrid"</code>, the first files and tables to inspect are:</p>
 <ul>
 <li><code>expr_anno.csv</code></li>
-<li>the annotation coverage report returned by <code><a href="reference/annotate_expr.html">annotate_expr()</a></code>
-</li>
+<li><code>annotation_report.csv</code></li>
+<li><code>annotation_ambiguity.csv</code></li>
+<li><code>annotation_provenance.csv</code></li>
 <li><code>expr_meta_merged.csv</code></li>
 </ul>
 <p>The practical checklist is:</p>
 <ul>
 <li>confirm <code>symbol</code> coverage is high enough for downstream symbol-based tools</li>
 <li>confirm <code>gene_name</code> coverage tracks with <code>symbol</code>
+</li>
+<li>inspect any multi-hit cases in <code>annotation_ambiguity.csv</code>
+</li>
+<li>record the Ensembl release, OrgDb package, and run date from <code>annotation_provenance.csv</code>
 </li>
 <li>confirm merged sample labels line up with the expected <code>meta</code> rows</li>
 <li>use the merged table as the common input for Deconvolution and Signature analyses</li>
@@ -306,6 +325,7 @@
 <p>The package website includes:</p>
 <ul>
 <li>a getting started article</li>
+<li>a benchmarking and reproducibility article</li>
 <li>human and mouse step-by-step case studies</li>
 <li>a theory and design article</li>
 <li>a function reference</li>
@@ -338,7 +358,9 @@
   <ul class="list-unstyled">
 <li><a href="reference/run_expranno.html">Run the full workflow</a></li>
     <li><a href="reference/annotate_expr.html">Annotate expression matrices</a></li>
+    <li><a href="reference/benchmark_annotation_engines.html">Benchmark annotation engines</a></li>
     <li><a href="articles/getting-started.html">Read the getting started guide</a></li>
+    <li><a href="articles/benchmarking-and-reproducibility.html">Read the reproducibility guide</a></li>
     <li><a href="articles/case-study-human-rnaseq.html">Follow the human case study</a></li>
     <li><a href="articles/case-study-mouse-rnaseq.html">Follow the mouse case study</a></li>
   </ul>
@@ -348,7 +370,9 @@
   <h2>Core Outputs</h2>
   <ul class="list-unstyled">
 <li><code>expr_anno.csv</code></li>
-    <li><code>annotation coverage report</code></li>
+    <li><code>annotation_report.csv</code></li>
+    <li><code>annotation_ambiguity.csv</code></li>
+    <li><code>annotation_provenance.csv</code></li>
     <li><code>expr_meta_merged.csv</code></li>
     <li><code>cell_deconv_*.csv</code></li>
     <li><code>signature_*.csv</code></li>

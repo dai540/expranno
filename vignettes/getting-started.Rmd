@@ -107,12 +107,13 @@ if (window.mermaid) {
 
 ## The workflow at a glance
 
-The workflow is easiest to read in four checkpoints:
+The workflow is easiest to read in five checkpoints:
 
 1. validate the input contract
 2. annotate genes and inspect coverage
-3. merge expression with metadata
-4. run Deconvolution or Signature analyses from the merged table
+3. inspect provenance and ambiguity
+4. merge expression with metadata
+5. run Deconvolution or Signature analyses from the merged table
 
 ## Pick a species
 
@@ -141,9 +142,13 @@ head(mouse_demo$expr$gene_id)
 `"hybrid"` is the default because it is the most coverage-oriented mode.
 It uses a cascade:
 
-1. `biomaRt`
+1. `biomaRt` with a fixed Ensembl release (`v102` by default)
 2. species-specific `orgdb`
 3. species-specific `EnsDb`
+
+That mirrors a practical manual workflow: query Ensembl first, fill
+unmapped IDs from `org.Hs.eg.db` or `org.Mm.eg.db`, then use `EnsDb` to
+enrich structural fields such as biotype and coordinates.
 
 For lightweight docs and tests, the examples below use `"none"`.
 
@@ -175,6 +180,19 @@ result <- run_expranno(
 )
 
 result
+```
+
+If your data already live in a `SummarizedExperiment`, you can start
+there directly.
+
+```{r, eval = FALSE}
+result <- run_expranno(
+  expr = se,
+  species = "human",
+  assay_name = "counts",
+  gene_id_col = "gene_id",
+  annotation_engine = "hybrid"
+)
 ```
 
 ## Control duplicate symbols and score kernels
@@ -219,8 +237,25 @@ run_expranno(
 For a production analysis with `"hybrid"`, the first things to check are:
 
 - `expr_anno.csv`
-- the annotation coverage report from `annotate_expr()`
+- `annotation_report.csv`
+- `annotation_ambiguity.csv`
+- `annotation_provenance.csv`
 - `expr_meta_merged.csv`
 
 If `symbol` coverage is weak, downstream Deconvolution and Signature
 methods will usually be the first places where the problem appears.
+
+If you want to compare engines on the same input before standardizing a
+lab workflow, benchmark them explicitly.
+
+```{r}
+benchmark <- benchmark_annotation_engines(
+  expr = demo$expr,
+  meta = demo$meta,
+  species = "human",
+  engines = c("none"),
+  verbose = FALSE
+)
+
+benchmark$summary
+```

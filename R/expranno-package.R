@@ -9,6 +9,8 @@
 #' a compact annotation coverage report to support downstream quality checks.
 #'
 #' @importFrom stats aggregate
+#' @importFrom stats setNames
+#' @importFrom utils capture.output
 #' @importFrom utils write.csv
 #' @keywords internal
 "_PACKAGE"

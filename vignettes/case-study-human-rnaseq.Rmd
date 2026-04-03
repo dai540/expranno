@@ -30,6 +30,13 @@ mock_report <- data.frame(
   field = c("symbol", "gene_name", "entrez_id", "biotype"),
   annotation_rate = c(1.00, 1.00, 0.67, 1.00)
 )
+mock_provenance <- data.frame(
+  source = c("biomart", "orgdb", "ensdb"),
+  backend_release = c("Ensembl v102", "org.Hs.eg.db 3.22.0", "EnsDb.Hsapiens.v86 2.99.0"),
+  annotation_date = c("2026-04-03", "2026-04-03", "2026-04-03"),
+  status = c("ok", "ok", "ok"),
+  stringsAsFactors = FALSE
+)
 ```
 
 ## Goal
@@ -106,7 +113,16 @@ received each annotation field.
 mock_report
 ```
 
-## Step 6: How to read annotation coverage
+## Step 6: Inspect provenance
+
+In a real hybrid run, `annotation_provenance.csv` records which backend
+ran and which release was used.
+
+```{r}
+mock_provenance
+```
+
+## Step 7: How to read annotation coverage
 
 The `annotation_rate` column is the proportion of genes with a non-missing
 value for each field in the annotated gene table.
@@ -123,7 +139,7 @@ In this mock example, `symbol` and `gene_name` are fully covered, while
 next steps mainly depend on symbols, but it would still be worth noting in
 the analysis record.
 
-## Step 7: Merge annotated expression with metadata
+## Step 8: Merge annotated expression with metadata
 
 ```{r}
 merged <- merge_expr_meta(
@@ -134,13 +150,13 @@ merged <- merge_expr_meta(
 merged
 ```
 
-## Step 8: Inspect a simple sample summary
+## Step 9: Inspect a simple sample summary
 
 ```{r}
 aggregate(expression ~ sample + group, data = merged, FUN = mean)
 ```
 
-## Step 9: Run the standard wrapper
+## Step 10: Run the standard wrapper
 
 ```{r}
 out <- run_expranno(
@@ -162,7 +178,8 @@ For a real human analysis, the usual sequence is:
 
 1. annotate with `"hybrid"`
 2. inspect `expr_anno.csv`
-3. inspect the annotation coverage report
-4. merge with `meta`
-5. run deconvolution
-6. run GSVA or ssGSEA
+3. inspect `annotation_report.csv`
+4. inspect `annotation_provenance.csv`
+5. merge with `meta`
+6. run deconvolution
+7. run GSVA or ssGSEA

@@ -30,6 +30,13 @@ mock_report <- data.frame(
   field = c("symbol", "gene_name", "entrez_id", "biotype"),
   annotation_rate = c(1.00, 1.00, 0.67, 1.00)
 )
+mock_provenance <- data.frame(
+  source = c("biomart", "orgdb", "ensdb"),
+  backend_release = c("Ensembl v102", "org.Mm.eg.db 3.22.0", "EnsDb.Mmusculus.v79 2.99.0"),
+  annotation_date = c("2026-04-03", "2026-04-03", "2026-04-03"),
+  status = c("ok", "ok", "ok"),
+  stringsAsFactors = FALSE
+)
 ```
 
 ## Goal
@@ -96,7 +103,13 @@ fields were filled when a real backend is used.
 mock_report
 ```
 
-## Step 6: How to read annotation coverage
+## Step 6: Inspect provenance
+
+```{r}
+mock_provenance
+```
+
+## Step 7: How to read annotation coverage
 
 For mouse annotation, the report helps answer three questions quickly:
 
@@ -115,7 +128,7 @@ If the report is unexpectedly weak, check:
 - mouse annotation backends are installed
 - the input IDs are real mouse Ensembl gene IDs
 
-## Step 7: Merge annotated expression with metadata
+## Step 8: Merge annotated expression with metadata
 
 ```{r}
 merged <- merge_expr_meta(
@@ -126,13 +139,13 @@ merged <- merge_expr_meta(
 merged
 ```
 
-## Step 8: Inspect a simple sample summary
+## Step 9: Inspect a simple sample summary
 
 ```{r}
 aggregate(expression ~ sample + group, data = merged, FUN = mean)
 ```
 
-## Step 9: Prepare signature inputs
+## Step 10: Prepare signature inputs
 
 ```{r}
 geneset_path <- system.file("extdata", "hallmark_demo.gmt", package = "expranno")
@@ -143,5 +156,6 @@ read_genesets(geneset_path)
 
 The structure is the same as the human case study, but the species must
 be set to `"mouse"` and the annotation backend needs mouse-compatible
-resources. The annotation report is the fastest way to confirm that the
-species-specific mapping worked.
+resources. The annotation report and provenance table are the fastest way
+to confirm that the species-specific mapping worked and which release was
+used.

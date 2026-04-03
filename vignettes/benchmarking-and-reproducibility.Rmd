@@ -1,0 +1,123 @@
+---
+title: "Benchmarking and Reproducibility"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Benchmarking and Reproducibility}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`expranno` aims to maximize annotation coverage, but public-facing
+analysis also needs provenance and benchmarkable behavior.
+
+This article focuses on three things:
+
+1. comparing annotation engines on the same input
+2. recording backend provenance for reproducibility
+3. keeping a session-level record of the software environment
+
+```{r}
+library(expranno)
+demo <- example_expranno_data("human")
+```
+
+## Benchmark annotation engines
+
+Use `benchmark_annotation_engines()` when you want to compare
+`biomart`, `orgdb`, `ensdb`, and `hybrid` on exactly the same data.
+
+```{r}
+benchmark <- benchmark_annotation_engines(
+  expr = demo$expr,
+  meta = demo$meta,
+  species = "human",
+  engines = c("none"),
+  verbose = FALSE
+)
+
+benchmark$summary
+```
+
+In a real run with optional backends installed, a more informative call
+looks like this:
+
+```{r, eval = FALSE}
+benchmark <- benchmark_annotation_engines(
+  expr = demo$expr,
+  meta = demo$meta,
+  species = "human",
+  engines = c("biomart", "orgdb", "ensdb", "hybrid"),
+  biomart_version = 102
+)
+```
+
+The benchmark output helps answer practical questions:
+
+- does `hybrid` improve `symbol` coverage over `biomart` alone?
+- which engine contributes most to `gene_name` coverage?
+- how many ambiguous gene-fields appear under each engine?
+
+## Provenance from annotation
+
+`annotate_expr()` now records backend provenance and ambiguity directly.
+
+```{r}
+annotation <- annotate_expr(
+  expr = demo$expr,
+  meta = demo$meta,
+  species = "human",
+  annotation_engine = "none",
+  verbose = FALSE
+)
+
+annotation$provenance
+annotation$ambiguity_report
+```
+
+For production runs with `annotation_engine = "hybrid"`, the provenance
+table becomes much more informative. It records which backend ran, what
+species and dataset were used, which Ensembl release was targeted, and
+the annotation date.
+
+## Stable files from the full wrapper
+
+`run_expranno()` writes reproducibility-oriented side files by default.
+
+```{r}
+outdir <- tempfile("expranno-benchmark-")
+dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+
+result <- run_expranno(
+  expr = demo$expr,
+  meta = demo$meta,
+  species = "human",
+  annotation_engine = "none",
+  output_dir = outdir,
+  run_deconvolution = FALSE,
+  run_signature = FALSE,
+  run_benchmark = TRUE,
+  benchmark_engines = c("none"),
+  verbose = FALSE
+)
+
+basename(result$files)
+```
+
+The wrapper now keeps:
+
+- `annotation_report.csv`
+- `annotation_ambiguity.csv`
+- `annotation_provenance.csv`
+- `annotation_benchmark_summary.csv`
+- `annotation_benchmark_coverage.csv`
+- `session_info.txt`
+
+These files make it easier to re-run the same workflow later and explain
+which annotation sources were active in a given result directory.

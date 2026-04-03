@@ -1,14 +1,26 @@
 #' Run the full expranno workflow
 #'
-#' This wrapper annotates genes, writes `expr_anno.csv`, merges expression with
-#' metadata, optionally runs immune deconvolution and signature scoring, and
-#' returns all outputs in one structured object.
+#' This wrapper annotates genes, writes `expr_anno.csv`, writes provenance and
+#' ambiguity reports, merges expression with metadata, optionally runs
+#' deconvolution and signature scoring, optionally benchmarks annotation
+#' engines, and returns all outputs in one structured object.
 #'
-#' @param expr Expression table with `gene_id` in the first column.
-#' @param meta Metadata table with `sample` in the first column.
+#' @param expr Expression table with `gene_id` in the first column, or a
+#'   `SummarizedExperiment`-like object.
+#' @param meta Metadata table with `sample` in the first column. Leave `NULL`
+#'   when `expr` is a `SummarizedExperiment`.
 #' @param species Either `"auto"`, `"human"`, or `"mouse"`.
 #' @param annotation_engine Annotation backend strategy.
 #' @param output_dir Output directory.
+#' @param biomart_version Fixed Ensembl release used by the `biomaRt` backend.
+#' @param biomart_host Optional explicit Ensembl host.
+#' @param biomart_mirror Optional Ensembl mirror name.
+#' @param assay_name Optional assay name when `expr` is a
+#'   `SummarizedExperiment`.
+#' @param gene_id_col Optional row-data column containing Ensembl IDs when
+#'   `expr` is a `SummarizedExperiment`.
+#' @param sample_col Metadata column to use as `sample` when `expr` is a
+#'   `SummarizedExperiment`.
 #' @param run_deconvolution Whether to run `immunedeconv`.
 #' @param deconv_methods Either `"all_except_cibersort"` or an explicit vector.
 #' @param expr_scale Expression scale used to choose duplicate-symbol handling.
@@ -28,16 +40,27 @@
 #'   `GSVA::gsvaParam()`.
 #' @param ssgsea_args Optional named list of extra arguments passed to
 #'   `GSVA::ssgseaParam()`.
+#' @param run_benchmark Whether to run [benchmark_annotation_engines()] on the
+#'   same inputs.
+#' @param benchmark_engines Annotation engines to benchmark when
+#'   `run_benchmark = TRUE`.
+#' @param save_session_info Whether to write `session_info.txt`.
 #' @param verbose Whether to emit progress messages.
 #'
 #' @return An `expranno_result` object.
 #' @export
 run_expranno <- function(
     expr,
-    meta,
+    meta = NULL,
     species = c("auto", "human", "mouse"),
     annotation_engine = c("hybrid", "biomart", "orgdb", "ensdb", "none"),
     output_dir = ".",
+    biomart_version = 102,
+    biomart_host = NULL,
+    biomart_mirror = NULL,
+    assay_name = NULL,
+    gene_id_col = NULL,
+    sample_col = "sample",
     run_deconvolution = TRUE,
     deconv_methods = "all_except_cibersort",
     expr_scale = c("auto", "count", "abundance", "log"),
@@ -52,18 +75,33 @@ run_expranno <- function(
     signature_max_size = Inf,
     gsva_args = list(),
     ssgsea_args = list(),
+    run_benchmark = FALSE,
+    benchmark_engines = c("none", "biomart", "orgdb", "ensdb", "hybrid"),
+    save_session_info = TRUE,
     verbose = TRUE) {
   dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+  species <- match.arg(species)
+  annotation_engine <- match.arg(annotation_engine)
   expr_scale <- match.arg(expr_scale)
   duplicate_strategy <- match.arg(duplicate_strategy)
+  signature_method <- match.arg(signature_method)
   signature_kcdf <- match.arg(signature_kcdf)
 
   annotation <- annotate_expr(
     expr = expr,
     meta = meta,
-    species = match.arg(species),
-    annotation_engine = match.arg(annotation_engine),
+    species = species,
+    annotation_engine = annotation_engine,
+    biomart_version = biomart_version,
+    biomart_host = biomart_host,
+    biomart_mirror = biomart_mirror,
+    assay_name = assay_name,
+    gene_id_col = gene_id_col,
+    sample_col = sample_col,
     output_file = file.path(output_dir, "expr_anno.csv"),
+    report_file = file.path(output_dir, "annotation_report.csv"),
+    ambiguity_file = file.path(output_dir, "annotation_ambiguity.csv"),
+    provenance_file = file.path(output_dir, "annotation_provenance.csv"),
     verbose = verbose
   )
 
@@ -98,7 +136,7 @@ run_expranno <- function(
       expr_anno = annotation$expr_anno,
       geneset_file = geneset_file,
       gene_sets = gene_sets,
-      method = match.arg(signature_method),
+      method = signature_method,
       expr_scale = expr_scale,
       duplicate_strategy = duplicate_strategy,
       kcdf = signature_kcdf,
@@ -110,12 +148,43 @@ run_expranno <- function(
     )
   }
 
+  benchmark <- NULL
+  if (isTRUE(run_benchmark)) {
+    benchmark <- benchmark_annotation_engines(
+      expr = expr,
+      meta = meta,
+      species = species,
+      engines = benchmark_engines,
+      strip_version = annotation$params$strip_version,
+      biomart_version = biomart_version,
+      biomart_host = biomart_host,
+      biomart_mirror = biomart_mirror,
+      assay_name = assay_name,
+      gene_id_col = gene_id_col,
+      sample_col = sample_col,
+      output_file = file.path(output_dir, "annotation_benchmark_summary.csv"),
+      coverage_file = file.path(output_dir, "annotation_benchmark_coverage.csv"),
+      verbose = verbose
+    )
+  }
+
+  session_info <- NULL
+  if (isTRUE(save_session_info)) {
+    session_info <- session_info_text()
+    write_text_if_requested(
+      session_info,
+      output_file = file.path(output_dir, "session_info.txt")
+    )
+  }
+
   files <- list.files(output_dir, full.names = TRUE)
   new_expranno_result(
     annotation = annotation,
     expr_meta_merged = expr_meta_merged,
     deconvolution = deconvolution,
     signatures = signatures,
-    files = files
+    files = files,
+    benchmark = benchmark,
+    session_info = session_info
   )
 }

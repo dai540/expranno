@@ -101,13 +101,73 @@ write_if_requested <- function(x, output_file = NULL, row.names = FALSE) {
   invisible(x)
 }
 
+clean_annotation_value <- function(x) {
+  out <- trimws(as.character(x))
+  out[out %in% c("", "NA", "NANA", "NULL")] <- NA_character_
+  out
+}
+
+non_missing_unique <- function(x) {
+  cleaned <- clean_annotation_value(x)
+  unique(cleaned[!is.na(cleaned)])
+}
+
+candidate_values_from_string <- function(x) {
+  if (length(x) == 0L || is.na(x) || !nzchar(x)) {
+    return(character(0))
+  }
+  non_missing_unique(strsplit(x, ";", fixed = TRUE)[[1]])
+}
+
+collapse_candidate_strings <- function(values) {
+  flattened <- unlist(lapply(values, candidate_values_from_string), use.names = FALSE)
+  unique_vals <- non_missing_unique(flattened)
+  list(
+    value = if (length(unique_vals) > 0L) unique_vals[[1]] else NA_character_,
+    candidates = if (length(unique_vals) > 0L) paste(unique_vals, collapse = ";") else NA_character_,
+    candidate_count = length(unique_vals),
+    is_ambiguous = length(unique_vals) > 1L
+  )
+}
+
+collapse_annotation_field <- function(values) {
+  unique_vals <- non_missing_unique(values)
+  list(
+    value = if (length(unique_vals) > 0L) unique_vals[[1]] else NA_character_,
+    candidates = if (length(unique_vals) > 0L) paste(unique_vals, collapse = ";") else NA_character_,
+    candidate_count = length(unique_vals),
+    is_ambiguous = length(unique_vals) > 1L
+  )
+}
+
+write_text_if_requested <- function(text, output_file = NULL) {
+  if (!is.null(output_file)) {
+    writeLines(text, con = output_file, useBytes = TRUE)
+  }
+  invisible(text)
+}
+
+session_info_text <- function() {
+  paste(capture.output(utils::sessionInfo()), collapse = "\n")
+}
+
 known_annotation_columns <- function() {
   c(
     "gene_id_raw", "gene_id", "symbol", "gene_name", "entrez_id", "biotype",
     "chromosome", "start", "end", "strand", "annotation_source",
-    "annotation_status", "symbol_source", "gene_name_source", "entrez_id_source",
+    "annotation_status", "annotation_backend_release", "annotation_backend_host",
+    "annotation_backend_mirror", "annotation_date", "symbol_source", "gene_name_source", "entrez_id_source",
     "biotype_source", "chromosome_source", "start_source", "end_source",
-    "strand_source"
+    "strand_source", "symbol_candidates", "gene_name_candidates",
+    "entrez_id_candidates", "biotype_candidates", "chromosome_candidates",
+    "start_candidates", "end_candidates", "strand_candidates",
+    "symbol_candidate_count", "gene_name_candidate_count",
+    "entrez_id_candidate_count", "biotype_candidate_count",
+    "chromosome_candidate_count", "start_candidate_count",
+    "end_candidate_count", "strand_candidate_count",
+    "symbol_is_ambiguous", "gene_name_is_ambiguous", "entrez_id_is_ambiguous",
+    "biotype_is_ambiguous", "chromosome_is_ambiguous", "start_is_ambiguous",
+    "end_is_ambiguous", "strand_is_ambiguous"
   )
 }
 
@@ -237,25 +297,91 @@ annotation_coverage_report <- function(annotation, fields) {
   )
 }
 
-new_expranno_annotation <- function(expr_anno, annotation, meta_checked, report, params) {
+annotation_ambiguity_report <- function(annotation, fields) {
+  rows <- list()
+  idx <- 1L
+  for (field in fields) {
+    count_col <- paste0(field, "_candidate_count")
+    value_col <- field
+    candidate_col <- paste0(field, "_candidates")
+    source_col <- paste0(field, "_source")
+    if (!all(c(count_col, value_col, candidate_col, source_col) %in% names(annotation))) {
+      next
+    }
+    keep <- !is.na(annotation[[count_col]]) & annotation[[count_col]] > 1L
+    if (!any(keep)) {
+      next
+    }
+    rows[[idx]] <- data.frame(
+      gene_id = annotation$gene_id[keep],
+      field = field,
+      chosen_value = annotation[[value_col]][keep],
+      candidate_count = annotation[[count_col]][keep],
+      candidates = annotation[[candidate_col]][keep],
+      source = annotation[[source_col]][keep],
+      stringsAsFactors = FALSE
+    )
+    idx <- idx + 1L
+  }
+  if (length(rows) == 0L) {
+    return(data.frame(
+      gene_id = character(0),
+      field = character(0),
+      chosen_value = character(0),
+      candidate_count = integer(0),
+      candidates = character(0),
+      source = character(0),
+      stringsAsFactors = FALSE
+    ))
+  }
+  do.call(rbind, rows)
+}
+
+annotation_summary_metrics <- function(annotation, report, ambiguity_report) {
+  data.frame(
+    annotated_genes = sum(annotation$annotation_status == "annotated", na.rm = TRUE),
+    total_genes = nrow(annotation),
+    ambiguous_gene_fields = nrow(ambiguity_report),
+    symbol_coverage = report$annotation_rate[match("symbol", report$field)] %||% NA_real_,
+    gene_name_coverage = report$annotation_rate[match("gene_name", report$field)] %||% NA_real_,
+    stringsAsFactors = FALSE
+  )
+}
+
+new_expranno_benchmark <- function(summary, coverage, runs, params) {
+  out <- list(
+    summary = summary,
+    coverage = coverage,
+    runs = runs,
+    params = params
+  )
+  class(out) <- c("expranno_benchmark", "list")
+  out
+}
+
+new_expranno_annotation <- function(expr_anno, annotation, meta_checked, report, ambiguity_report, provenance, params) {
   out <- list(
     expr_anno = expr_anno,
     annotation = annotation,
     meta_checked = meta_checked,
     report = report,
+    ambiguity_report = ambiguity_report,
+    provenance = provenance,
     params = params
   )
   class(out) <- c("expranno_annotation", "list")
   out
 }
 
-new_expranno_result <- function(annotation, expr_meta_merged, deconvolution, signatures, files) {
+new_expranno_result <- function(annotation, expr_meta_merged, deconvolution, signatures, files, benchmark = NULL, session_info = NULL) {
   out <- list(
     annotation = annotation,
     expr_meta_merged = expr_meta_merged,
     deconvolution = deconvolution,
     signatures = signatures,
-    files = files
+    files = files,
+    benchmark = benchmark,
+    session_info = session_info
   )
   class(out) <- c("expranno_result", "list")
   out

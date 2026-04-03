@@ -8,6 +8,12 @@
 expression matrix and sample metadata, then move through gene annotation,
 metadata integration, Deconvolution, and Signature analysis.
 
+It is intentionally a downstream orchestration layer rather than a full
+RNA-seq pipeline. Alignment, counting, QC, and differential expression
+stay outside the package. The goal here is to take an existing Ensembl-ID
+expression matrix and make it annotation-aware, metadata-aligned, and
+ready for deconvolution or signature scoring.
+
 The package is designed for human and mouse expression matrices where:
 
 - the first column of `expr` is `gene_id`
@@ -24,12 +30,13 @@ The package is designed for human and mouse expression matrices where:
 Rather than forcing a single annotation backend, `expranno` uses a
 coverage-first strategy that can combine:
 
-- `biomaRt`
+- `biomaRt` with a fixed Ensembl release (`v102` by default)
 - `org.Hs.eg.db` or `org.Mm.eg.db`
 - optional `EnsDb` packages
 
 This makes it possible to recover more symbols, names, and identifiers
-than a single-source annotation pass.
+than a single-source annotation pass, while still recording which backend
+filled each field.
 
 ![expranno workflow](man/figures/workflow-overview.svg)
 
@@ -37,9 +44,10 @@ than a single-source annotation pass.
 
 1. validate `expr` and `meta`
 2. annotate genes and write `expr_anno.csv`
-3. merge expression and metadata into `expr_meta_merged.csv`
-4. run Deconvolution and save one table per method
-5. run Signature analysis and save one score table per method
+3. save `annotation_report.csv`, `annotation_ambiguity.csv`, and `annotation_provenance.csv`
+4. merge expression and metadata into `expr_meta_merged.csv`
+5. run Deconvolution and save one table per method
+6. run Signature analysis and save one score table per method
 
 ## Installation
 
@@ -60,7 +68,7 @@ remotes::install_github("dai540/expranno")
 Or install from a source tarball:
 
 ```r
-install.packages("path/to/expranno_2.0.2.tar.gz", repos = NULL, type = "source")
+install.packages("path/to/expranno_2.1.0.tar.gz", repos = NULL, type = "source")
 ```
 
 Optional backends:
@@ -114,6 +122,7 @@ result <- expranno::run_expranno(
   meta = meta,
   species = "human",
   annotation_engine = "hybrid",
+  biomart_version = 102,
   expr_scale = "abundance",
   duplicate_strategy = "mean",
   output_dir = "results",
@@ -129,6 +138,11 @@ result <- expranno::run_expranno(
 `deconv_args` is available for method-specific `immunedeconv` arguments.
 This is especially important for `timer` and `consensus_tme`, which
 require an `indications` vector.
+
+`annotate_expr()` and `run_expranno()` also accept
+`SummarizedExperiment`-like inputs. If your assay and metadata already
+live in a Bioconductor container, use `assay_name` and `gene_id_col` to
+coerce them into the package contract without manual CSV reshaping.
 
 `expr_scale` and `duplicate_strategy` control how duplicated symbols are
 collapsed before downstream analyses. The default `"auto"` strategy uses
@@ -169,9 +183,11 @@ stepwise building blocks.
 
 - `run_expranno()`
 - `annotate_expr()`
+- `benchmark_annotation_engines()`
 - `merge_expr_meta()`
 - `run_cell_deconvolution()`
 - `run_signature_analysis()`
+- `as_expranno_input()`
 
 ## Minimal Example
 
@@ -194,15 +210,20 @@ res <- expranno::run_expranno(
 `expranno` is designed to write analysis-ready CSV files with stable names.
 
 - `expr_anno.csv`
+- `annotation_report.csv`
+- `annotation_ambiguity.csv`
+- `annotation_provenance.csv`
 - `expr_meta_merged.csv`
 - `cell_deconv_<method>.csv`
 - `signature_gsva.csv`
 - `signature_ssgsea.csv`
+- `session_info.txt`
 
 The high-level wrapper is `run_expranno()`, but the package also exposes
 smaller steps:
 
 - `annotate_expr()`
+- `benchmark_annotation_engines()`
 - `merge_expr_meta()`
 - `run_cell_deconvolution()`
 - `run_signature_analysis()`
@@ -213,13 +234,17 @@ After a real run with `annotation_engine = "hybrid"`, the first files and
 tables to inspect are:
 
 - `expr_anno.csv`
-- the annotation coverage report returned by `annotate_expr()`
+- `annotation_report.csv`
+- `annotation_ambiguity.csv`
+- `annotation_provenance.csv`
 - `expr_meta_merged.csv`
 
 The practical checklist is:
 
 - confirm `symbol` coverage is high enough for downstream symbol-based tools
 - confirm `gene_name` coverage tracks with `symbol`
+- inspect any multi-hit cases in `annotation_ambiguity.csv`
+- record the Ensembl release, OrgDb package, and run date from `annotation_provenance.csv`
 - confirm merged sample labels line up with the expected `meta` rows
 - use the merged table as the common input for Deconvolution and Signature analyses
 
@@ -233,6 +258,7 @@ by `"Gaussian"`.
 The package website includes:
 
 - a getting started article
+- a benchmarking and reproducibility article
 - human and mouse step-by-step case studies
 - a theory and design article
 - a function reference

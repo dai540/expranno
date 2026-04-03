@@ -28,7 +28,54 @@ test_that("annotate_expr with no backend still returns aligned objects", {
   expect_s3_class(result, "expranno_annotation")
   expect_true("expr_anno" %in% names(result))
   expect_true("meta_checked" %in% names(result))
+  expect_true("ambiguity_report" %in% names(result))
+  expect_true("provenance" %in% names(result))
   expect_equal(nrow(result$expr_anno), nrow(demo$expr))
+})
+
+test_that("benchmark_annotation_engines compares engines on the same inputs", {
+  demo <- example_expranno_data()
+
+  benchmark <- benchmark_annotation_engines(
+    expr = demo$expr,
+    meta = demo$meta,
+    species = "human",
+    engines = c("none"),
+    verbose = FALSE
+  )
+
+  expect_s3_class(benchmark, "expranno_benchmark")
+  expect_true(all(c("engine", "status", "annotated_genes") %in% names(benchmark$summary)))
+  expect_identical(benchmark$summary$engine, "none")
+})
+
+test_that("SummarizedExperiment inputs can be coerced to expranno contract", {
+  testthat::skip_if_not_installed("SummarizedExperiment")
+
+  demo <- example_expranno_data()
+  se <- SummarizedExperiment::SummarizedExperiment(
+    assays = list(counts = as.matrix(demo$expr[, -1, drop = FALSE])),
+    rowData = S4Vectors::DataFrame(gene_id = demo$expr$gene_id),
+    colData = S4Vectors::DataFrame(
+      sample = demo$meta$sample,
+      group = demo$meta$group,
+      batch = demo$meta$batch
+    )
+  )
+  colnames(se) <- demo$meta$sample
+
+  coerced <- as_expranno_input(se, assay_name = "counts")
+  annotated <- annotate_expr(
+    expr = se,
+    species = "human",
+    annotation_engine = "none",
+    assay_name = "counts",
+    verbose = FALSE
+  )
+
+  expect_identical(names(coerced$expr)[1], "gene_id")
+  expect_identical(names(coerced$meta)[1], "sample")
+  expect_s3_class(annotated, "expranno_annotation")
 })
 
 test_that("merge_expr_meta pivots sample columns into long format", {

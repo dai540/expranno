@@ -1,3 +1,17 @@
+# expranno 2.1.0
+
+- Reworked hybrid annotation around a fixed `biomaRt` release (`Ensembl v102`)
+  with human/mouse-specific symbol recovery, backend provenance capture, and
+  ambiguity reporting.
+- Added `annotation_report.csv`, `annotation_ambiguity.csv`,
+  `annotation_provenance.csv`, and optional `session_info.txt` outputs to the
+  main wrapper.
+- Added `benchmark_annotation_engines()` so `none`, `biomart`, `orgdb`,
+  `ensdb`, and `hybrid` can be compared on the same input.
+- Added `SummarizedExperiment` / `SingleCellExperiment` input coercion through
+  `as_expranno_input()`.
+- Added a dedicated GitHub Actions workflow for optional-backend smoke tests.
+
 # expranno 2.0.2
 
 - Fixed `EnsDb` fallback annotation by switching to

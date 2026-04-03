@@ -55,6 +55,27 @@ test_that("hybrid annotation smoke test works for human and mouse", {
   expect_true(all(mouse_ann$report$annotation_rate[mouse_ann$report$field %in% c("symbol", "gene_name")] > 0))
   expect_true(any(grepl("orgdb|ensdb|biomart", human_ann$annotation$annotation_source)))
   expect_true(any(grepl("orgdb|ensdb|biomart", mouse_ann$annotation$annotation_source)))
+  expect_true("biomart" %in% human_ann$provenance$source)
+  expect_true("orgdb" %in% mouse_ann$provenance$source)
+  expect_true(any(grepl("Ensembl v102", human_ann$provenance$backend_release, fixed = TRUE)))
+  expect_true(all(c("annotation_backend_release", "annotation_date") %in% names(human_ann$annotation)))
+})
+
+test_that("annotation benchmark smoke test summarizes hybrid versus single backends", {
+  skip_if_optional_backends_missing()
+
+  demo <- example_expranno_data("mouse")
+  benchmark <- benchmark_annotation_engines(
+    expr = demo$expr,
+    meta = demo$meta,
+    species = "mouse",
+    engines = c("biomart", "orgdb", "hybrid"),
+    verbose = FALSE
+  )
+
+  expect_s3_class(benchmark, "expranno_benchmark")
+  expect_true(all(c("biomart", "orgdb", "hybrid") %in% benchmark$summary$engine))
+  expect_true(any(benchmark$coverage$field == "symbol"))
 })
 
 test_that("real-like deconvolution smoke tests work for human and mouse", {
@@ -119,6 +140,10 @@ test_that("run_expranno smoke test writes annotation, merge, and signature outpu
   expect_s3_class(result, "expranno_result")
   expect_true(file.exists(file.path(outdir, "expr_anno.csv")))
   expect_true(file.exists(file.path(outdir, "expr_meta_merged.csv")))
+  expect_true(file.exists(file.path(outdir, "annotation_report.csv")))
+  expect_true(file.exists(file.path(outdir, "annotation_ambiguity.csv")))
+  expect_true(file.exists(file.path(outdir, "annotation_provenance.csv")))
+  expect_true(file.exists(file.path(outdir, "session_info.txt")))
   expect_true(file.exists(file.path(outdir, "signature_gsva.csv")))
   expect_true(file.exists(file.path(outdir, "signature_ssgsea.csv")))
   expect_true(all(c("gsva", "ssgsea") %in% names(result$signatures)))
