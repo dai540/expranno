@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Design</h6></li>
     <li><a class="dropdown-item" href="../articles/theory-and-design.html">Theory and Design</a></li>
+    <li><a class="dropdown-item" href="../articles/benchmarking-and-reproducibility.html">Benchmarking and Reproducibility</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Case Studies</h6></li>
     <li><a class="dropdown-item" href="../articles/case-study-human-rnaseq.html">Case Study: Human RNA-seq Workflow</a></li>
@@ -135,18 +136,58 @@ report.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">anno</span><span class="op">$</span><span class="va">expr_anno</span></span>
-<span><span class="co">#&gt;          gene_id_raw         gene_id symbol gene_name entrez_id biotype</span></span>
-<span><span class="co">#&gt; 1 ENSG00000141510.17 ENSG00000141510     NA        NA        NA      NA</span></span>
-<span><span class="co">#&gt; 2 ENSG00000146648.18 ENSG00000146648     NA        NA        NA      NA</span></span>
-<span><span class="co">#&gt; 3 ENSG00000012048.23 ENSG00000012048     NA        NA        NA      NA</span></span>
-<span><span class="co">#&gt;   chromosome start end strand annotation_source annotation_status sample_a</span></span>
-<span><span class="co">#&gt; 1         NA    NA  NA     NA              &lt;NA&gt;       unannotated      120</span></span>
-<span><span class="co">#&gt; 2         NA    NA  NA     NA              &lt;NA&gt;       unannotated       80</span></span>
-<span><span class="co">#&gt; 3         NA    NA  NA     NA              &lt;NA&gt;       unannotated       25</span></span>
-<span><span class="co">#&gt;   sample_b sample_c</span></span>
-<span><span class="co">#&gt; 1      140      118</span></span>
-<span><span class="co">#&gt; 2       77       91</span></span>
-<span><span class="co">#&gt; 3       30       21</span></span></code></pre></div>
+<span><span class="co">#&gt;          gene_id_raw         gene_id symbol symbol_candidates</span></span>
+<span><span class="co">#&gt; 1 ENSG00000141510.17 ENSG00000141510   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2 ENSG00000146648.18 ENSG00000146648   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3 ENSG00000012048.23 ENSG00000012048   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   symbol_candidate_count symbol_is_ambiguous symbol_source gene_name</span></span>
+<span><span class="co">#&gt; 1                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   gene_name_candidates gene_name_candidate_count gene_name_is_ambiguous</span></span>
+<span><span class="co">#&gt; 1                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt; 2                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt; 3                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt;   gene_name_source entrez_id entrez_id_candidates entrez_id_candidate_count</span></span>
+<span><span class="co">#&gt; 1             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt; 2             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt; 3             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt;   entrez_id_is_ambiguous entrez_id_source biotype biotype_candidates</span></span>
+<span><span class="co">#&gt; 1                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   biotype_candidate_count biotype_is_ambiguous biotype_source chromosome</span></span>
+<span><span class="co">#&gt; 1                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   chromosome_candidates chromosome_candidate_count chromosome_is_ambiguous</span></span>
+<span><span class="co">#&gt; 1                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt; 2                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt; 3                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt;   chromosome_source start start_candidates start_candidate_count</span></span>
+<span><span class="co">#&gt; 1              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt; 2              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt; 3              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt;   start_is_ambiguous start_source  end end_candidates end_candidate_count</span></span>
+<span><span class="co">#&gt; 1              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt; 2              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt; 3              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt;   end_is_ambiguous end_source strand strand_candidates strand_candidate_count</span></span>
+<span><span class="co">#&gt; 1            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt; 2            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt; 3            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt;   strand_is_ambiguous strand_source annotation_source annotation_status</span></span>
+<span><span class="co">#&gt; 1               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt; 2               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt; 3               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt;   annotation_backend_release annotation_backend_host annotation_backend_mirror</span></span>
+<span><span class="co">#&gt; 1                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   annotation_date sample_a sample_b sample_c</span></span>
+<span><span class="co">#&gt; 1      2026-04-03      120      140      118</span></span>
+<span><span class="co">#&gt; 2      2026-04-03       80       77       91</span></span>
+<span><span class="co">#&gt; 3      2026-04-03       25       30       21</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-4-inspect-expr_anno-csv">Step 4: Inspect <code>expr_anno.csv</code><a class="anchor" aria-label="anchor" href="#step-4-inspect-expr_anno-csv"></a>
@@ -188,7 +229,19 @@ how many genes received each annotation field.</p>
 <span><span class="co">#&gt; 4   biotype            1.00</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="step-6-how-to-read-annotation-coverage">Step 6: How to read annotation coverage<a class="anchor" aria-label="anchor" href="#step-6-how-to-read-annotation-coverage"></a>
+<h2 id="step-6-inspect-provenance">Step 6: Inspect provenance<a class="anchor" aria-label="anchor" href="#step-6-inspect-provenance"></a>
+</h2>
+<p>In a real hybrid run, <code>annotation_provenance.csv</code> records
+which backend ran and which release was used.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mock_provenance</span></span>
+<span><span class="co">#&gt;    source           backend_release annotation_date status</span></span>
+<span><span class="co">#&gt; 1 biomart              Ensembl v102      2026-04-03     ok</span></span>
+<span><span class="co">#&gt; 2   orgdb       org.Hs.eg.db 3.22.0      2026-04-03     ok</span></span>
+<span><span class="co">#&gt; 3   ensdb EnsDb.Hsapiens.v86 2.99.0      2026-04-03     ok</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="step-7-how-to-read-annotation-coverage">Step 7: How to read annotation coverage<a class="anchor" aria-label="anchor" href="#step-7-how-to-read-annotation-coverage"></a>
 </h2>
 <p>The <code>annotation_rate</code> column is the proportion of genes
 with a non-missing value for each field in the annotated gene table.</p>
@@ -212,50 +265,150 @@ That pattern is often acceptable if the next steps mainly depend on
 symbols, but it would still be worth noting in the analysis record.</p>
 </div>
 <div class="section level2">
-<h2 id="step-7-merge-annotated-expression-with-metadata">Step 7: Merge annotated expression with metadata<a class="anchor" aria-label="anchor" href="#step-7-merge-annotated-expression-with-metadata"></a>
+<h2 id="step-8-merge-annotated-expression-with-metadata">Step 8: Merge annotated expression with metadata<a class="anchor" aria-label="anchor" href="#step-8-merge-annotated-expression-with-metadata"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">merged</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/merge_expr_meta.html">merge_expr_meta</a></span><span class="op">(</span></span>
 <span>  expr_anno <span class="op">=</span> <span class="va">anno</span><span class="op">$</span><span class="va">expr_anno</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">anno</span><span class="op">$</span><span class="va">meta_checked</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">merged</span></span>
-<span><span class="co">#&gt;     sample        gene_id_raw         gene_id symbol gene_name entrez_id</span></span>
-<span><span class="co">#&gt; 1 sample_a ENSG00000141510.17 ENSG00000141510     NA        NA        NA</span></span>
-<span><span class="co">#&gt; 2 sample_a ENSG00000146648.18 ENSG00000146648     NA        NA        NA</span></span>
-<span><span class="co">#&gt; 3 sample_a ENSG00000012048.23 ENSG00000012048     NA        NA        NA</span></span>
-<span><span class="co">#&gt; 4 sample_b ENSG00000141510.17 ENSG00000141510     NA        NA        NA</span></span>
-<span><span class="co">#&gt; 5 sample_b ENSG00000146648.18 ENSG00000146648     NA        NA        NA</span></span>
-<span><span class="co">#&gt; 6 sample_b ENSG00000012048.23 ENSG00000012048     NA        NA        NA</span></span>
-<span><span class="co">#&gt; 7 sample_c ENSG00000141510.17 ENSG00000141510     NA        NA        NA</span></span>
-<span><span class="co">#&gt; 8 sample_c ENSG00000146648.18 ENSG00000146648     NA        NA        NA</span></span>
-<span><span class="co">#&gt; 9 sample_c ENSG00000012048.23 ENSG00000012048     NA        NA        NA</span></span>
-<span><span class="co">#&gt;   biotype chromosome start end strand annotation_source annotation_status</span></span>
-<span><span class="co">#&gt; 1      NA         NA    NA  NA     NA              &lt;NA&gt;       unannotated</span></span>
-<span><span class="co">#&gt; 2      NA         NA    NA  NA     NA              &lt;NA&gt;       unannotated</span></span>
-<span><span class="co">#&gt; 3      NA         NA    NA  NA     NA              &lt;NA&gt;       unannotated</span></span>
-<span><span class="co">#&gt; 4      NA         NA    NA  NA     NA              &lt;NA&gt;       unannotated</span></span>
-<span><span class="co">#&gt; 5      NA         NA    NA  NA     NA              &lt;NA&gt;       unannotated</span></span>
-<span><span class="co">#&gt; 6      NA         NA    NA  NA     NA              &lt;NA&gt;       unannotated</span></span>
-<span><span class="co">#&gt; 7      NA         NA    NA  NA     NA              &lt;NA&gt;       unannotated</span></span>
-<span><span class="co">#&gt; 8      NA         NA    NA  NA     NA              &lt;NA&gt;       unannotated</span></span>
-<span><span class="co">#&gt; 9      NA         NA    NA  NA     NA              &lt;NA&gt;       unannotated</span></span>
-<span><span class="co">#&gt;   expression   group batch species</span></span>
-<span><span class="co">#&gt; 1        120    case    b1   human</span></span>
-<span><span class="co">#&gt; 2         80    case    b1   human</span></span>
-<span><span class="co">#&gt; 3         25    case    b1   human</span></span>
-<span><span class="co">#&gt; 4        140 control    b1   human</span></span>
-<span><span class="co">#&gt; 5         77 control    b1   human</span></span>
-<span><span class="co">#&gt; 6         30 control    b1   human</span></span>
-<span><span class="co">#&gt; 7        118    case    b2   human</span></span>
-<span><span class="co">#&gt; 8         91    case    b2   human</span></span>
-<span><span class="co">#&gt; 9         21    case    b2   human</span></span></code></pre></div>
+<span><span class="co">#&gt;     sample        gene_id_raw         gene_id symbol symbol_candidates</span></span>
+<span><span class="co">#&gt; 1 sample_a ENSG00000141510.17 ENSG00000141510   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2 sample_a ENSG00000146648.18 ENSG00000146648   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3 sample_a ENSG00000012048.23 ENSG00000012048   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4 sample_b ENSG00000141510.17 ENSG00000141510   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5 sample_b ENSG00000146648.18 ENSG00000146648   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6 sample_b ENSG00000012048.23 ENSG00000012048   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7 sample_c ENSG00000141510.17 ENSG00000141510   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8 sample_c ENSG00000146648.18 ENSG00000146648   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 9 sample_c ENSG00000012048.23 ENSG00000012048   &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   symbol_candidate_count symbol_is_ambiguous symbol_source gene_name</span></span>
+<span><span class="co">#&gt; 1                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 9                      0               FALSE          &lt;NA&gt;      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   gene_name_candidates gene_name_candidate_count gene_name_is_ambiguous</span></span>
+<span><span class="co">#&gt; 1                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt; 2                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt; 3                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt; 4                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt; 5                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt; 6                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt; 7                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt; 8                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt; 9                 &lt;NA&gt;                         0                  FALSE</span></span>
+<span><span class="co">#&gt;   gene_name_source entrez_id entrez_id_candidates entrez_id_candidate_count</span></span>
+<span><span class="co">#&gt; 1             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt; 2             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt; 3             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt; 4             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt; 5             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt; 6             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt; 7             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt; 8             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt; 9             &lt;NA&gt;      &lt;NA&gt;                 &lt;NA&gt;                         0</span></span>
+<span><span class="co">#&gt;   entrez_id_is_ambiguous entrez_id_source biotype biotype_candidates</span></span>
+<span><span class="co">#&gt; 1                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 9                  FALSE             &lt;NA&gt;    &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   biotype_candidate_count biotype_is_ambiguous biotype_source chromosome</span></span>
+<span><span class="co">#&gt; 1                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 9                       0                FALSE           &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   chromosome_candidates chromosome_candidate_count chromosome_is_ambiguous</span></span>
+<span><span class="co">#&gt; 1                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt; 2                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt; 3                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt; 4                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt; 5                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt; 6                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt; 7                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt; 8                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt; 9                  &lt;NA&gt;                          0                   FALSE</span></span>
+<span><span class="co">#&gt;   chromosome_source start start_candidates start_candidate_count</span></span>
+<span><span class="co">#&gt; 1              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt; 2              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt; 3              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt; 4              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt; 5              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt; 6              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt; 7              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt; 8              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt; 9              &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;                     0</span></span>
+<span><span class="co">#&gt;   start_is_ambiguous start_source  end end_candidates end_candidate_count</span></span>
+<span><span class="co">#&gt; 1              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt; 2              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt; 3              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt; 4              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt; 5              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt; 6              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt; 7              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt; 8              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt; 9              FALSE         &lt;NA&gt; &lt;NA&gt;           &lt;NA&gt;                   0</span></span>
+<span><span class="co">#&gt;   end_is_ambiguous end_source strand strand_candidates strand_candidate_count</span></span>
+<span><span class="co">#&gt; 1            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt; 2            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt; 3            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt; 4            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt; 5            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt; 6            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt; 7            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt; 8            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt; 9            FALSE       &lt;NA&gt;   &lt;NA&gt;              &lt;NA&gt;                      0</span></span>
+<span><span class="co">#&gt;   strand_is_ambiguous strand_source annotation_source annotation_status</span></span>
+<span><span class="co">#&gt; 1               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt; 2               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt; 3               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt; 4               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt; 5               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt; 6               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt; 7               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt; 8               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt; 9               FALSE          &lt;NA&gt;              &lt;NA&gt;       unannotated</span></span>
+<span><span class="co">#&gt;   annotation_backend_release annotation_backend_host annotation_backend_mirror</span></span>
+<span><span class="co">#&gt; 1                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 9                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   annotation_date expression   group batch species</span></span>
+<span><span class="co">#&gt; 1      2026-04-03        120    case    b1   human</span></span>
+<span><span class="co">#&gt; 2      2026-04-03         80    case    b1   human</span></span>
+<span><span class="co">#&gt; 3      2026-04-03         25    case    b1   human</span></span>
+<span><span class="co">#&gt; 4      2026-04-03        140 control    b1   human</span></span>
+<span><span class="co">#&gt; 5      2026-04-03         77 control    b1   human</span></span>
+<span><span class="co">#&gt; 6      2026-04-03         30 control    b1   human</span></span>
+<span><span class="co">#&gt; 7      2026-04-03        118    case    b2   human</span></span>
+<span><span class="co">#&gt; 8      2026-04-03         91    case    b2   human</span></span>
+<span><span class="co">#&gt; 9      2026-04-03         21    case    b2   human</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="step-8-inspect-a-simple-sample-summary">Step 8: Inspect a simple sample summary<a class="anchor" aria-label="anchor" href="#step-8-inspect-a-simple-sample-summary"></a>
+<h2 id="step-9-inspect-a-simple-sample-summary">Step 9: Inspect a simple sample summary<a class="anchor" aria-label="anchor" href="#step-9-inspect-a-simple-sample-summary"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">expression</span> <span class="op">~</span> <span class="va">sample</span> <span class="op">+</span> <span class="va">group</span>, data <span class="op">=</span> <span class="va">merged</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     sample   group expression</span></span>
 <span><span class="co">#&gt; 1 sample_a    case   75.00000</span></span>
@@ -263,9 +416,9 @@ symbols, but it would still be worth noting in the analysis record.</p>
 <span><span class="co">#&gt; 3 sample_b control   82.33333</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="step-9-run-the-standard-wrapper">Step 9: Run the standard wrapper<a class="anchor" aria-label="anchor" href="#step-9-run-the-standard-wrapper"></a>
+<h2 id="step-10-run-the-standard-wrapper">Step 10: Run the standard wrapper<a class="anchor" aria-label="anchor" href="#step-10-run-the-standard-wrapper"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
@@ -281,7 +434,8 @@ symbols, but it would still be worth noting in the analysis record.</p>
 <span><span class="co">#&gt;   annotated genes: 3</span></span>
 <span><span class="co">#&gt;   merged rows: 9</span></span>
 <span><span class="co">#&gt;   deconvolution runs: 0</span></span>
-<span><span class="co">#&gt;   signature runs: 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   signature runs: 0</span></span>
+<span><span class="co">#&gt;   benchmark runs: 0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="human-workflow-takeaway">Human workflow takeaway<a class="anchor" aria-label="anchor" href="#human-workflow-takeaway"></a>
@@ -292,7 +446,10 @@ symbols, but it would still be worth noting in the analysis record.</p>
 </li>
 <li>inspect <code>expr_anno.csv</code>
 </li>
-<li>inspect the annotation coverage report</li>
+<li>inspect <code>annotation_report.csv</code>
+</li>
+<li>inspect <code>annotation_provenance.csv</code>
+</li>
 <li>merge with <code>meta</code>
 </li>
 <li>run deconvolution</li>

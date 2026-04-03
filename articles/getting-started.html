@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Design</h6></li>
     <li><a class="dropdown-item" href="../articles/theory-and-design.html">Theory and Design</a></li>
+    <li><a class="dropdown-item" href="../articles/benchmarking-and-reproducibility.html">Benchmarking and Reproducibility</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Case Studies</h6></li>
     <li><a class="dropdown-item" href="../articles/case-study-human-rnaseq.html">Case Study: Human RNA-seq Workflow</a></li>
@@ -169,10 +170,11 @@ if (window.mermaid) {
 </script><div class="section level2">
 <h2 id="the-workflow-at-a-glance">The workflow at a glance<a class="anchor" aria-label="anchor" href="#the-workflow-at-a-glance"></a>
 </h2>
-<p>The workflow is easiest to read in four checkpoints:</p>
+<p>The workflow is easiest to read in five checkpoints:</p>
 <ol style="list-style-type: decimal">
 <li>validate the input contract</li>
 <li>annotate genes and inspect coverage</li>
+<li>inspect provenance and ambiguity</li>
 <li>merge expression with metadata</li>
 <li>run Deconvolution or Signature analyses from the merged table</li>
 </ol>
@@ -217,12 +219,18 @@ IDs only</li>
 <p><code>"hybrid"</code> is the default because it is the most
 coverage-oriented mode. It uses a cascade:</p>
 <ol style="list-style-type: decimal">
-<li><code>biomaRt</code></li>
+<li>
+<code>biomaRt</code> with a fixed Ensembl release (<code>v102</code>
+by default)</li>
 <li>species-specific <code>orgdb</code>
 </li>
 <li>species-specific <code>EnsDb</code>
 </li>
 </ol>
+<p>That mirrors a practical manual workflow: query Ensembl first, fill
+unmapped IDs from <code>org.Hs.eg.db</code> or
+<code>org.Mm.eg.db</code>, then use <code>EnsDb</code> to enrich
+structural fields such as biotype and coordinates.</p>
 <p>For lightweight docs and tests, the examples below use
 <code>"none"</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -254,7 +262,18 @@ coverage-oriented mode. It uses a cascade:</p>
 <span><span class="co">#&gt;   annotated genes: 3</span></span>
 <span><span class="co">#&gt;   merged rows: 9</span></span>
 <span><span class="co">#&gt;   deconvolution runs: 0</span></span>
-<span><span class="co">#&gt;   signature runs: 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   signature runs: 0</span></span>
+<span><span class="co">#&gt;   benchmark runs: 0</span></span></code></pre></div>
+<p>If your data already live in a <code>SummarizedExperiment</code>, you
+can start there directly.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
+<span>  expr <span class="op">=</span> <span class="va">se</span>,</span>
+<span>  species <span class="op">=</span> <span class="st">"human"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  gene_id_col <span class="op">=</span> <span class="st">"gene_id"</span>,</span>
+<span>  annotation_engine <span class="op">=</span> <span class="st">"hybrid"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="control-duplicate-symbols-and-score-kernels">Control duplicate symbols and score kernels<a class="anchor" aria-label="anchor" href="#control-duplicate-symbols-and-score-kernels"></a>
@@ -286,7 +305,7 @@ the expression scale:</p>
 <p>Some <code>immunedeconv</code> methods require extra arguments. In
 particular, <code>timer</code> and <code>consensus_tme</code> need an
 <code>indications</code> vector with one tumor type per sample.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
@@ -308,14 +327,30 @@ particular, <code>timer</code> and <code>consensus_tme</code> need an
 things to check are:</p>
 <ul>
 <li><code>expr_anno.csv</code></li>
-<li>the annotation coverage report from
-<code><a href="../reference/annotate_expr.html">annotate_expr()</a></code>
-</li>
+<li><code>annotation_report.csv</code></li>
+<li><code>annotation_ambiguity.csv</code></li>
+<li><code>annotation_provenance.csv</code></li>
 <li><code>expr_meta_merged.csv</code></li>
 </ul>
 <p>If <code>symbol</code> coverage is weak, downstream Deconvolution and
 Signature methods will usually be the first places where the problem
 appears.</p>
+<p>If you want to compare engines on the same input before standardizing
+a lab workflow, benchmark them explicitly.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">benchmark</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/benchmark_annotation_engines.html">benchmark_annotation_engines</a></span><span class="op">(</span></span>
+<span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
+<span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
+<span>  species <span class="op">=</span> <span class="st">"human"</span>,</span>
+<span>  engines <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">benchmark</span><span class="op">$</span><span class="va">summary</span></span>
+<span><span class="co">#&gt;      engine status species message annotated_genes total_genes</span></span>
+<span><span class="co">#&gt; none   none     ok   human    &lt;NA&gt;               0           3</span></span>
+<span><span class="co">#&gt;      ambiguous_gene_fields symbol_coverage gene_name_coverage</span></span>
+<span><span class="co">#&gt; none                     0               0                  0</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
