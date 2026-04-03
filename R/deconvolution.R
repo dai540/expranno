@@ -5,7 +5,6 @@ detect_deconvolution_methods <- function() {
 
   candidates <- c(
     "deconvolution_methods",
-    "deconvolution_methods_human",
     "deconvolution_methods_mouse"
   )
   found <- character(0)
@@ -13,7 +12,13 @@ detect_deconvolution_methods <- function() {
     if (!exists(fn, where = asNamespace("immunedeconv"), inherits = FALSE)) {
       next
     }
-    values <- tryCatch(getExportedValue("immunedeconv", fn)(), error = function(e) character(0))
+    values <- tryCatch(
+      {
+        obj <- getExportedValue("immunedeconv", fn)
+        if (is.function(obj)) obj() else obj
+      },
+      error = function(e) character(0)
+    )
     found <- c(found, values)
   }
 

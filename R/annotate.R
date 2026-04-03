@@ -64,6 +64,7 @@ query_orgdb_annotation <- function(gene_ids, species) {
 
 query_ensdb_annotation <- function(gene_ids, species) {
   require_namespace("ensembldb", reason = "EnsDb annotation")
+  require_namespace("AnnotationFilter", reason = "EnsDb annotation")
 
   ens_pkg <- switch(
     species,
@@ -81,7 +82,7 @@ query_ensdb_annotation <- function(gene_ids, species) {
   db <- getExportedValue(ens_pkg, db_name)
   raw <- ensembldb::genes(
     db,
-    filter = ensembldb::GeneIdFilter(unique(gene_ids)),
+    filter = AnnotationFilter::GeneIdFilter(unique(gene_ids)),
     return.type = "DataFrame"
   )
 

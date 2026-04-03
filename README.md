@@ -60,7 +60,7 @@ remotes::install_github("dai540/expranno")
 Or install from a source tarball:
 
 ```r
-install.packages("path/to/expranno_2.0.1.tar.gz", repos = NULL, type = "source")
+install.packages("path/to/expranno_2.0.2.tar.gz", repos = NULL, type = "source")
 ```
 
 Optional backends:
@@ -238,3 +238,18 @@ The package website includes:
 - a function reference
 
 Website: <https://dai540.github.io/expranno/>
+
+## Backend Smoke Test
+
+For a local optional-backend smoke test, run:
+
+```r
+source(system.file("scripts", "run_smoke_optional_backends.R", package = "expranno"))
+```
+
+Or run the installed script directly with an output directory:
+
+```r
+script <- system.file("scripts", "run_smoke_optional_backends.R", package = "expranno")
+system2(file.path(R.home("bin"), "Rscript"), c(script, "smoke-outputs"))
+```

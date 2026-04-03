@@ -1,3 +1,14 @@
+# expranno 2.0.2
+
+- Fixed `EnsDb` fallback annotation by switching to
+  `AnnotationFilter::GeneIdFilter()`.
+- Fixed automatic deconvolution method discovery for current
+  `immunedeconv` exports.
+- Added skip-aware optional-backend smoke tests for hybrid annotation,
+  real-data-like deconvolution, and end-to-end signature scoring.
+- Added `inst/scripts/run_smoke_optional_backends.R` for local backend
+  verification runs that write smoke-test outputs to disk.
+
 # expranno 2.0.1
 
 - Switched signature scoring to the current GSVA parameter-object API
