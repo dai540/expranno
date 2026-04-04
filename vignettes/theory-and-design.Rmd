@@ -11,13 +11,14 @@ vignette: >
 
 ## Design Goals
 
-The package aims to do five things well:
+The package aims to do six things well:
 
 1. enforce a simple and strict input contract
 2. maximize annotation coverage for human and mouse
 3. expose provenance and ambiguity rather than hiding them
-4. keep expression and metadata aligned
-5. make downstream immune and signature analyses reproducible
+4. support fixed presets for repeated human and mouse workflows
+5. keep expression and metadata aligned
+6. make downstream immune and signature analyses reproducible
 
 ## Why the package starts with annotation
 
@@ -131,6 +132,11 @@ Together these files answer:
 - where did it come from?
 - which rows still need human review?
 
+For repeated lab workflows, the package now also ships built-in presets
+such as `human_tpm_v102` and `mouse_tpm_v102`. These are meant to make
+species, Ensembl release, and version stripping explicit instead of
+implicit.
+
 ## Data shape choices
 
 `expranno` keeps two complementary representations:
@@ -177,6 +183,14 @@ reports:
 
 This is the package's main answer to the question, "Did the hybrid
 engine actually improve annotation on this dataset?"
+
+## Validation beyond coverage
+
+Coverage is necessary but not sufficient. `expranno` now also includes
+`validate_annotation_engines()`, which compares chosen fields against a
+truth table keyed by Ensembl gene ID. This supports a second question:
+
+- are the recovered labels correct for the genes we already trust?
 
 ## Downstream analyses
 

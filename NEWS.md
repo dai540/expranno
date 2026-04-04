@@ -3,11 +3,15 @@
 - Reworked hybrid annotation around a fixed `biomaRt` release (`Ensembl v102`)
   with human/mouse-specific symbol recovery, backend provenance capture, and
   ambiguity reporting.
+- Added explicit human and mouse annotation presets such as
+  `human_tpm_v102` and `mouse_tpm_v102` for repeatable lab workflows.
 - Added `annotation_report.csv`, `annotation_ambiguity.csv`,
   `annotation_provenance.csv`, and optional `session_info.txt` outputs to the
   main wrapper.
 - Added `benchmark_annotation_engines()` so `none`, `biomart`, `orgdb`,
   `ensdb`, and `hybrid` can be compared on the same input.
+- Added `validate_annotation_engines()` plus validation CSV outputs so
+  annotation can be checked against truth tables rather than coverage alone.
 - Added `SummarizedExperiment` / `SingleCellExperiment` input coercion through
   `as_expranno_input()`.
 - Added a dedicated GitHub Actions workflow for optional-backend smoke tests.

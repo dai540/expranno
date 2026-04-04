@@ -8,6 +8,10 @@
 #' @param meta Metadata table with `sample` first. Leave `NULL` when `expr` is a
 #'   `SummarizedExperiment`.
 #' @param species Either `"auto"`, `"human"`, or `"mouse"`.
+#' @param annotation_preset Optional preset that fixes a reproducible
+#'   annotation configuration. Supported values are `"human_v102"`,
+#'   `"mouse_v102"`, `"human_tpm_v102"`, `"mouse_tpm_v102"`,
+#'   `"human_count_v102"`, and `"mouse_count_v102"`.
 #' @param engines Character vector of annotation engines to compare.
 #' @param fields Optional annotation fields to benchmark.
 #' @param strip_version Whether to remove Ensembl version suffixes.
@@ -30,6 +34,7 @@ benchmark_annotation_engines <- function(
     expr,
     meta = NULL,
     species = c("auto", "human", "mouse"),
+    annotation_preset = NULL,
     engines = c("none", "biomart", "orgdb", "ensdb", "hybrid"),
     fields = NULL,
     strip_version = TRUE,
@@ -42,8 +47,15 @@ benchmark_annotation_engines <- function(
     output_file = NULL,
     coverage_file = NULL,
     verbose = TRUE) {
+  preset <- annotation_preset_defaults(annotation_preset)
   fields <- fields %||% default_annotation_fields()
-  species <- match.arg(species)
+  species <- if (is.null(preset)) match.arg(species) else preset$species
+  if (!is.null(preset)) {
+    strip_version <- preset$strip_version
+    biomart_version <- preset$biomart_version
+    biomart_host <- preset$biomart_host
+    biomart_mirror <- preset$biomart_mirror
+  }
   runs <- list()
   summary_rows <- list()
   coverage_rows <- list()
@@ -58,6 +70,7 @@ benchmark_annotation_engines <- function(
         expr = expr,
         meta = meta,
         species = species,
+        annotation_preset = annotation_preset,
         annotation_engine = engine,
         fields = fields,
         strip_version = strip_version,
@@ -129,6 +142,7 @@ benchmark_annotation_engines <- function(
     runs = runs,
     params = list(
       species = species,
+      annotation_preset = annotation_preset,
       engines = engines,
       fields = fields,
       strip_version = strip_version,

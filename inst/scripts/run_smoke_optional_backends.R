@@ -33,16 +33,23 @@ dir.create(human_deconv_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(mouse_deconv_dir, recursive = TRUE, showWarnings = FALSE)
 
 human_demo <- example_expranno_data("human")
+human_truth <- data.frame(
+  gene_id = human_demo$expr$gene_id,
+  symbol = c("TP53", "EGFR", "BRCA1"),
+  stringsAsFactors = FALSE
+)
 human_run <- run_expranno(
   expr = human_demo$expr,
   meta = human_demo$meta,
-  species = "human",
-  annotation_engine = "hybrid",
+  annotation_preset = "human_count_v102",
   expr_scale = "count",
   duplicate_strategy = "sum",
   output_dir = human_dir,
   run_deconvolution = FALSE,
   run_signature = TRUE,
+  run_validation = TRUE,
+  validation_truth = human_truth,
+  validation_fields = "symbol",
   geneset_file = system.file("extdata", "hallmark_demo.gmt", package = "expranno"),
   signature_method = "both",
   signature_kcdf = "Poisson",
@@ -76,6 +83,7 @@ mouse_deconv <- run_cell_deconvolution(
 summary_table <- data.frame(
   component = c(
     "human_annotation",
+    "human_validation_summary",
     "human_signature_gsva",
     "human_signature_ssgsea",
     "human_deconv_epic",
@@ -88,6 +96,7 @@ summary_table <- data.frame(
   ),
   rows = c(
     nrow(human_run$annotation$expr_anno),
+    nrow(human_run$validation$summary),
     nrow(human_run$signatures$gsva),
     nrow(human_run$signatures$ssgsea),
     nrow(human_deconv$epic),

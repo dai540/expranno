@@ -84,11 +84,12 @@ workflow.</p>
 <div class="section level2">
 <h2 id="design-goals">Design Goals<a class="anchor" aria-label="anchor" href="#design-goals"></a>
 </h2>
-<p>The package aims to do five things well:</p>
+<p>The package aims to do six things well:</p>
 <ol style="list-style-type: decimal">
 <li>enforce a simple and strict input contract</li>
 <li>maximize annotation coverage for human and mouse</li>
 <li>expose provenance and ambiguity rather than hiding them</li>
+<li>support fixed presets for repeated human and mouse workflows</li>
 <li>keep expression and metadata aligned</li>
 <li>make downstream immune and signature analyses reproducible</li>
 </ol>
@@ -243,6 +244,10 @@ and run-date tracking</li>
 <li>where did it come from?</li>
 <li>which rows still need human review?</li>
 </ul>
+<p>For repeated lab workflows, the package now also ships built-in
+presets such as <code>human_tpm_v102</code> and
+<code>mouse_tpm_v102</code>. These are meant to make species, Ensembl
+release, and version stripping explicit instead of implicit.</p>
 </div>
 <div class="section level2">
 <h2 id="data-shape-choices">Data shape choices<a class="anchor" aria-label="anchor" href="#data-shape-choices"></a>
@@ -302,6 +307,18 @@ reports:</p>
 </ul>
 <p>This is the package’s main answer to the question, “Did the hybrid
 engine actually improve annotation on this dataset?”</p>
+</div>
+<div class="section level2">
+<h2 id="validation-beyond-coverage">Validation beyond coverage<a class="anchor" aria-label="anchor" href="#validation-beyond-coverage"></a>
+</h2>
+<p>Coverage is necessary but not sufficient. <code>expranno</code> now
+also includes <code><a href="../reference/validate_annotation_engines.html">validate_annotation_engines()</a></code>, which compares
+chosen fields against a truth table keyed by Ensembl gene ID. This
+supports a second question:</p>
+<ul>
+<li>are the recovered labels correct for the genes we already
+trust?</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="downstream-analyses">Downstream analyses<a class="anchor" aria-label="anchor" href="#downstream-analyses"></a>

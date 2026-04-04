@@ -115,6 +115,14 @@ The workflow is easiest to read in five checkpoints:
 4. merge expression with metadata
 5. run Deconvolution or Signature analyses from the merged table
 
+If you want fixed human or mouse defaults instead of manually setting
+species, version stripping, and Ensembl release each time, use one of
+the built-in presets.
+
+```{r}
+list_annotation_presets()
+```
+
 ## Pick a species
 
 Use `species = "human"` for `ENSG...` input IDs and `species = "mouse"`
@@ -152,6 +160,14 @@ enrich structural fields such as biotype and coordinates.
 
 For lightweight docs and tests, the examples below use `"none"`.
 
+For real runs, a reproducible preset is often easier to share than a
+long list of arguments. Examples:
+
+- `annotation_preset = "human_tpm_v102"`
+- `annotation_preset = "mouse_tpm_v102"`
+- `annotation_preset = "human_count_v102"`
+- `annotation_preset = "mouse_count_v102"`
+
 ```{r}
 annotated <- annotate_expr(
   expr = demo$expr,
@@ -180,6 +196,17 @@ result <- run_expranno(
 )
 
 result
+```
+
+For a reproducible production-style run, switch to a preset explicitly:
+
+```{r, eval = FALSE}
+run_expranno(
+  expr = demo$expr,
+  meta = demo$meta,
+  annotation_preset = "human_count_v102",
+  output_dir = "results"
+)
 ```
 
 If your data already live in a `SummarizedExperiment`, you can start
@@ -258,4 +285,27 @@ benchmark <- benchmark_annotation_engines(
 )
 
 benchmark$summary
+```
+
+If you also have a truth table, you can validate exact matches instead of
+only coverage.
+
+```{r}
+truth <- data.frame(
+  gene_id = demo$expr$gene_id,
+  symbol = c("TP53", "EGFR", "BRCA1"),
+  stringsAsFactors = FALSE
+)
+
+validation <- validate_annotation_engines(
+  expr = demo$expr,
+  meta = demo$meta,
+  truth = truth,
+  species = "human",
+  engines = "none",
+  fields = "symbol",
+  verbose = FALSE
+)
+
+validation$summary
 ```

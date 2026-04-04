@@ -92,6 +92,7 @@
 </li>
 <li>Signature analysis with GSVA or ssGSEA</li>
 </ul>
+<p>For repeated human or mouse projects, the package now also exposes fixed annotation presets such as <code>human_tpm_v102</code> and <code>mouse_tpm_v102</code> so a lab can standardize release, species, and version-stripping behavior instead of re-specifying those knobs each time.</p>
 <p>Rather than forcing a single annotation backend, <code>expranno</code> uses a coverage-first strategy that can combine:</p>
 <ul>
 <li>
@@ -112,6 +113,8 @@
 <li>annotate genes and write <code>expr_anno.csv</code>
 </li>
 <li>save <code>annotation_report.csv</code>, <code>annotation_ambiguity.csv</code>, and <code>annotation_provenance.csv</code>
+</li>
+<li>optionally validate against a truth table and write <code>annotation_validation_*.csv</code>
 </li>
 <li>merge expression and metadata into <code>expr_meta_merged.csv</code>
 </li>
@@ -173,9 +176,7 @@
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">meta</span>,</span>
-<span>  species <span class="op">=</span> <span class="st">"human"</span>,</span>
-<span>  annotation_engine <span class="op">=</span> <span class="st">"hybrid"</span>,</span>
-<span>  biomart_version <span class="op">=</span> <span class="fl">102</span>,</span>
+<span>  annotation_preset <span class="op">=</span> <span class="st">"human_tpm_v102"</span>,</span>
 <span>  expr_scale <span class="op">=</span> <span class="st">"abundance"</span>,</span>
 <span>  duplicate_strategy <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"results"</span>,</span>
@@ -248,10 +249,12 @@
 <li><code><a href="reference/run_expranno.html">run_expranno()</a></code></li>
 <li><code><a href="reference/annotate_expr.html">annotate_expr()</a></code></li>
 <li><code><a href="reference/benchmark_annotation_engines.html">benchmark_annotation_engines()</a></code></li>
+<li><code><a href="reference/validate_annotation_engines.html">validate_annotation_engines()</a></code></li>
 <li><code><a href="reference/merge_expr_meta.html">merge_expr_meta()</a></code></li>
 <li><code><a href="reference/run_cell_deconvolution.html">run_cell_deconvolution()</a></code></li>
 <li><code><a href="reference/run_signature_analysis.html">run_signature_analysis()</a></code></li>
 <li><code><a href="reference/as_expranno_input.html">as_expranno_input()</a></code></li>
+<li><code><a href="reference/list_annotation_presets.html">list_annotation_presets()</a></code></li>
 </ul>
 </div>
 <div class="section level2">
@@ -279,6 +282,8 @@
 <li><code>annotation_report.csv</code></li>
 <li><code>annotation_ambiguity.csv</code></li>
 <li><code>annotation_provenance.csv</code></li>
+<li><code>annotation_validation_summary.csv</code></li>
+<li><code>annotation_validation_detail.csv</code></li>
 <li><code>expr_meta_merged.csv</code></li>
 <li><code>cell_deconv_&lt;method&gt;.csv</code></li>
 <li><code>signature_gsva.csv</code></li>
@@ -303,6 +308,7 @@
 <li><code>annotation_report.csv</code></li>
 <li><code>annotation_ambiguity.csv</code></li>
 <li><code>annotation_provenance.csv</code></li>
+<li><code>annotation_validation_summary.csv</code></li>
 <li><code>expr_meta_merged.csv</code></li>
 </ul>
 <p>The practical checklist is:</p>
@@ -313,6 +319,8 @@
 <li>inspect any multi-hit cases in <code>annotation_ambiguity.csv</code>
 </li>
 <li>record the Ensembl release, OrgDb package, and run date from <code>annotation_provenance.csv</code>
+</li>
+<li>if a truth table is available, inspect exact-match rates in <code>annotation_validation_summary.csv</code>
 </li>
 <li>confirm merged sample labels line up with the expected <code>meta</code> rows</li>
 <li>use the merged table as the common input for Deconvolution and Signature analyses</li>
@@ -359,6 +367,7 @@
 <li><a href="reference/run_expranno.html">Run the full workflow</a></li>
     <li><a href="reference/annotate_expr.html">Annotate expression matrices</a></li>
     <li><a href="reference/benchmark_annotation_engines.html">Benchmark annotation engines</a></li>
+    <li><a href="reference/validate_annotation_engines.html">Validate annotation engines</a></li>
     <li><a href="articles/getting-started.html">Read the getting started guide</a></li>
     <li><a href="articles/benchmarking-and-reproducibility.html">Read the reproducibility guide</a></li>
     <li><a href="articles/case-study-human-rnaseq.html">Follow the human case study</a></li>
@@ -373,6 +382,7 @@
     <li><code>annotation_report.csv</code></li>
     <li><code>annotation_ambiguity.csv</code></li>
     <li><code>annotation_provenance.csv</code></li>
+    <li><code>annotation_validation_*.csv</code></li>
     <li><code>expr_meta_merged.csv</code></li>
     <li><code>cell_deconv_*.csv</code></li>
     <li><code>signature_*.csv</code></li>

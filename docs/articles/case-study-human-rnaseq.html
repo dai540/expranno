@@ -114,7 +114,12 @@ output generation.</p>
 </h2>
 <p>For human data, the recommended production choice is:</p>
 <ul>
-<li><code>annotation_engine = "hybrid"</code></li>
+<li>
+<code>annotation_preset = "human_tpm_v102"</code> for TPM-like
+input</li>
+<li>
+<code>annotation_preset = "human_count_v102"</code> for count-like
+input</li>
 </ul>
 <p>That setting tries:</p>
 <ol style="list-style-type: decimal">
@@ -435,14 +440,16 @@ symbols, but it would still be worth noting in the analysis record.</p>
 <span><span class="co">#&gt;   merged rows: 9</span></span>
 <span><span class="co">#&gt;   deconvolution runs: 0</span></span>
 <span><span class="co">#&gt;   signature runs: 0</span></span>
-<span><span class="co">#&gt;   benchmark runs: 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   benchmark runs: 0</span></span>
+<span><span class="co">#&gt;   validation runs: 0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="human-workflow-takeaway">Human workflow takeaway<a class="anchor" aria-label="anchor" href="#human-workflow-takeaway"></a>
 </h2>
 <p>For a real human analysis, the usual sequence is:</p>
 <ol style="list-style-type: decimal">
-<li>annotate with <code>"hybrid"</code>
+<li>annotate with a fixed preset such as
+<code>"human_tpm_v102"</code>
 </li>
 <li>inspect <code>expr_anno.csv</code>
 </li>

@@ -282,6 +282,43 @@ default_annotation_fields <- function() {
   c("symbol", "gene_name", "entrez_id", "biotype", "chromosome", "start", "end", "strand")
 }
 
+available_annotation_presets <- function() {
+  c(
+    "human_v102",
+    "mouse_v102",
+    "human_tpm_v102",
+    "mouse_tpm_v102",
+    "human_count_v102",
+    "mouse_count_v102"
+  )
+}
+
+annotation_preset_defaults <- function(annotation_preset) {
+  if (is.null(annotation_preset)) {
+    return(NULL)
+  }
+
+  annotation_preset <- match.arg(annotation_preset, available_annotation_presets())
+  species <- if (grepl("^human", annotation_preset)) "human" else "mouse"
+  expr_scale <- if (grepl("_tpm_", annotation_preset)) "abundance" else if (grepl("_count_", annotation_preset)) "count" else "auto"
+
+  list(
+    annotation_preset = annotation_preset,
+    species = species,
+    annotation_engine = "hybrid",
+    strip_version = TRUE,
+    biomart_version = 102,
+    biomart_host = NULL,
+    biomart_mirror = NULL,
+    expr_scale = expr_scale,
+    duplicate_strategy = "auto"
+  )
+}
+
+truth_fields_from_truth <- function(truth, truth_gene_col) {
+  setdiff(names(truth), truth_gene_col)
+}
+
 annotation_coverage_report <- function(annotation, fields) {
   rates <- vapply(fields, function(field) {
     if (!field %in% names(annotation)) {
@@ -359,6 +396,17 @@ new_expranno_benchmark <- function(summary, coverage, runs, params) {
   out
 }
 
+new_expranno_validation <- function(summary, details, runs, params) {
+  out <- list(
+    summary = summary,
+    details = details,
+    runs = runs,
+    params = params
+  )
+  class(out) <- c("expranno_validation", "list")
+  out
+}
+
 new_expranno_annotation <- function(expr_anno, annotation, meta_checked, report, ambiguity_report, provenance, params) {
   out <- list(
     expr_anno = expr_anno,
@@ -373,7 +421,7 @@ new_expranno_annotation <- function(expr_anno, annotation, meta_checked, report,
   out
 }
 
-new_expranno_result <- function(annotation, expr_meta_merged, deconvolution, signatures, files, benchmark = NULL, session_info = NULL) {
+new_expranno_result <- function(annotation, expr_meta_merged, deconvolution, signatures, files, benchmark = NULL, validation = NULL, session_info = NULL) {
   out <- list(
     annotation = annotation,
     expr_meta_merged = expr_meta_merged,
@@ -381,6 +429,7 @@ new_expranno_result <- function(annotation, expr_meta_merged, deconvolution, sig
     signatures = signatures,
     files = files,
     benchmark = benchmark,
+    validation = validation,
     session_info = session_info
   )
   class(out) <- c("expranno_result", "list")

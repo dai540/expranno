@@ -8,6 +8,7 @@ annotate_expr(
   expr,
   meta = NULL,
   species = c("auto", "human", "mouse"),
+  annotation_preset = NULL,
   annotation_engine = c("hybrid", "biomart", "orgdb", "ensdb", "none"),
   fields = NULL,
   strip_version = TRUE,
@@ -33,6 +34,11 @@ when \code{expr} is a \code{SummarizedExperiment} and metadata should be taken f
 \code{colData}.}
 
 \item{species}{Either \code{"auto"}, \code{"human"}, or \code{"mouse"}.}
+
+\item{annotation_preset}{Optional preset that fixes a reproducible
+annotation configuration. Supported values are \code{"human_v102"},
+\code{"mouse_v102"}, \code{"human_tpm_v102"}, \code{"mouse_tpm_v102"},
+\code{"human_count_v102"}, and \code{"mouse_count_v102"}.}
 
 \item{annotation_engine}{Annotation backend strategy. Use \code{"hybrid"} to try
 \code{biomaRt}, \code{orgdb}, and \code{EnsDb} in sequence.}

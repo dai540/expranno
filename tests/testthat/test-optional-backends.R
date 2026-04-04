@@ -78,6 +78,31 @@ test_that("annotation benchmark smoke test summarizes hybrid versus single backe
   expect_true(any(benchmark$coverage$field == "symbol"))
 })
 
+test_that("truth-based annotation validation works with hybrid human annotation", {
+  skip_if_optional_backends_missing()
+
+  demo <- example_expranno_data("human")
+  truth <- data.frame(
+    gene_id = demo$expr$gene_id,
+    symbol = c("TP53", "EGFR", "BRCA1"),
+    stringsAsFactors = FALSE
+  )
+
+  validation <- validate_annotation_engines(
+    expr = demo$expr,
+    meta = demo$meta,
+    truth = truth,
+    species = "human",
+    annotation_preset = "human_count_v102",
+    engines = "hybrid",
+    fields = "symbol",
+    verbose = FALSE
+  )
+
+  expect_s3_class(validation, "expranno_validation")
+  expect_true(validation$summary$match_rate[1] > 0)
+})
+
 test_that("real-like deconvolution smoke tests work for human and mouse", {
   skip_if_optional_backends_missing()
 
@@ -125,12 +150,19 @@ test_that("run_expranno smoke test writes annotation, merge, and signature outpu
     expr = demo$expr,
     meta = demo$meta,
     species = "human",
-    annotation_engine = "hybrid",
+    annotation_preset = "human_count_v102",
     expr_scale = "count",
     duplicate_strategy = "sum",
     output_dir = outdir,
     run_deconvolution = FALSE,
     run_signature = TRUE,
+    run_validation = TRUE,
+    validation_truth = data.frame(
+      gene_id = demo$expr$gene_id,
+      symbol = c("TP53", "EGFR", "BRCA1"),
+      stringsAsFactors = FALSE
+    ),
+    validation_fields = "symbol",
     geneset_file = system.file("extdata", "hallmark_demo.gmt", package = "expranno"),
     signature_method = "both",
     signature_kcdf = "Poisson",
@@ -143,8 +175,11 @@ test_that("run_expranno smoke test writes annotation, merge, and signature outpu
   expect_true(file.exists(file.path(outdir, "annotation_report.csv")))
   expect_true(file.exists(file.path(outdir, "annotation_ambiguity.csv")))
   expect_true(file.exists(file.path(outdir, "annotation_provenance.csv")))
+  expect_true(file.exists(file.path(outdir, "annotation_validation_summary.csv")))
+  expect_true(file.exists(file.path(outdir, "annotation_validation_detail.csv")))
   expect_true(file.exists(file.path(outdir, "session_info.txt")))
   expect_true(file.exists(file.path(outdir, "signature_gsva.csv")))
   expect_true(file.exists(file.path(outdir, "signature_ssgsea.csv")))
   expect_true(all(c("gsva", "ssgsea") %in% names(result$signatures)))
+  expect_s3_class(result$validation, "expranno_validation")
 })

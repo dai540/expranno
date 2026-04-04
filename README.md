@@ -27,6 +27,11 @@ The package is designed for human and mouse expression matrices where:
 - Deconvolution with `immunedeconv`
 - Signature analysis with GSVA or ssGSEA
 
+For repeated human or mouse projects, the package now also exposes fixed
+annotation presets such as `human_tpm_v102` and `mouse_tpm_v102` so a
+lab can standardize release, species, and version-stripping behavior
+instead of re-specifying those knobs each time.
+
 Rather than forcing a single annotation backend, `expranno` uses a
 coverage-first strategy that can combine:
 
@@ -45,9 +50,10 @@ filled each field.
 1. validate `expr` and `meta`
 2. annotate genes and write `expr_anno.csv`
 3. save `annotation_report.csv`, `annotation_ambiguity.csv`, and `annotation_provenance.csv`
-4. merge expression and metadata into `expr_meta_merged.csv`
-5. run Deconvolution and save one table per method
-6. run Signature analysis and save one score table per method
+4. optionally validate against a truth table and write `annotation_validation_*.csv`
+5. merge expression and metadata into `expr_meta_merged.csv`
+6. run Deconvolution and save one table per method
+7. run Signature analysis and save one score table per method
 
 ## Installation
 
@@ -120,9 +126,7 @@ from raw inputs to saved outputs.
 result <- expranno::run_expranno(
   expr = expr,
   meta = meta,
-  species = "human",
-  annotation_engine = "hybrid",
-  biomart_version = 102,
+  annotation_preset = "human_tpm_v102",
   expr_scale = "abundance",
   duplicate_strategy = "mean",
   output_dir = "results",
@@ -184,10 +188,12 @@ stepwise building blocks.
 - `run_expranno()`
 - `annotate_expr()`
 - `benchmark_annotation_engines()`
+- `validate_annotation_engines()`
 - `merge_expr_meta()`
 - `run_cell_deconvolution()`
 - `run_signature_analysis()`
 - `as_expranno_input()`
+- `list_annotation_presets()`
 
 ## Minimal Example
 
@@ -213,6 +219,8 @@ res <- expranno::run_expranno(
 - `annotation_report.csv`
 - `annotation_ambiguity.csv`
 - `annotation_provenance.csv`
+- `annotation_validation_summary.csv`
+- `annotation_validation_detail.csv`
 - `expr_meta_merged.csv`
 - `cell_deconv_<method>.csv`
 - `signature_gsva.csv`
@@ -237,6 +245,7 @@ tables to inspect are:
 - `annotation_report.csv`
 - `annotation_ambiguity.csv`
 - `annotation_provenance.csv`
+- `annotation_validation_summary.csv`
 - `expr_meta_merged.csv`
 
 The practical checklist is:
@@ -245,6 +254,7 @@ The practical checklist is:
 - confirm `gene_name` coverage tracks with `symbol`
 - inspect any multi-hit cases in `annotation_ambiguity.csv`
 - record the Ensembl release, OrgDb package, and run date from `annotation_provenance.csv`
+- if a truth table is available, inspect exact-match rates in `annotation_validation_summary.csv`
 - confirm merged sample labels line up with the expected `meta` rows
 - use the merged table as the common input for Deconvolution and Signature analyses
 

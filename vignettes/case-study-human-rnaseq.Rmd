@@ -63,7 +63,8 @@ validate_meta(demo$meta)
 
 For human data, the recommended production choice is:
 
-- `annotation_engine = "hybrid"`
+- `annotation_preset = "human_tpm_v102"` for TPM-like input
+- `annotation_preset = "human_count_v102"` for count-like input
 
 That setting tries:
 
@@ -176,7 +177,7 @@ out
 
 For a real human analysis, the usual sequence is:
 
-1. annotate with `"hybrid"`
+1. annotate with a fixed preset such as `"human_tpm_v102"`
 2. inspect `expr_anno.csv`
 3. inspect `annotation_report.csv`
 4. inspect `annotation_provenance.csv`

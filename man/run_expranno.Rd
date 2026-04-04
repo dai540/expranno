@@ -8,6 +8,7 @@ run_expranno(
   expr,
   meta = NULL,
   species = c("auto", "human", "mouse"),
+  annotation_preset = NULL,
   annotation_engine = c("hybrid", "biomart", "orgdb", "ensdb", "none"),
   output_dir = ".",
   biomart_version = 102,
@@ -32,6 +33,10 @@ run_expranno(
   ssgsea_args = list(),
   run_benchmark = FALSE,
   benchmark_engines = c("none", "biomart", "orgdb", "ensdb", "hybrid"),
+  run_validation = FALSE,
+  validation_truth = NULL,
+  validation_truth_gene_col = "gene_id",
+  validation_fields = NULL,
   save_session_info = TRUE,
   verbose = TRUE
 )
@@ -44,6 +49,11 @@ run_expranno(
 when \code{expr} is a \code{SummarizedExperiment}.}
 
 \item{species}{Either \code{"auto"}, \code{"human"}, or \code{"mouse"}.}
+
+\item{annotation_preset}{Optional preset that fixes a reproducible
+annotation configuration. Supported values are \code{"human_v102"},
+\code{"mouse_v102"}, \code{"human_tpm_v102"}, \code{"mouse_tpm_v102"},
+\code{"human_count_v102"}, and \code{"mouse_count_v102"}.}
 
 \item{annotation_engine}{Annotation backend strategy.}
 
@@ -102,6 +112,17 @@ same inputs.}
 
 \item{benchmark_engines}{Annotation engines to benchmark when
 \code{run_benchmark = TRUE}.}
+
+\item{run_validation}{Whether to run \code{\link[=validate_annotation_engines]{validate_annotation_engines()}} against
+a supplied truth table.}
+
+\item{validation_truth}{Optional truth table keyed by Ensembl gene ID.}
+
+\item{validation_truth_gene_col}{Column in \code{validation_truth} containing the
+Ensembl gene ID.}
+
+\item{validation_fields}{Optional truth fields to validate, such as
+\code{symbol}.}
 
 \item{save_session_info}{Whether to write \code{session_info.txt}.}
 

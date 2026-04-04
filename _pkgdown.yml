@@ -42,12 +42,14 @@ reference:
       - run_expranno
       - annotate_expr
       - benchmark_annotation_engines
+      - validate_annotation_engines
       - merge_expr_meta
       - run_cell_deconvolution
       - run_signature_analysis
   - title: Input helpers
     contents:
       - as_expranno_input
+      - list_annotation_presets
       - validate_expr
       - validate_meta
       - read_genesets

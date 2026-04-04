@@ -583,6 +583,10 @@ build_annotation <- function(
 #'   when `expr` is a `SummarizedExperiment` and metadata should be taken from
 #'   `colData`.
 #' @param species Either `"auto"`, `"human"`, or `"mouse"`.
+#' @param annotation_preset Optional preset that fixes a reproducible
+#'   annotation configuration. Supported values are `"human_v102"`,
+#'   `"mouse_v102"`, `"human_tpm_v102"`, `"mouse_tpm_v102"`,
+#'   `"human_count_v102"`, and `"mouse_count_v102"`.
 #' @param annotation_engine Annotation backend strategy. Use `"hybrid"` to try
 #'   `biomaRt`, `orgdb`, and `EnsDb` in sequence.
 #' @param fields Optional annotation fields to keep.
@@ -608,6 +612,7 @@ annotate_expr <- function(
     expr,
     meta = NULL,
     species = c("auto", "human", "mouse"),
+    annotation_preset = NULL,
     annotation_engine = c("hybrid", "biomart", "orgdb", "ensdb", "none"),
     fields = NULL,
     strip_version = TRUE,
@@ -622,8 +627,16 @@ annotate_expr <- function(
     ambiguity_file = NULL,
     provenance_file = NULL,
     verbose = TRUE) {
-  species <- match.arg(species)
+  preset <- annotation_preset_defaults(annotation_preset)
+  species <- if (is.null(preset)) match.arg(species) else preset$species
   annotation_engine <- match.arg(annotation_engine)
+  if (!is.null(preset)) {
+    annotation_engine <- preset$annotation_engine
+    strip_version <- preset$strip_version
+    biomart_version <- preset$biomart_version
+    biomart_host <- preset$biomart_host
+    biomart_mirror <- preset$biomart_mirror
+  }
   inputs <- coerce_expranno_inputs(
     expr = expr,
     meta = meta,
@@ -679,6 +692,7 @@ annotate_expr <- function(
     params = list(
       species = resolved_species,
       annotation_engine = annotation_engine,
+      annotation_preset = annotation_preset,
       strip_version = strip_version,
       biomart_version = biomart_version,
       biomart_host = biomart_host,

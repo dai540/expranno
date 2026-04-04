@@ -49,6 +49,53 @@ test_that("benchmark_annotation_engines compares engines on the same inputs", {
   expect_identical(benchmark$summary$engine, "none")
 })
 
+test_that("annotation presets are listed and can override defaults", {
+  presets <- list_annotation_presets()
+  mouse_demo <- example_expranno_data("mouse")
+
+  expect_true(all(c("annotation_preset", "species", "biomart_version") %in% names(presets)))
+  expect_true("mouse_tpm_v102" %in% presets$annotation_preset)
+
+  annotated <- annotate_expr(
+    expr = mouse_demo$expr,
+    meta = mouse_demo$meta,
+    species = "human",
+    annotation_preset = "mouse_tpm_v102",
+    annotation_engine = "none",
+    verbose = FALSE
+  )
+
+  expect_identical(annotated$params$species, "mouse")
+  expect_identical(annotated$params$annotation_engine, "hybrid")
+  expect_identical(annotated$params$annotation_preset, "mouse_tpm_v102")
+  expect_identical(annotated$params$biomart_version, 102)
+})
+
+test_that("validate_annotation_engines returns truth-based summary and details", {
+  demo <- example_expranno_data()
+  truth <- data.frame(
+    gene_id = demo$expr$gene_id,
+    symbol = c("TP53", "EGFR", "BRCA1"),
+    stringsAsFactors = FALSE
+  )
+
+  validation <- validate_annotation_engines(
+    expr = demo$expr,
+    meta = demo$meta,
+    truth = truth,
+    species = "human",
+    engines = c("none"),
+    fields = "symbol",
+    verbose = FALSE
+  )
+
+  expect_s3_class(validation, "expranno_validation")
+  expect_true(all(c("engine", "field", "match_rate") %in% names(validation$summary)))
+  expect_true(all(c("gene_id", "truth_value", "predicted_value") %in% names(validation$details)))
+  expect_identical(validation$summary$engine, "none")
+  expect_equal(validation$summary$missing_prediction_rows, 3)
+})
+
 test_that("SummarizedExperiment inputs can be coerced to expranno contract", {
   testthat::skip_if_not_installed("SummarizedExperiment")
 

@@ -20,8 +20,9 @@ analysis also needs provenance and benchmarkable behavior.
 This article focuses on three things:
 
 1. comparing annotation engines on the same input
-2. recording backend provenance for reproducibility
-3. keeping a session-level record of the software environment
+2. validating exact matches against a truth table
+3. recording backend provenance for reproducibility
+4. keeping a session-level record of the software environment
 
 ```{r}
 library(expranno)
@@ -63,6 +64,35 @@ The benchmark output helps answer practical questions:
 - does `hybrid` improve `symbol` coverage over `biomart` alone?
 - which engine contributes most to `gene_name` coverage?
 - how many ambiguous gene-fields appear under each engine?
+
+## Validate against truth
+
+Coverage is useful, but a public package also needs a way to ask
+whether recovered labels are actually correct for a known subset.
+
+```{r}
+truth <- data.frame(
+  gene_id = demo$expr$gene_id,
+  symbol = c("TP53", "EGFR", "BRCA1"),
+  stringsAsFactors = FALSE
+)
+
+validation <- validate_annotation_engines(
+  expr = demo$expr,
+  meta = demo$meta,
+  truth = truth,
+  species = "human",
+  engines = "none",
+  fields = "symbol",
+  verbose = FALSE
+)
+
+validation$summary
+```
+
+In a production run, the same function can be used to compare `biomart`,
+`orgdb`, `ensdb`, and `hybrid` against a curated truth set from the same
+species.
 
 ## Provenance from annotation
 
@@ -117,6 +147,8 @@ The wrapper now keeps:
 - `annotation_provenance.csv`
 - `annotation_benchmark_summary.csv`
 - `annotation_benchmark_coverage.csv`
+- `annotation_validation_summary.csv`
+- `annotation_validation_detail.csv`
 - `session_info.txt`
 
 These files make it easier to re-run the same workflow later and explain

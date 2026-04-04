@@ -63,7 +63,8 @@ validate_meta(demo$meta)
 
 For mouse data, the recommended production choice is:
 
-- `annotation_engine = "hybrid"`
+- `annotation_preset = "mouse_tpm_v102"` for TPM-like input
+- `annotation_preset = "mouse_count_v102"` for count-like input
 
 That setting tries:
 
@@ -155,7 +156,8 @@ read_genesets(geneset_path)
 ## Mouse workflow takeaway
 
 The structure is the same as the human case study, but the species must
-be set to `"mouse"` and the annotation backend needs mouse-compatible
-resources. The annotation report and provenance table are the fastest way
-to confirm that the species-specific mapping worked and which release was
+be fixed to mouse and the annotation backend needs mouse-compatible
+resources. Using `"mouse_tpm_v102"` is the clearest way to preserve that
+intent. The annotation report and provenance table are the fastest way to
+confirm that the species-specific mapping worked and which release was
 used.

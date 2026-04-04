@@ -10,6 +10,10 @@
 #' @param meta Metadata table with `sample` in the first column. Leave `NULL`
 #'   when `expr` is a `SummarizedExperiment`.
 #' @param species Either `"auto"`, `"human"`, or `"mouse"`.
+#' @param annotation_preset Optional preset that fixes a reproducible
+#'   annotation configuration. Supported values are `"human_v102"`,
+#'   `"mouse_v102"`, `"human_tpm_v102"`, `"mouse_tpm_v102"`,
+#'   `"human_count_v102"`, and `"mouse_count_v102"`.
 #' @param annotation_engine Annotation backend strategy.
 #' @param output_dir Output directory.
 #' @param biomart_version Fixed Ensembl release used by the `biomaRt` backend.
@@ -44,6 +48,13 @@
 #'   same inputs.
 #' @param benchmark_engines Annotation engines to benchmark when
 #'   `run_benchmark = TRUE`.
+#' @param run_validation Whether to run [validate_annotation_engines()] against
+#'   a supplied truth table.
+#' @param validation_truth Optional truth table keyed by Ensembl gene ID.
+#' @param validation_truth_gene_col Column in `validation_truth` containing the
+#'   Ensembl gene ID.
+#' @param validation_fields Optional truth fields to validate, such as
+#'   `symbol`.
 #' @param save_session_info Whether to write `session_info.txt`.
 #' @param verbose Whether to emit progress messages.
 #'
@@ -53,6 +64,7 @@ run_expranno <- function(
     expr,
     meta = NULL,
     species = c("auto", "human", "mouse"),
+    annotation_preset = NULL,
     annotation_engine = c("hybrid", "biomart", "orgdb", "ensdb", "none"),
     output_dir = ".",
     biomart_version = 102,
@@ -77,20 +89,37 @@ run_expranno <- function(
     ssgsea_args = list(),
     run_benchmark = FALSE,
     benchmark_engines = c("none", "biomart", "orgdb", "ensdb", "hybrid"),
+    run_validation = FALSE,
+    validation_truth = NULL,
+    validation_truth_gene_col = "gene_id",
+    validation_fields = NULL,
     save_session_info = TRUE,
     verbose = TRUE) {
   dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
-  species <- match.arg(species)
-  annotation_engine <- match.arg(annotation_engine)
+  preset <- annotation_preset_defaults(annotation_preset)
+  species <- if (is.null(preset)) match.arg(species) else preset$species
+  annotation_engine <- if (is.null(preset)) match.arg(annotation_engine) else preset$annotation_engine
   expr_scale <- match.arg(expr_scale)
   duplicate_strategy <- match.arg(duplicate_strategy)
   signature_method <- match.arg(signature_method)
   signature_kcdf <- match.arg(signature_kcdf)
+  if (!is.null(preset)) {
+    biomart_version <- preset$biomart_version
+    biomart_host <- preset$biomart_host
+    biomart_mirror <- preset$biomart_mirror
+    if (identical(expr_scale, "auto")) {
+      expr_scale <- preset$expr_scale
+    }
+    if (identical(duplicate_strategy, "auto")) {
+      duplicate_strategy <- preset$duplicate_strategy
+    }
+  }
 
   annotation <- annotate_expr(
     expr = expr,
     meta = meta,
     species = species,
+    annotation_preset = annotation_preset,
     annotation_engine = annotation_engine,
     biomart_version = biomart_version,
     biomart_host = biomart_host,
@@ -154,6 +183,7 @@ run_expranno <- function(
       expr = expr,
       meta = meta,
       species = species,
+      annotation_preset = annotation_preset,
       engines = benchmark_engines,
       strip_version = annotation$params$strip_version,
       biomart_version = biomart_version,
@@ -164,6 +194,38 @@ run_expranno <- function(
       sample_col = sample_col,
       output_file = file.path(output_dir, "annotation_benchmark_summary.csv"),
       coverage_file = file.path(output_dir, "annotation_benchmark_coverage.csv"),
+      verbose = verbose
+    )
+  }
+
+  validation <- NULL
+  if (isTRUE(run_validation)) {
+    if (is.null(validation_truth)) {
+      stop("Provide `validation_truth` when `run_validation = TRUE`.", call. = FALSE)
+    }
+    validation_engines <- if (isTRUE(run_benchmark)) {
+      unique(c(annotation_engine, benchmark_engines[benchmark_engines != "none"]))
+    } else {
+      annotation_engine
+    }
+    validation <- validate_annotation_engines(
+      expr = expr,
+      meta = meta,
+      truth = validation_truth,
+      truth_gene_col = validation_truth_gene_col,
+      species = species,
+      annotation_preset = annotation_preset,
+      engines = validation_engines,
+      fields = validation_fields,
+      strip_version = annotation$params$strip_version,
+      biomart_version = biomart_version,
+      biomart_host = biomart_host,
+      biomart_mirror = biomart_mirror,
+      assay_name = assay_name,
+      gene_id_col = gene_id_col,
+      sample_col = sample_col,
+      output_file = file.path(output_dir, "annotation_validation_summary.csv"),
+      detail_file = file.path(output_dir, "annotation_validation_detail.csv"),
       verbose = verbose
     )
   }
@@ -185,6 +247,7 @@ run_expranno <- function(
     signatures = signatures,
     files = files,
     benchmark = benchmark,
+    validation = validation,
     session_info = session_info
   )
 }
