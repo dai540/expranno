@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -41,29 +41,41 @@ jobs:
           GITHUB_PAT: ${{ github.token }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          options(repos = c(CRAN = "https://cloud.r-project.org"))
+          options(repos = BiocManager::repositories())
           BiocManager::install(
             c(
               "AnnotationDbi",
               "AnnotationFilter",
+              "annotate",
+              "Biobase",
+              "BiocParallel",
               "biomaRt",
               "ensembldb",
               "EnsDb.Hsapiens.v86",
               "EnsDb.Mmusculus.v79",
+              "genefilter",
               "GSVA",
+              "preprocessCore",
+              "quantiseqr",
               "SummarizedExperiment",
               "S4Vectors",
+              "sva",
               "org.Hs.eg.db",
               "org.Mm.eg.db"
             ),
             ask = FALSE,
             update = FALSE
           )
+          remotes::install_github("dviraran/xCell", upgrade = "never")
+          remotes::install_github("GfellerLab/EPIC", upgrade = "never")
+          remotes::install_github("grst/MCPcounter", upgrade = "never")
+          remotes::install_github("grst/mMCPcounter", upgrade = "never")
+          remotes::install_github("cansysbio/ConsensusTME", upgrade = "never")
           if (!requireNamespace("immunedeconv", quietly = TRUE)) {
             remotes::install_github(
               "omnideconv/immunedeconv",
               upgrade = "never",
-              dependencies = TRUE
+              dependencies = FALSE
             )
           }
 
