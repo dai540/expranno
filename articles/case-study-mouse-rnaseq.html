@@ -113,7 +113,12 @@ be set correctly.</p>
 </h2>
 <p>For mouse data, the recommended production choice is:</p>
 <ul>
-<li><code>annotation_engine = "hybrid"</code></li>
+<li>
+<code>annotation_preset = "mouse_tpm_v102"</code> for TPM-like
+input</li>
+<li>
+<code>annotation_preset = "mouse_count_v102"</code> for count-like
+input</li>
 </ul>
 <p>That setting tries:</p>
 <ol style="list-style-type: decimal">
@@ -185,9 +190,9 @@ without heavy annotation backends.</p>
 <span><span class="co">#&gt; 2                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 3                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
 <span><span class="co">#&gt;   annotation_date sample_a sample_b sample_c</span></span>
-<span><span class="co">#&gt; 1      2026-04-03      220      205      214</span></span>
-<span><span class="co">#&gt; 2      2026-04-03      150      163      158</span></span>
-<span><span class="co">#&gt; 3      2026-04-03       44       47       40</span></span></code></pre></div>
+<span><span class="co">#&gt; 1      2026-04-04      220      205      214</span></span>
+<span><span class="co">#&gt; 2      2026-04-04      150      163      158</span></span>
+<span><span class="co">#&gt; 3      2026-04-04       44       47       40</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-4-inspect-expr_anno-csv">Step 4: Inspect <code>expr_anno.csv</code><a class="anchor" aria-label="anchor" href="#step-4-inspect-expr_anno-csv"></a>
@@ -382,15 +387,15 @@ is equally complete.</p>
 <span><span class="co">#&gt; 8                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 9                       &lt;NA&gt;                    &lt;NA&gt;                      &lt;NA&gt;</span></span>
 <span><span class="co">#&gt;   annotation_date expression   group batch species</span></span>
-<span><span class="co">#&gt; 1      2026-04-03        220    case    b1   mouse</span></span>
-<span><span class="co">#&gt; 2      2026-04-03        150    case    b1   mouse</span></span>
-<span><span class="co">#&gt; 3      2026-04-03         44    case    b1   mouse</span></span>
-<span><span class="co">#&gt; 4      2026-04-03        205 control    b1   mouse</span></span>
-<span><span class="co">#&gt; 5      2026-04-03        163 control    b1   mouse</span></span>
-<span><span class="co">#&gt; 6      2026-04-03         47 control    b1   mouse</span></span>
-<span><span class="co">#&gt; 7      2026-04-03        214    case    b2   mouse</span></span>
-<span><span class="co">#&gt; 8      2026-04-03        158    case    b2   mouse</span></span>
-<span><span class="co">#&gt; 9      2026-04-03         40    case    b2   mouse</span></span></code></pre></div>
+<span><span class="co">#&gt; 1      2026-04-04        220    case    b1   mouse</span></span>
+<span><span class="co">#&gt; 2      2026-04-04        150    case    b1   mouse</span></span>
+<span><span class="co">#&gt; 3      2026-04-04         44    case    b1   mouse</span></span>
+<span><span class="co">#&gt; 4      2026-04-04        205 control    b1   mouse</span></span>
+<span><span class="co">#&gt; 5      2026-04-04        163 control    b1   mouse</span></span>
+<span><span class="co">#&gt; 6      2026-04-04         47 control    b1   mouse</span></span>
+<span><span class="co">#&gt; 7      2026-04-04        214    case    b2   mouse</span></span>
+<span><span class="co">#&gt; 8      2026-04-04        158    case    b2   mouse</span></span>
+<span><span class="co">#&gt; 9      2026-04-04         40    case    b2   mouse</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-9-inspect-a-simple-sample-summary">Step 9: Inspect a simple sample summary<a class="anchor" aria-label="anchor" href="#step-9-inspect-a-simple-sample-summary"></a>
@@ -418,10 +423,11 @@ is equally complete.</p>
 <h2 id="mouse-workflow-takeaway">Mouse workflow takeaway<a class="anchor" aria-label="anchor" href="#mouse-workflow-takeaway"></a>
 </h2>
 <p>The structure is the same as the human case study, but the species
-must be set to <code>"mouse"</code> and the annotation backend needs
-mouse-compatible resources. The annotation report and provenance table
-are the fastest way to confirm that the species-specific mapping worked
-and which release was used.</p>
+must be fixed to mouse and the annotation backend needs mouse-compatible
+resources. Using <code>"mouse_tpm_v102"</code> is the clearest way to
+preserve that intent. The annotation report and provenance table are the
+fastest way to confirm that the species-specific mapping worked and
+which release was used.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

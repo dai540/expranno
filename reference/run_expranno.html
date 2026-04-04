@@ -65,6 +65,7 @@ engines, and returns all outputs in one structured object.</p>
 <span>  <span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  species <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"human"</span>, <span class="st">"mouse"</span><span class="op">)</span>,</span>
+<span>  annotation_preset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  annotation_engine <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hybrid"</span>, <span class="st">"biomart"</span>, <span class="st">"orgdb"</span>, <span class="st">"ensdb"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"."</span>,</span>
 <span>  biomart_version <span class="op">=</span> <span class="fl">102</span>,</span>
@@ -89,6 +90,10 @@ engines, and returns all outputs in one structured object.</p>
 <span>  ssgsea_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  run_benchmark <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  benchmark_engines <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"biomart"</span>, <span class="st">"orgdb"</span>, <span class="st">"ensdb"</span>, <span class="st">"hybrid"</span><span class="op">)</span>,</span>
+<span>  run_validation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  validation_truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  validation_truth_gene_col <span class="op">=</span> <span class="st">"gene_id"</span>,</span>
+<span>  validation_fields <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  save_session_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -110,6 +115,13 @@ when <code>expr</code> is a <code>SummarizedExperiment</code>.</p></dd>
 
 <dt id="arg-species">species<a class="anchor" aria-label="anchor" href="#arg-species"></a></dt>
 <dd><p>Either <code>"auto"</code>, <code>"human"</code>, or <code>"mouse"</code>.</p></dd>
+
+
+<dt id="arg-annotation-preset">annotation_preset<a class="anchor" aria-label="anchor" href="#arg-annotation-preset"></a></dt>
+<dd><p>Optional preset that fixes a reproducible
+annotation configuration. Supported values are <code>"human_v102"</code>,
+<code>"mouse_v102"</code>, <code>"human_tpm_v102"</code>, <code>"mouse_tpm_v102"</code>,
+<code>"human_count_v102"</code>, and <code>"mouse_count_v102"</code>.</p></dd>
 
 
 <dt id="arg-annotation-engine">annotation_engine<a class="anchor" aria-label="anchor" href="#arg-annotation-engine"></a></dt>
@@ -216,6 +228,25 @@ same inputs.</p></dd>
 <dt id="arg-benchmark-engines">benchmark_engines<a class="anchor" aria-label="anchor" href="#arg-benchmark-engines"></a></dt>
 <dd><p>Annotation engines to benchmark when
 <code>run_benchmark = TRUE</code>.</p></dd>
+
+
+<dt id="arg-run-validation">run_validation<a class="anchor" aria-label="anchor" href="#arg-run-validation"></a></dt>
+<dd><p>Whether to run <code><a href="validate_annotation_engines.html">validate_annotation_engines()</a></code> against
+a supplied truth table.</p></dd>
+
+
+<dt id="arg-validation-truth">validation_truth<a class="anchor" aria-label="anchor" href="#arg-validation-truth"></a></dt>
+<dd><p>Optional truth table keyed by Ensembl gene ID.</p></dd>
+
+
+<dt id="arg-validation-truth-gene-col">validation_truth_gene_col<a class="anchor" aria-label="anchor" href="#arg-validation-truth-gene-col"></a></dt>
+<dd><p>Column in <code>validation_truth</code> containing the
+Ensembl gene ID.</p></dd>
+
+
+<dt id="arg-validation-fields">validation_fields<a class="anchor" aria-label="anchor" href="#arg-validation-fields"></a></dt>
+<dd><p>Optional truth fields to validate, such as
+<code>symbol</code>.</p></dd>
 
 
 <dt id="arg-save-session-info">save_session_info<a class="anchor" aria-label="anchor" href="#arg-save-session-info"></a></dt>

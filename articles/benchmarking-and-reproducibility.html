@@ -85,6 +85,7 @@ behavior.</p>
 <p>This article focuses on three things:</p>
 <ol style="list-style-type: decimal">
 <li>comparing annotation engines on the same input</li>
+<li>validating exact matches against a truth table</li>
 <li>recording backend provenance for reproducibility</li>
 <li>keeping a session-level record of the software environment</li>
 </ol>
@@ -131,11 +132,45 @@ coverage?</li>
 </ul>
 </div>
 <div class="section level2">
+<h2 id="validate-against-truth">Validate against truth<a class="anchor" aria-label="anchor" href="#validate-against-truth"></a>
+</h2>
+<p>Coverage is useful, but a public package also needs a way to ask
+whether recovered labels are actually correct for a known subset.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">truth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  gene_id <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span><span class="op">$</span><span class="va">gene_id</span>,</span>
+<span>  symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP53"</span>, <span class="st">"EGFR"</span>, <span class="st">"BRCA1"</span><span class="op">)</span>,</span>
+<span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">validation</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/validate_annotation_engines.html">validate_annotation_engines</a></span><span class="op">(</span></span>
+<span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
+<span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
+<span>  truth <span class="op">=</span> <span class="va">truth</span>,</span>
+<span>  species <span class="op">=</span> <span class="st">"human"</span>,</span>
+<span>  engines <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>  fields <span class="op">=</span> <span class="st">"symbol"</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">validation</span><span class="op">$</span><span class="va">summary</span></span>
+<span><span class="co">#&gt;              engine  field truth_rows matched_rows missing_prediction_rows</span></span>
+<span><span class="co">#&gt; none::symbol   none symbol          3            0                       3</span></span>
+<span><span class="co">#&gt;              mismatch_rows ambiguous_rows match_rate missing_prediction_rate</span></span>
+<span><span class="co">#&gt; none::symbol             0              0          0                       1</span></span>
+<span><span class="co">#&gt;              mismatch_rate</span></span>
+<span><span class="co">#&gt; none::symbol             0</span></span></code></pre></div>
+<p>In a production run, the same function can be used to compare
+<code>biomart</code>, <code>orgdb</code>, <code>ensdb</code>, and
+<code>hybrid</code> against a curated truth set from the same
+species.</p>
+</div>
+<div class="section level2">
 <h2 id="provenance-from-annotation">Provenance from annotation<a class="anchor" aria-label="anchor" href="#provenance-from-annotation"></a>
 </h2>
 <p><code><a href="../reference/annotate_expr.html">annotate_expr()</a></code> now records backend provenance and
 ambiguity directly.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annotate_expr.html">annotate_expr</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
@@ -165,7 +200,7 @@ was targeted, and the annotation date.</p>
 </h2>
 <p><code><a href="../reference/run_expranno.html">run_expranno()</a></code> writes reproducibility-oriented side
 files by default.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outdir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="st">"expranno-benchmark-"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">outdir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
@@ -194,6 +229,8 @@ files by default.</p>
 <li><code>annotation_provenance.csv</code></li>
 <li><code>annotation_benchmark_summary.csv</code></li>
 <li><code>annotation_benchmark_coverage.csv</code></li>
+<li><code>annotation_validation_summary.csv</code></li>
+<li><code>annotation_validation_detail.csv</code></li>
 <li><code>session_info.txt</code></li>
 </ul>
 <p>These files make it easier to re-run the same workflow later and
