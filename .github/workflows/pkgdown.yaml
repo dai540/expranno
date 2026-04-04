@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: write
 
@@ -41,6 +44,7 @@ jobs:
           pkgdown::build_reference(pkg)
           for (nm in c(
             "getting-started",
+            "benchmarking-and-reproducibility",
             "theory-and-design",
             "case-study-human-rnaseq",
             "case-study-mouse-rnaseq"
@@ -53,6 +57,10 @@ jobs:
             )
           }
           pkgdown:::build_articles_index(pkg)
+          stale_md <- list.files("docs", pattern = "\\.md$", recursive = TRUE, full.names = TRUE)
+          if (length(stale_md) > 0) {
+            unlink(stale_md)
+          }
         shell: Rscript {0}
 
       - name: Deploy site

@@ -7,6 +7,9 @@ on:
   schedule:
     - cron: "0 18 * * 0"
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: read
 
@@ -72,6 +75,10 @@ jobs:
         run: testthat::test_local()
         shell: Rscript {0}
 
+      - name: Install expranno
+        run: remotes::install_local(".", upgrade = "never", dependencies = FALSE)
+        shell: Rscript {0}
+
       - name: Optional backend smoke runner
-        run: source("inst/scripts/run_smoke_optional_backends.R")
+        run: source(system.file("scripts", "run_smoke_optional_backends.R", package = "expranno"))
         shell: Rscript {0}
