@@ -1,0 +1,242 @@
+# Theory and Design
+
+`expranno` is designed around a CSV-first RNA-seq analysis workflow.
+
+## Design Goals
+
+The package aims to do six things well:
+
+1.  enforce a simple and strict input contract
+2.  maximize annotation coverage for human and mouse
+3.  expose provenance and ambiguity rather than hiding them
+4.  support fixed presets for repeated human and mouse workflows
+5.  keep expression and metadata aligned
+6.  make downstream immune and signature analyses reproducible
+
+## Why the package starts with annotation
+
+Many downstream tools expect gene symbols rather than Ensembl IDs. A
+reliable annotation layer makes it possible to:
+
+- keep the original `gene_id`
+- recover a display-ready `symbol`
+- attach gene-level metadata such as name and biotype
+- create symbol-based matrices for deconvolution and scoring
+
+## Annotation strategy
+
+The default design is a coverage-first cascade:
+
+1.  `biomaRt` at a fixed Ensembl release (`v102` by default)
+2.  `org.Hs.eg.db` or `org.Mm.eg.db`
+3.  optional `EnsDb` packages
+
+Each stage only fills missing fields left by the previous stage. This is
+why `expranno` can often recover more usable annotation than a
+single-source lookup.
+
+This also makes the package behavior much closer to a careful manual
+annotation workflow. A user can reason about it as:
+
+1.  ask Ensembl first
+2.  fill missing symbols or names from `OrgDb`
+3.  fill structural fields from `EnsDb`
+
+## Annotation engines in detail
+
+`expranno` exposes five annotation engines.
+
+### `hybrid`
+
+This is the recommended default. It is designed to maximize annotation
+coverage by filling missing fields progressively across multiple
+sources.
+
+Human:
+
+1.  `biomaRt`
+2.  `org.Hs.eg.db`
+3.  optional `EnsDb.Hsapiens.v86`
+
+Mouse:
+
+1.  `biomaRt`
+2.  `org.Mm.eg.db`
+3.  optional `EnsDb.Mmusculus.v79`
+
+Use this when the goal is the highest practical annotation rate.
+`expranno` also records which source supplied each chosen field and
+stores unioned candidates for ambiguity review.
+
+### `biomart`
+
+This uses only `biomaRt`. It is convenient when you want one consistent
+Ensembl-oriented source, and in `expranno` it is tied to a fixed Ensembl
+release by default for better reproducibility.
+
+### `orgdb`
+
+This uses only `org.Hs.eg.db` or `org.Mm.eg.db`. It is useful for stable
+symbol and identifier mapping, but it does not aim to be the richest
+single-source annotation path.
+
+### `ensdb`
+
+This uses only `EnsDb`. It is especially useful for coordinate and
+biotype-oriented annotation fields.
+
+### `none`
+
+This skips external lookup and only keeps normalized Ensembl IDs. It is
+mainly useful for tests, examples, and lightweight documentation builds.
+
+## When to use each engine
+
+- Use `"hybrid"` for real analysis.
+- Use `"biomart"` if you want a single online Ensembl source.
+- Use `"orgdb"` if you need a local annotation mapping layer.
+- Use `"ensdb"` if gene model fields are the main target.
+- Use `"none"` for dry runs, docs, and testing package flow without
+  external dependencies.
+
+## Why annotation coverage is a first-class output
+
+`expranno` does not treat annotation as a hidden preprocessing step. The
+coverage report is part of the workflow because it answers the most
+important downstream question immediately:
+
+- is the annotation complete enough for symbol-based analyses?
+
+In practice, the coverage report should be checked before running
+Deconvolution or Signature analysis. Strong `symbol` and `gene_name`
+coverage usually indicates that the expression matrix is ready for those
+steps, while weak coverage is often a sign that the species or backend
+configuration needs attention.
+
+The package now writes three annotation-side files because coverage
+alone is not enough:
+
+- `annotation_report.csv` for per-field coverage
+- `annotation_ambiguity.csv` for multi-candidate mappings
+- `annotation_provenance.csv` for backend release, package, and run-date
+  tracking
+
+Together these files answer:
+
+- how much annotation was recovered?
+- where did it come from?
+- which rows still need human review?
+
+For repeated lab workflows, the package now also ships built-in presets
+such as `human_tpm_v102` and `mouse_tpm_v102`. These are meant to make
+species, Ensembl release, and version stripping explicit instead of
+implicit.
+
+The preset table exposed by
+[`list_annotation_presets()`](https://dai540.github.io/expranno/reference/list_annotation_presets.md)
+also documents recommended input scale, symbol priority, fallback order,
+and bundled truth resources so a lab can standardize not only
+annotation, but also its validation examples.
+
+## Data shape choices
+
+`expranno` keeps two complementary representations:
+
+- a wide annotated matrix for file export
+- a long merged table for downstream analysis
+
+The wide representation is best for exchange and reproducibility:
+
+- `expr_anno.csv`
+
+The long representation is best for plotting, grouped summaries, and
+sample-level joins:
+
+- `expr_meta_merged.csv`
+
+For Bioconductor-first projects, the package also now provides
+[`as_expranno_input()`](https://dai540.github.io/expranno/reference/as_expranno_input.md)
+so a `SummarizedExperiment` can be converted into the same strict
+contract without manual reshaping.
+
+The reverse direction is now supported too.
+[`as_expranno_se()`](https://dai540.github.io/expranno/reference/as_expranno_se.md)
+converts an `expranno_result` or `expranno_annotation` into a
+`SummarizedExperiment` with:
+
+- annotated expression in the main assay
+- annotation fields in `rowData`
+- sample metadata in `colData`
+- optional signature and deconvolution outputs appended as sample-level
+  `colData` columns
+
+## Duplicate symbol strategy
+
+Many downstream methods operate on gene symbols rather than Ensembl IDs,
+so duplicated symbols have to be collapsed after annotation. `expranno`
+now exposes that choice directly instead of silently summing everything.
+
+- for count-like matrices, the default `"auto"` rule uses `"sum"`
+- for abundance-like or log-scale matrices, the default `"auto"` rule
+  uses `"mean"`
+
+This matters because summing TPM-like or log-scale values is usually not
+a good default. If a project needs a different rule, the strategy can be
+set explicitly to `"sum"`, `"mean"`, `"max"`, or `"first"`.
+
+## Benchmarking the annotation layer
+
+Because coverage-first design should be measurable, `expranno` now
+includes
+[`benchmark_annotation_engines()`](https://dai540.github.io/expranno/reference/benchmark_annotation_engines.md).
+That function compares `none`, `biomart`, `orgdb`, `ensdb`, and `hybrid`
+on the same input and reports:
+
+- annotated gene counts
+- per-field coverage
+- ambiguity burden
+
+This is the package’s main answer to the question, “Did the hybrid
+engine actually improve annotation on this dataset?”
+
+## Validation beyond coverage
+
+Coverage is necessary but not sufficient. `expranno` now also includes
+[`validate_annotation_engines()`](https://dai540.github.io/expranno/reference/validate_annotation_engines.md),
+which compares chosen fields against a truth table keyed by Ensembl gene
+ID. This supports a second question:
+
+- are the recovered labels correct for the genes we already trust?
+
+## Downstream analyses
+
+After annotation and merging, the package supports:
+
+- immune deconvolution with `immunedeconv`
+- pathway or signature scoring with GSVA or ssGSEA
+
+Both are designed to write explicit CSV outputs so that results are easy
+to inspect outside R.
+
+For deconvolution, `expranno` forwards method-specific arguments to
+`immunedeconv`. This is important for methods such as `timer` and
+`consensus_tme`, which require an `indications` vector.
+
+For signature scoring, `expranno` now uses the current GSVA
+parameter-object workflow (`gsvaParam()` / `ssgseaParam()`) when that
+API is available, while keeping a legacy fallback for older GSVA
+versions.
+
+The full wrapper also writes `session_info.txt` so that package versions
+and the R runtime used for a result directory can be recovered later.
+
+## Recommended order of inspection
+
+For a production analysis, the usual order is:
+
+1.  validate `expr` and `meta`
+2.  inspect `expr_anno.csv`
+3.  inspect the annotation coverage report
+4.  inspect `expr_meta_merged.csv`
+5.  run Deconvolution
+6.  run Signature analysis

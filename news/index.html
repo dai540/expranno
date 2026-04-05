@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,16 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.3.1" id="expranno-231">expranno 2.3.1<a class="anchor" aria-label="anchor" href="#expranno-231"></a></h2>
+<ul><li>Fixed the pkgdown GitHub Actions workflow by allowing <code>pkgdown</code> to install the local package before building reference examples.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.3.0" id="expranno-230">expranno 2.3.0<a class="anchor" aria-label="anchor" href="#expranno-230"></a></h2>
+<ul><li>Synchronized the public version across <code>DESCRIPTION</code>, <code>NEWS.md</code>, <code>README.md</code>, citations, and the next pkgdown deployment.</li>
+<li>Slimmed the repository by dropping generated <code>docs/</code> from <code>main</code> and relying on the pkgdown workflow to rebuild and publish the site.</li>
+<li>Removed redundant figure assets and simplified the pkgdown workflow so the source tree stays smaller and easier to maintain.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.2.2" id="expranno-222">expranno 2.2.2<a class="anchor" aria-label="anchor" href="#expranno-222"></a></h2>
 <ul><li>Installed <code>SummarizedExperiment</code>, <code>S4Vectors</code>, and <code>SingleCellExperiment</code> in GitHub Actions so Bioconductor-output tests and vignettes pass consistently across the CI matrix.</li>
 </ul></div>
@@ -56,13 +66,6 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.2.0" id="expranno-220">expranno 2.2.0<a class="anchor" aria-label="anchor" href="#expranno-220"></a></h2>
-<ul><li>Added bundled human and mouse truth resources through <code><a href="../reference/example_annotation_truth.html">example_annotation_truth()</a></code> so validation examples can be reproduced without a custom truth table.</li>
-<li>Added <code><a href="../reference/as_expranno_se.html">as_expranno_se()</a></code> to move annotated expression, metadata, and available sample-level outputs back into a <code>SummarizedExperiment</code>.</li>
-<li>Expanded <code><a href="../reference/list_annotation_presets.html">list_annotation_presets()</a></code> to document recommended input scale, backend order, symbol-priority rules, and bundled truth-table pairings.</li>
-<li>Added a reusable optional-backend installer script and a starter Dockerfile under <code>inst/</code> for more reproducible setups.</li>
-</ul></div>
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.2.0" id="expranno-220-1">expranno 2.2.0<a class="anchor" aria-label="anchor" href="#expranno-220-1"></a></h2>
 <ul><li>Added <code><a href="../reference/example_annotation_truth.html">example_annotation_truth()</a></code> plus bundled human and mouse truth tables so validation examples no longer depend on ad hoc local files.</li>
 <li>Added <code><a href="../reference/as_expranno_se.html">as_expranno_se()</a></code> to convert annotated outputs back into a <code>SummarizedExperiment</code> with annotation in <code>rowData</code> and sample-level outputs in <code>colData</code>.</li>
 <li>Expanded <code><a href="../reference/list_annotation_presets.html">list_annotation_presets()</a></code> with recommended input scale, backend cascade, symbol priority, and bundled validation resource columns.</li>
