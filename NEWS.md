@@ -1,3 +1,9 @@
+# expranno 2.2.1
+
+- Guarded the Bioconductor-output vignette example in `getting-started.Rmd`
+  so `pkgdown`, `R CMD check`, and release builds no longer fail when
+  `SummarizedExperiment` is not installed.
+
 # expranno 2.2.0
 
 - Added bundled human and mouse truth resources through

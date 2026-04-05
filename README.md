@@ -79,7 +79,7 @@ remotes::install_github("dai540/expranno")
 Or install from a source tarball:
 
 ```r
-install.packages("path/to/expranno_2.2.0.tar.gz", repos = NULL, type = "source")
+install.packages("path/to/expranno_2.2.1.tar.gz", repos = NULL, type = "source")
 ```
 
 Optional backends:

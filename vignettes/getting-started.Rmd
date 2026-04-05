@@ -234,8 +234,12 @@ annotated <- annotate_expr(
   verbose = FALSE
 )
 
-se <- as_expranno_se(annotated)
-se
+if (requireNamespace("SummarizedExperiment", quietly = TRUE)) {
+  se <- as_expranno_se(annotated)
+  se
+} else {
+  "Install SummarizedExperiment to use as_expranno_se()."
+}
 ```
 
 If your data already live in a `SummarizedExperiment`, you can start
