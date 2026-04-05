@@ -1,11 +1,21 @@
 # expranno
 
-![expranno workflow](reference/figures/expranno-flow.svg)
+[![pkgdown](https://img.shields.io/badge/docs-pkgdown-315c86)](https://dai540.github.io/expranno/)
+[![R-CMD-check](https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml)
+[![GitHub
+release](https://img.shields.io/github/v/release/dai540/expranno)](https://github.com/dai540/expranno/releases)
+[![License:
+MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://dai540.github.io/expranno/LICENSE.txt)
 
 `expranno` is an R package for RNA-seq workflows that start from an
 expression matrix and sample metadata, then move through gene
-annotation, metadata integration, immune deconvolution, and signature
-scoring.
+annotation, metadata integration, Deconvolution, and Signature analysis.
+
+It is intentionally a downstream orchestration layer rather than a full
+RNA-seq pipeline. Alignment, counting, QC, and differential expression
+stay outside the package. The goal here is to take an existing
+Ensembl-ID expression matrix and make it annotation-aware,
+metadata-aligned, and ready for deconvolution or signature scoring.
 
 The package is designed for human and mouse expression matrices where:
 
@@ -17,36 +27,66 @@ The package is designed for human and mouse expression matrices where:
 
 - gene annotation from Ensembl IDs
 - expression and metadata integration
-- immune deconvolution with `immunedeconv`
-- signature scoring with GSVA or ssGSEA
+- Deconvolution with `immunedeconv`
+- Signature analysis with GSVA or ssGSEA
+
+For repeated human or mouse projects, the package now also exposes fixed
+annotation presets such as `human_tpm_v102` and `mouse_tpm_v102` so a
+lab can standardize release, species, and version-stripping behavior
+instead of re-specifying those knobs each time.
+
+The package also bundles small human and mouse truth tables through
+[`example_annotation_truth()`](https://dai540.github.io/expranno/reference/example_annotation_truth.md),
+making it easier to demonstrate or regress annotation validation without
+writing a custom truth table first.
 
 Rather than forcing a single annotation backend, `expranno` uses a
 coverage-first strategy that can combine:
 
-- `biomaRt`
+- `biomaRt` with a fixed Ensembl release (`v102` by default)
 - `org.Hs.eg.db` or `org.Mm.eg.db`
 - optional `EnsDb` packages
 
 This makes it possible to recover more symbols, names, and identifiers
-than a single-source annotation pass.
+than a single-source annotation pass, while still recording which
+backend filled each field.
+
+![expranno workflow](reference/figures/workflow-overview.svg)
+
+expranno workflow
 
 `expranno` does this in a simple analysis sequence:
 
 1.  validate `expr` and `meta`
 2.  annotate genes and write `expr_anno.csv`
-3.  merge expression and metadata into `expr_meta_merged.csv`
-4.  run immune deconvolution and save one table per method
-5.  run GSVA or ssGSEA and save one score table per method
-
-  
+3.  save `annotation_report.csv`, `annotation_ambiguity.csv`, and
+    `annotation_provenance.csv`
+4.  optionally validate against a truth table and write
+    `annotation_validation_*.csv`
+5.  merge expression and metadata into `expr_meta_merged.csv`
+6.  run Deconvolution and save one table per method
+7.  run Signature analysis and save one score table per method
 
 ## Installation
 
-Local install:
+Install from GitHub:
 
 ``` r
-# install.packages("pak")
-# pak::pak("path/to/expranno")
+install.packages("pak")
+pak::pak("dai540/expranno")
+```
+
+Or:
+
+``` r
+install.packages("remotes")
+remotes::install_github("dai540/expranno")
+```
+
+Or install from a source tarball:
+
+``` r
+install.packages("path/to/expranno_2.2.1.tar.gz", repos = NULL, type = "source")
 ```
 
 Optional backends:
@@ -65,27 +105,89 @@ BiocManager::install(c(
 ))
 ```
 
+Or use the bundled installer script after the package is installed:
+
+``` r
+source(system.file("scripts", "install_optional_backends.R", package = "expranno"))
+expranno_install_optional_backends()
+```
+
+For containerized and reproducible installs, `expranno` also ships a
+starter Dockerfile at
+`system.file("docker", "Dockerfile", package = "expranno")`.
+
+Then load the package:
+
+``` r
+library(expranno)
+```
+
+## Citation
+
+If you use `expranno`, cite the package as:
+
+> Dai (2026). *expranno: Expression Annotation, Metadata Integration,
+> Deconvolution, and Signature Analysis*. R package.
+> <https://dai540.github.io/expranno/>
+
+You can also retrieve the citation from R:
+
+``` r
+citation("expranno")
+```
+
+## Author
+
+`expranno` is developed and maintained by Dai Dai.
+
 ## Workflow Overview
 
 The main wrapper is
-[`run_expranno()`](https://example.com/expranno/reference/run_expranno.md).
+[`run_expranno()`](https://dai540.github.io/expranno/reference/run_expranno.md).
 It orchestrates the whole pipeline from raw inputs to saved outputs.
 
 ``` r
 result <- expranno::run_expranno(
   expr = expr,
   meta = meta,
-  species = "human",
-  annotation_engine = "hybrid",
+  annotation_preset = "human_tpm_v102",
+  expr_scale = "abundance",
+  duplicate_strategy = "mean",
   output_dir = "results",
   run_deconvolution = TRUE,
+  deconv_args = list(indications = rep("SKCM", ncol(expr) - 1L)),
   run_signature = TRUE,
   geneset_file = "hallmark.gmt",
-  signature_method = "both"
+  signature_method = "both",
+  signature_kcdf = "Gaussian"
 )
 ```
 
+`deconv_args` is available for method-specific `immunedeconv` arguments.
+This is especially important for `timer` and `consensus_tme`, which
+require an `indications` vector.
+
+[`annotate_expr()`](https://dai540.github.io/expranno/reference/annotate_expr.md)
+and
+[`run_expranno()`](https://dai540.github.io/expranno/reference/run_expranno.md)
+also accept `SummarizedExperiment`-like inputs. If your assay and
+metadata already live in a Bioconductor container, use `assay_name` and
+`gene_id_col` to coerce them into the package contract without manual
+CSV reshaping. After a run, use
+[`as_expranno_se()`](https://dai540.github.io/expranno/reference/as_expranno_se.md)
+to move annotated expression, metadata, and available sample-level
+downstream outputs back into a `SummarizedExperiment`.
+
+`expr_scale` and `duplicate_strategy` control how duplicated symbols are
+collapsed before downstream analyses. The default `"auto"` strategy uses
+`"sum"` for count-like data and `"mean"` for abundance or log-scale
+data.
+
 ## Input Contract
+
+``` r
+demo <- expranno::example_expranno_data()
+```
 
 `expr` must be a gene-by-sample table.
 
@@ -114,11 +216,17 @@ head(demo$meta)
 `expranno` is intentionally split into one end-to-end wrapper and four
 stepwise building blocks.
 
-- [`run_expranno()`](https://example.com/expranno/reference/run_expranno.md)
-- [`annotate_expr()`](https://example.com/expranno/reference/annotate_expr.md)
-- [`merge_expr_meta()`](https://example.com/expranno/reference/merge_expr_meta.md)
-- [`run_cell_deconvolution()`](https://example.com/expranno/reference/run_cell_deconvolution.md)
-- [`run_signature_analysis()`](https://example.com/expranno/reference/run_signature_analysis.md)
+- [`run_expranno()`](https://dai540.github.io/expranno/reference/run_expranno.md)
+- [`annotate_expr()`](https://dai540.github.io/expranno/reference/annotate_expr.md)
+- [`benchmark_annotation_engines()`](https://dai540.github.io/expranno/reference/benchmark_annotation_engines.md)
+- [`validate_annotation_engines()`](https://dai540.github.io/expranno/reference/validate_annotation_engines.md)
+- [`merge_expr_meta()`](https://dai540.github.io/expranno/reference/merge_expr_meta.md)
+- [`run_cell_deconvolution()`](https://dai540.github.io/expranno/reference/run_cell_deconvolution.md)
+- [`run_signature_analysis()`](https://dai540.github.io/expranno/reference/run_signature_analysis.md)
+- [`as_expranno_input()`](https://dai540.github.io/expranno/reference/as_expranno_input.md)
+- [`as_expranno_se()`](https://dai540.github.io/expranno/reference/as_expranno_se.md)
+- [`list_annotation_presets()`](https://dai540.github.io/expranno/reference/list_annotation_presets.md)
+- [`example_annotation_truth()`](https://dai540.github.io/expranno/reference/example_annotation_truth.md)
 
 ## Minimal Example
 
@@ -142,53 +250,137 @@ res <- expranno::run_expranno(
 names.
 
 - `expr_anno.csv`
+- `annotation_report.csv`
+- `annotation_ambiguity.csv`
+- `annotation_provenance.csv`
+- `annotation_validation_summary.csv`
+- `annotation_validation_detail.csv`
 - `expr_meta_merged.csv`
 - `cell_deconv_<method>.csv`
 - `signature_gsva.csv`
 - `signature_ssgsea.csv`
+- `session_info.txt`
 
 The high-level wrapper is
-[`run_expranno()`](https://example.com/expranno/reference/run_expranno.md),
+[`run_expranno()`](https://dai540.github.io/expranno/reference/run_expranno.md),
 but the package also exposes smaller steps:
 
-- [`annotate_expr()`](https://example.com/expranno/reference/annotate_expr.md)
-- [`merge_expr_meta()`](https://example.com/expranno/reference/merge_expr_meta.md)
-- [`run_cell_deconvolution()`](https://example.com/expranno/reference/run_cell_deconvolution.md)
-- [`run_signature_analysis()`](https://example.com/expranno/reference/run_signature_analysis.md)
+- [`annotate_expr()`](https://dai540.github.io/expranno/reference/annotate_expr.md)
+- [`benchmark_annotation_engines()`](https://dai540.github.io/expranno/reference/benchmark_annotation_engines.md)
+- [`merge_expr_meta()`](https://dai540.github.io/expranno/reference/merge_expr_meta.md)
+- [`run_cell_deconvolution()`](https://dai540.github.io/expranno/reference/run_cell_deconvolution.md)
+- [`run_signature_analysis()`](https://dai540.github.io/expranno/reference/run_signature_analysis.md)
+
+## What To Inspect First
+
+After a real run with `annotation_engine = "hybrid"`, the first files
+and tables to inspect are:
+
+- `expr_anno.csv`
+- `annotation_report.csv`
+- `annotation_ambiguity.csv`
+- `annotation_provenance.csv`
+- `annotation_validation_summary.csv`
+- `expr_meta_merged.csv`
+
+The practical checklist is:
+
+- confirm `symbol` coverage is high enough for downstream symbol-based
+  tools
+- confirm `gene_name` coverage tracks with `symbol`
+- inspect any multi-hit cases in `annotation_ambiguity.csv`
+- record the Ensembl release, OrgDb package, and run date from
+  `annotation_provenance.csv`
+- if a truth table is available, inspect exact-match rates in
+  `annotation_validation_summary.csv`
+- confirm merged sample labels line up with the expected `meta` rows
+- use the merged table as the common input for Deconvolution and
+  Signature analyses
+
+For signature scoring, also confirm that `signature_kcdf` matches the
+expression scale you are using. Count-like inputs usually call for
+`"Poisson"`, while continuous log-scale inputs are usually better
+matched by `"Gaussian"`.
+
+## Presets and Truth Tables
+
+The built-in presets are meant to standardize repeated workflows.
+
+``` r
+expranno::list_annotation_presets()
+```
+
+The bundled truth resources make validation examples reproducible.
+
+``` r
+expranno::example_annotation_truth("human")
+expranno::example_annotation_truth("mouse")
+```
 
 ## Documentation
 
 The package website includes:
 
 - a getting started article
-- a step-by-step case study tutorial
+- a preset reference article
+- a benchmarking and reproducibility article
+- human and mouse step-by-step case studies
 - a theory and design article
 - a function reference
+
+Website: <https://dai540.github.io/expranno/>
+
+## Backend Smoke Test
+
+For a local optional-backend smoke test, run:
+
+``` r
+source(system.file("scripts", "run_smoke_optional_backends.R", package = "expranno"))
+```
+
+Or run the installed script directly with an output directory:
+
+``` r
+script <- system.file("scripts", "run_smoke_optional_backends.R", package = "expranno")
+system2(file.path(R.home("bin"), "Rscript"), c(script, "smoke-outputs"))
+```
 
 # Package index
 
 ## Main workflows
 
-- [`run_expranno()`](https://example.com/expranno/reference/run_expranno.md)
+- [`run_expranno()`](https://dai540.github.io/expranno/reference/run_expranno.md)
   : Run the full expranno workflow
-- [`annotate_expr()`](https://example.com/expranno/reference/annotate_expr.md)
+- [`annotate_expr()`](https://dai540.github.io/expranno/reference/annotate_expr.md)
   : Annotate an expression matrix
-- [`merge_expr_meta()`](https://example.com/expranno/reference/merge_expr_meta.md)
+- [`benchmark_annotation_engines()`](https://dai540.github.io/expranno/reference/benchmark_annotation_engines.md)
+  : Benchmark annotation engines on the same input
+- [`validate_annotation_engines()`](https://dai540.github.io/expranno/reference/validate_annotation_engines.md)
+  : Validate annotation engines against a truth table
+- [`merge_expr_meta()`](https://dai540.github.io/expranno/reference/merge_expr_meta.md)
   : Merge annotated expression and metadata
-- [`run_cell_deconvolution()`](https://example.com/expranno/reference/run_cell_deconvolution.md)
+- [`run_cell_deconvolution()`](https://dai540.github.io/expranno/reference/run_cell_deconvolution.md)
   : Run immune deconvolution
-- [`run_signature_analysis()`](https://example.com/expranno/reference/run_signature_analysis.md)
+- [`run_signature_analysis()`](https://dai540.github.io/expranno/reference/run_signature_analysis.md)
   : Run GSVA or ssGSEA signature scoring
 
 ## Input helpers
 
-- [`validate_expr()`](https://example.com/expranno/reference/validate_expr.md)
+- [`as_expranno_input()`](https://dai540.github.io/expranno/reference/as_expranno_input.md)
+  : Coerce Bioconductor containers to expranno inputs
+- [`as_expranno_se()`](https://dai540.github.io/expranno/reference/as_expranno_se.md)
+  : Convert expranno output to SummarizedExperiment
+- [`list_annotation_presets()`](https://dai540.github.io/expranno/reference/list_annotation_presets.md)
+  : List built-in annotation presets
+- [`example_annotation_truth()`](https://dai540.github.io/expranno/reference/example_annotation_truth.md)
+  : Example annotation truth tables
+- [`validate_expr()`](https://dai540.github.io/expranno/reference/validate_expr.md)
   : Validate an expression table
-- [`validate_meta()`](https://example.com/expranno/reference/validate_meta.md)
+- [`validate_meta()`](https://dai540.github.io/expranno/reference/validate_meta.md)
   : Validate a metadata table
-- [`read_genesets()`](https://example.com/expranno/reference/read_genesets.md)
+- [`read_genesets()`](https://dai540.github.io/expranno/reference/read_genesets.md)
   : Read gene sets from a GMT file
-- [`example_expranno_data()`](https://example.com/expranno/reference/example_expranno_data.md)
+- [`example_expranno_data()`](https://dai540.github.io/expranno/reference/example_expranno_data.md)
   : Example expression and metadata inputs
 
 # Articles
@@ -196,16 +388,20 @@ The package website includes:
 ### Core tutorials
 
 - [Getting Started with
-  expranno](https://example.com/expranno/articles/getting-started.md):
+  expranno](https://dai540.github.io/expranno/articles/getting-started.md):
+- [Preset
+  Reference](https://dai540.github.io/expranno/articles/preset-reference.md):
+
+### Theory and design
+
 - [Theory and
-  Design](https://example.com/expranno/articles/theory-and-design.md):
+  Design](https://dai540.github.io/expranno/articles/theory-and-design.md):
+- [Benchmarking and
+  Reproducibility](https://dai540.github.io/expranno/articles/benchmarking-and-reproducibility.md):
 
 ### Case studies
 
-- [Case Study: Toy RNA-seq
-  Workflow](https://example.com/expranno/articles/case-study-toy-rnaseq.md):
-
-### Design
-
-- [Theory and
-  Design](https://example.com/expranno/articles/theory-and-design.md):
+- [Case Study: Human RNA-seq
+  Workflow](https://dai540.github.io/expranno/articles/case-study-human-rnaseq.md):
+- [Case Study: Mouse RNA-seq
+  Workflow](https://dai540.github.io/expranno/articles/case-study-mouse-rnaseq.md):
