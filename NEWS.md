@@ -1,3 +1,9 @@
+# expranno 2.2.2
+
+- Installed `SummarizedExperiment`, `S4Vectors`, and
+  `SingleCellExperiment` in GitHub Actions so Bioconductor-output tests
+  and vignettes pass consistently across the CI matrix.
+
 # expranno 2.2.1
 
 - Guarded the Bioconductor-output vignette example in `getting-started.Rmd`

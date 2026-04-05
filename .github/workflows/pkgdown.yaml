@@ -32,6 +32,9 @@ jobs:
             any::roxygen2
             any::knitr
             any::rmarkdown
+            any::S4Vectors
+            any::SummarizedExperiment
+            any::SingleCellExperiment
 
       - name: Document
         run: roxygen2::roxygenise()

@@ -39,6 +39,9 @@ jobs:
             any::roxygen2
             any::knitr
             any::rmarkdown
+            any::S4Vectors
+            any::SummarizedExperiment
+            any::SingleCellExperiment
             any::testthat
 
       - name: Document
