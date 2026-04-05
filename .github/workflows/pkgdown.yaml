@@ -43,7 +43,7 @@ jobs:
       - name: Build site
         run: |
           unlink("docs", recursive = TRUE, force = TRUE)
-          pkgdown::build_site(pkg = ".", new_process = FALSE, install = FALSE)
+          pkgdown::build_site(pkg = ".", new_process = FALSE, install = TRUE)
         shell: Rscript {0}
 
       - name: Deploy site

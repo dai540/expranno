@@ -1,3 +1,8 @@
+# expranno 2.3.1
+
+- Fixed the pkgdown GitHub Actions workflow by allowing `pkgdown` to
+  install the local package before building reference examples.
+
 # expranno 2.3.0
 
 - Synchronized the public version across `DESCRIPTION`, `NEWS.md`,
