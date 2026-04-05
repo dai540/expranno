@@ -125,23 +125,41 @@ if (is.null(validation)) {
 }
 
 signature_error <- NULL
-signatures <- tryCatch(
-  run_signature_analysis(
-    expr_anno = human_annotation$expr_anno,
-    geneset_file = system.file("extdata", "hallmark_demo.gmt", package = "expranno"),
-    method = "both",
-    expr_scale = "count",
-    duplicate_strategy = "sum",
-    kcdf = "Poisson",
-    output_dir = human_dir
-  ),
-  error = function(e) {
-    signature_error <<- conditionMessage(e)
-    NULL
-  }
+has_signature_genes <- any(
+  !is.na(human_annotation$expr_anno$symbol) &
+    human_annotation$expr_anno$symbol != ""
 )
+signatures <- NULL
 
-if (is.null(signatures)) {
+if (isTRUE(has_signature_genes)) {
+  signatures <- tryCatch(
+    run_signature_analysis(
+      expr_anno = human_annotation$expr_anno,
+      geneset_file = system.file("extdata", "hallmark_demo.gmt", package = "expranno"),
+      method = "both",
+      expr_scale = "count",
+      duplicate_strategy = "sum",
+      kcdf = "Poisson",
+      output_dir = human_dir
+    ),
+    error = function(e) {
+      signature_error <<- conditionMessage(e)
+      NULL
+    }
+  )
+}
+
+if (!isTRUE(has_signature_genes)) {
+  notes <- rbind(
+    notes,
+    data.frame(
+      component = "signature",
+      status = "skipped",
+      detail = "no annotated symbols available for signature scoring",
+      stringsAsFactors = FALSE
+    )
+  )
+} else if (is.null(signatures)) {
   notes <- rbind(
     notes,
     data.frame(

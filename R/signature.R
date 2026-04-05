@@ -162,6 +162,16 @@ run_signature_analysis <- function(
     expr_scale = expr_scale,
     duplicate_strategy = duplicate_strategy
   )
+  if (nrow(expr_matrix) == 0L) {
+    stop(
+      sprintf(
+        "No non-missing values were found in `expr_anno$%s` after annotation filtering. Run annotation with a backend that populates `%s`, or choose a populated `gene_column`.",
+        gene_column,
+        gene_column
+      ),
+      call. = FALSE
+    )
+  }
 
   methods <- if (method == "both") c("gsva", "ssgsea") else method
   if (!is.null(output_dir)) {

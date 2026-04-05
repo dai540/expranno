@@ -234,6 +234,12 @@ resolve_duplicate_strategy <- function(duplicate_strategy, expr_scale, expr_matr
 }
 
 aggregate_duplicate_rows <- function(expr_matrix, gene_ids, duplicate_strategy) {
+  if (length(gene_ids) == 0L || nrow(expr_matrix) == 0L) {
+    out <- expr_matrix[0, , drop = FALSE]
+    rownames(out) <- character(0)
+    return(out)
+  }
+
   if (identical(duplicate_strategy, "first")) {
     keep <- !duplicated(gene_ids)
     out <- expr_matrix[keep, , drop = FALSE]
@@ -264,6 +270,9 @@ collapse_symbol_matrix <- function(
   }
 
   sample_cols <- sample_columns_from_expr_anno(expr_anno)
+  if (length(sample_cols) == 0L) {
+    stop("`expr_anno` does not contain any sample columns.", call. = FALSE)
+  }
   keep <- !is.na(expr_anno[[gene_column]]) & expr_anno[[gene_column]] != ""
   expr_mat <- numeric_expression_matrix(expr_anno, sample_cols = sample_cols, keep = keep)
   strategy <- resolve_duplicate_strategy(

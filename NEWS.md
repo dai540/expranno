@@ -15,6 +15,9 @@
 - Added `SummarizedExperiment` / `SingleCellExperiment` input coercion through
   `as_expranno_input()`.
 - Added a dedicated GitHub Actions workflow for optional-backend smoke tests.
+- Improved signature scoring failures so empty annotation columns now raise a
+  clear error instead of bubbling up as `no rows to aggregate`, and the
+  optional smoke runner skips signature scoring when no symbols were annotated.
 
 # expranno 2.0.2
 
