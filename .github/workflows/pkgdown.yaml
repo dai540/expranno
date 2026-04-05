@@ -42,32 +42,8 @@ jobs:
 
       - name: Build site
         run: |
-          pkg <- "."
-          pkgdown::build_home(pkg)
-          pkgdown::build_reference(pkg)
-          for (nm in c(
-            "getting-started",
-            "preset-reference",
-            "benchmarking-and-reproducibility",
-            "theory-and-design",
-            "case-study-human-rnaseq",
-            "case-study-mouse-rnaseq"
-          )) {
-            pkgdown:::build_article(
-              nm,
-              pkg = pkg,
-              new_process = FALSE,
-              quiet = FALSE
-            )
-          }
-          pkgdown:::build_articles_index(pkg)
-          stale_md <- list.files("docs", pattern = "\\.md$", recursive = TRUE, full.names = TRUE)
-          if (length(stale_md) > 0) {
-            unlink(stale_md)
-          }
-          if (file.exists("docs/PULL_REQUEST_TEMPLATE.html")) {
-            unlink("docs/PULL_REQUEST_TEMPLATE.html")
-          }
+          unlink("docs", recursive = TRUE, force = TRUE)
+          pkgdown::build_site(pkg = ".", new_process = FALSE, install = FALSE)
         shell: Rscript {0}
 
       - name: Deploy site

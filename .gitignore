@@ -1,0 +1,5 @@
+docs/
+*.tar.gz
+*.Rcheck/
+expranno-smoke-*/
+.DS_Store

@@ -1,3 +1,12 @@
+# expranno 2.3.0
+
+- Synchronized the public version across `DESCRIPTION`, `NEWS.md`,
+  `README.md`, citations, and the next pkgdown deployment.
+- Slimmed the repository by dropping generated `docs/` from `main` and
+  relying on the pkgdown workflow to rebuild and publish the site.
+- Removed redundant figure assets and simplified the pkgdown workflow so
+  the source tree stays smaller and easier to maintain.
+
 # expranno 2.2.2
 
 - Installed `SummarizedExperiment`, `S4Vectors`, and
@@ -9,19 +18,6 @@
 - Guarded the Bioconductor-output vignette example in `getting-started.Rmd`
   so `pkgdown`, `R CMD check`, and release builds no longer fail when
   `SummarizedExperiment` is not installed.
-
-# expranno 2.2.0
-
-- Added bundled human and mouse truth resources through
-  `example_annotation_truth()` so validation examples can be reproduced
-  without a custom truth table.
-- Added `as_expranno_se()` to move annotated expression, metadata, and
-  available sample-level outputs back into a `SummarizedExperiment`.
-- Expanded `list_annotation_presets()` to document recommended input
-  scale, backend order, symbol-priority rules, and bundled truth-table
-  pairings.
-- Added a reusable optional-backend installer script and a starter
-  Dockerfile under `inst/` for more reproducible setups.
 
 # expranno 2.2.0
 
