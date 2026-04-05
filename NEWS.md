@@ -1,3 +1,33 @@
+# expranno 2.2.0
+
+- Added bundled human and mouse truth resources through
+  `example_annotation_truth()` so validation examples can be reproduced
+  without a custom truth table.
+- Added `as_expranno_se()` to move annotated expression, metadata, and
+  available sample-level outputs back into a `SummarizedExperiment`.
+- Expanded `list_annotation_presets()` to document recommended input
+  scale, backend order, symbol-priority rules, and bundled truth-table
+  pairings.
+- Added a reusable optional-backend installer script and a starter
+  Dockerfile under `inst/` for more reproducible setups.
+
+# expranno 2.2.0
+
+- Added `example_annotation_truth()` plus bundled human and mouse truth
+  tables so validation examples no longer depend on ad hoc local files.
+- Added `as_expranno_se()` to convert annotated outputs back into a
+  `SummarizedExperiment` with annotation in `rowData` and sample-level
+  outputs in `colData`.
+- Expanded `list_annotation_presets()` with recommended input scale,
+  backend cascade, symbol priority, and bundled validation resource
+  columns.
+- Added a preset reference vignette and surfaced preset/truth/Bioconductor
+  helpers more clearly in the README and pkgdown site.
+- Added a bundled optional-backend installation helper and Docker recipe
+  for more reproducible local backend validation.
+- Strengthened public-package metadata and CI coverage for release
+  workflows and cross-platform checks.
+
 # expranno 2.1.0
 
 - Reworked hybrid annotation around a fixed `biomaRt` release (`Ensembl v102`)

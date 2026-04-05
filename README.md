@@ -2,7 +2,8 @@
 
 [![pkgdown](https://img.shields.io/badge/docs-pkgdown-315c86)](https://dai540.github.io/expranno/)
 [![R-CMD-check](https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/dai540/expranno)](https://github.com/dai540/expranno/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 
 `expranno` is an R package for RNA-seq workflows that start from an
 expression matrix and sample metadata, then move through gene annotation,
@@ -31,6 +32,10 @@ For repeated human or mouse projects, the package now also exposes fixed
 annotation presets such as `human_tpm_v102` and `mouse_tpm_v102` so a
 lab can standardize release, species, and version-stripping behavior
 instead of re-specifying those knobs each time.
+
+The package also bundles small human and mouse truth tables through
+`example_annotation_truth()`, making it easier to demonstrate or regress
+annotation validation without writing a custom truth table first.
 
 Rather than forcing a single annotation backend, `expranno` uses a
 coverage-first strategy that can combine:
@@ -74,7 +79,7 @@ remotes::install_github("dai540/expranno")
 Or install from a source tarball:
 
 ```r
-install.packages("path/to/expranno_2.1.0.tar.gz", repos = NULL, type = "source")
+install.packages("path/to/expranno_2.2.0.tar.gz", repos = NULL, type = "source")
 ```
 
 Optional backends:
@@ -92,6 +97,17 @@ BiocManager::install(c(
   "GSVA"
 ))
 ```
+
+Or use the bundled installer script after the package is installed:
+
+```r
+source(system.file("scripts", "install_optional_backends.R", package = "expranno"))
+expranno_install_optional_backends()
+```
+
+For containerized and reproducible installs, `expranno` also ships a
+starter Dockerfile at `system.file("docker", "Dockerfile", package =
+"expranno")`.
 
 Then load the package:
 
@@ -147,6 +163,9 @@ require an `indications` vector.
 `SummarizedExperiment`-like inputs. If your assay and metadata already
 live in a Bioconductor container, use `assay_name` and `gene_id_col` to
 coerce them into the package contract without manual CSV reshaping.
+After a run, use `as_expranno_se()` to move annotated expression,
+metadata, and available sample-level downstream outputs back into a
+`SummarizedExperiment`.
 
 `expr_scale` and `duplicate_strategy` control how duplicated symbols are
 collapsed before downstream analyses. The default `"auto"` strategy uses
@@ -193,7 +212,9 @@ stepwise building blocks.
 - `run_cell_deconvolution()`
 - `run_signature_analysis()`
 - `as_expranno_input()`
+- `as_expranno_se()`
 - `list_annotation_presets()`
+- `example_annotation_truth()`
 
 ## Minimal Example
 
@@ -263,11 +284,27 @@ expression scale you are using. Count-like inputs usually call for
 `"Poisson"`, while continuous log-scale inputs are usually better matched
 by `"Gaussian"`.
 
+## Presets and Truth Tables
+
+The built-in presets are meant to standardize repeated workflows.
+
+```r
+expranno::list_annotation_presets()
+```
+
+The bundled truth resources make validation examples reproducible.
+
+```r
+expranno::example_annotation_truth("human")
+expranno::example_annotation_truth("mouse")
+```
+
 ## Documentation
 
 The package website includes:
 
 - a getting started article
+- a preset reference article
 - a benchmarking and reproducibility article
 - human and mouse step-by-step case studies
 - a theory and design article

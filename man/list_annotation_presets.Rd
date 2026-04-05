@@ -7,7 +7,8 @@
 list_annotation_presets()
 }
 \value{
-A \code{data.frame} describing the available presets.
+A \code{data.frame} describing the available presets, including
+expression-scale intent, backend order, and bundled truth-table resource.
 }
 \description{
 Returns the fixed annotation presets that ship with \code{expranno}. These presets

@@ -32,11 +32,7 @@ dir.create(human_deconv_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(mouse_deconv_dir, recursive = TRUE, showWarnings = FALSE)
 
 human_demo <- example_expranno_data("human")
-human_truth <- data.frame(
-  gene_id = human_demo$expr$gene_id,
-  symbol = c("TP53", "EGFR", "BRCA1"),
-  stringsAsFactors = FALSE
-)
+human_truth <- example_annotation_truth("human")[, c("gene_id", "symbol"), drop = FALSE]
 
 human_annotation <- annotate_expr(
   expr = human_demo$expr,

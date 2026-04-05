@@ -39,56 +39,8 @@ jobs:
           GITHUB_PAT: ${{ github.token }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          options(repos = BiocManager::repositories())
-          BiocManager::install(
-            c(
-              "AnnotationDbi",
-              "AnnotationFilter",
-              "annotate",
-              "Biobase",
-              "BiocParallel",
-              "biomaRt",
-              "ensembldb",
-              "EnsDb.Hsapiens.v86",
-              "EnsDb.Mmusculus.v79",
-              "genefilter",
-              "GSVA",
-              "preprocessCore",
-              "quantiseqr",
-              "SummarizedExperiment",
-              "S4Vectors",
-              "sva",
-              "org.Hs.eg.db",
-              "org.Mm.eg.db"
-            ),
-            ask = FALSE,
-            update = FALSE
-          )
-          install_github_optional <- function(repo) {
-            tryCatch(
-              remotes::install_github(repo, upgrade = "never"),
-              error = function(e) {
-                message(sprintf("Skipping optional GitHub backend %s: %s", repo, conditionMessage(e)))
-              }
-            )
-          }
-          install_github_optional("dviraran/xCell")
-          install_github_optional("GfellerLab/EPIC")
-          install_github_optional("grst/MCPcounter")
-          install_github_optional("grst/mMCPcounter")
-          install_github_optional("cansysbio/ConsensusTME")
-          if (!requireNamespace("immunedeconv", quietly = TRUE)) {
-            tryCatch(
-              remotes::install_github(
-                "omnideconv/immunedeconv",
-                upgrade = "never",
-                dependencies = FALSE
-              ),
-              error = function(e) {
-                message(sprintf("Skipping immunedeconv installation: %s", conditionMessage(e)))
-              }
-            )
-          }
+          source("inst/scripts/install_optional_backends.R")
+          expranno_install_optional_backends(allow_failures = TRUE)
 
       - name: Document
         run: roxygen2::roxygenise()

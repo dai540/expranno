@@ -137,6 +137,11 @@ such as `human_tpm_v102` and `mouse_tpm_v102`. These are meant to make
 species, Ensembl release, and version stripping explicit instead of
 implicit.
 
+The preset table exposed by `list_annotation_presets()` also documents
+recommended input scale, symbol priority, fallback order, and bundled
+truth resources so a lab can standardize not only annotation, but also
+its validation examples.
+
 ## Data shape choices
 
 `expranno` keeps two complementary representations:
@@ -156,6 +161,16 @@ sample-level joins:
 For Bioconductor-first projects, the package also now provides
 `as_expranno_input()` so a `SummarizedExperiment` can be converted into
 the same strict contract without manual reshaping.
+
+The reverse direction is now supported too. `as_expranno_se()` converts
+an `expranno_result` or `expranno_annotation` into a
+`SummarizedExperiment` with:
+
+- annotated expression in the main assay
+- annotation fields in `rowData`
+- sample metadata in `colData`
+- optional signature and deconvolution outputs appended as sample-level
+  `colData` columns
 
 ## Duplicate symbol strategy
 

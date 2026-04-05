@@ -44,6 +44,7 @@ jobs:
           pkgdown::build_reference(pkg)
           for (nm in c(
             "getting-started",
+            "preset-reference",
             "benchmarking-and-reproducibility",
             "theory-and-design",
             "case-study-human-rnaseq",
@@ -60,6 +61,9 @@ jobs:
           stale_md <- list.files("docs", pattern = "\\.md$", recursive = TRUE, full.names = TRUE)
           if (length(stale_md) > 0) {
             unlink(stale_md)
+          }
+          if (file.exists("docs/PULL_REQUEST_TEMPLATE.html")) {
+            unlink("docs/PULL_REQUEST_TEMPLATE.html")
           }
         shell: Rscript {0}
 

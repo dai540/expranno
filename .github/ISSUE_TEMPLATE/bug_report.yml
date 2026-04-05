@@ -1,0 +1,35 @@
+name: Bug report
+description: Report a reproducible problem in expranno.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproducible example
+      description: Include the smallest input or code snippet that reproduces the issue.
+      render: r
+    validations:
+      required: true
+  - type: textarea
+    id: session
+    attributes:
+      label: Session information
+      description: Paste `sessionInfo()` or the generated `session_info.txt` when available.
+      render: r
+    validations:
+      required: false
+  - type: textarea
+    id: outputs
+    attributes:
+      label: Relevant outputs
+      description: Mention any generated files, warnings, or validation summaries that help diagnose the issue.
+    validations:
+      required: false

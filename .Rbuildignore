@@ -4,3 +4,5 @@
 ^README\.md$
 ^NEWS\.md$
 ^\.github$
+^CITATION\.cff$
+^LICENSE\.txt$

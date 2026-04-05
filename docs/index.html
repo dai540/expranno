@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@
 <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Core</h6></li>
     <li><a class="dropdown-item" href="articles/getting-started.html">Getting Started with expranno</a></li>
+    <li><a class="dropdown-item" href="articles/preset-reference.html">Preset Reference</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Design</h6></li>
     <li><a class="dropdown-item" href="articles/theory-and-design.html">Theory and Design</a></li>
@@ -73,7 +74,7 @@
 <img src="logo.svg" class="logo" alt=""><h1 id="expranno-">expranno <a class="anchor" aria-label="anchor" href="#expranno-"></a>
 </h1>
 </div>
-<p><a href="https://dai540.github.io/expranno/"><img src="https://img.shields.io/badge/docs-pkgdown-315c86" alt="pkgdown"></a> <a href="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a></p>
+<p><a href="https://dai540.github.io/expranno/"><img src="https://img.shields.io/badge/docs-pkgdown-315c86" alt="pkgdown"></a> <a href="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://github.com/dai540/expranno/releases" class="external-link"><img src="https://img.shields.io/github/v/release/dai540/expranno" alt="GitHub release"></a> <a href="LICENSE.txt"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a></p>
 <p><code>expranno</code> is an R package for RNA-seq workflows that start from an expression matrix and sample metadata, then move through gene annotation, metadata integration, Deconvolution, and Signature analysis.</p>
 <p>It is intentionally a downstream orchestration layer rather than a full RNA-seq pipeline. Alignment, counting, QC, and differential expression stay outside the package. The goal here is to take an existing Ensembl-ID expression matrix and make it annotation-aware, metadata-aligned, and ready for deconvolution or signature scoring.</p>
 <p>The package is designed for human and mouse expression matrices where:</p>
@@ -93,6 +94,7 @@
 <li>Signature analysis with GSVA or ssGSEA</li>
 </ul>
 <p>For repeated human or mouse projects, the package now also exposes fixed annotation presets such as <code>human_tpm_v102</code> and <code>mouse_tpm_v102</code> so a lab can standardize release, species, and version-stripping behavior instead of re-specifying those knobs each time.</p>
+<p>The package also bundles small human and mouse truth tables through <code><a href="reference/example_annotation_truth.html">example_annotation_truth()</a></code>, making it easier to demonstrate or regress annotation validation without writing a custom truth table first.</p>
 <p>Rather than forcing a single annotation backend, <code>expranno</code> uses a coverage-first strategy that can combine:</p>
 <ul>
 <li>
@@ -127,14 +129,14 @@
 <p>Install from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"dai540/expranno"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pak</span><span class="op">(</span><span class="st">"dai540/expranno"</span><span class="op">)</span></span></code></pre></div>
 <p>Or:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"dai540/expranno"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"dai540/expranno"</span><span class="op">)</span></span></code></pre></div>
 <p>Or install from a source tarball:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"path/to/expranno_2.1.0.tar.gz"</span>, repos <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"path/to/expranno_2.2.0.tar.gz"</span>, repos <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span></code></pre></div>
 <p>Optional backends:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -148,8 +150,13 @@
 <span>  <span class="st">"immunedeconv"</span>,</span>
 <span>  <span class="st">"GSVA"</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Then load the package:</p>
+<p>Or use the bundled installer script after the package is installed:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"scripts"</span>, <span class="st">"install_optional_backends.R"</span>, package <span class="op">=</span> <span class="st">"expranno"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">expranno_install_optional_backends</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>For containerized and reproducible installs, <code>expranno</code> also ships a starter Dockerfile at <code>system.file("docker", "Dockerfile", package = "expranno")</code>.</p>
+<p>Then load the package:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dai540/expranno" class="external-link">expranno</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -160,7 +167,7 @@
 <p>Dai (2026). <em>expranno: Expression Annotation, Metadata Integration, Deconvolution, and Signature Analysis</em>. R package. <a href="https://dai540.github.io/expranno/" class="uri">https://dai540.github.io/expranno/</a></p>
 </blockquote>
 <p>You can also retrieve the citation from R:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"expranno"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -172,7 +179,7 @@
 <h2 id="workflow-overview">Workflow Overview<a class="anchor" aria-label="anchor" href="#workflow-overview"></a>
 </h2>
 <p>The main wrapper is <code><a href="reference/run_expranno.html">run_expranno()</a></code>. It orchestrates the whole pipeline from raw inputs to saved outputs.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">meta</span>,</span>
@@ -188,16 +195,16 @@
 <span>  signature_kcdf <span class="op">=</span> <span class="st">"Gaussian"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><code>deconv_args</code> is available for method-specific <code>immunedeconv</code> arguments. This is especially important for <code>timer</code> and <code>consensus_tme</code>, which require an <code>indications</code> vector.</p>
-<p><code><a href="reference/annotate_expr.html">annotate_expr()</a></code> and <code><a href="reference/run_expranno.html">run_expranno()</a></code> also accept <code>SummarizedExperiment</code>-like inputs. If your assay and metadata already live in a Bioconductor container, use <code>assay_name</code> and <code>gene_id_col</code> to coerce them into the package contract without manual CSV reshaping.</p>
+<p><code><a href="reference/annotate_expr.html">annotate_expr()</a></code> and <code><a href="reference/run_expranno.html">run_expranno()</a></code> also accept <code>SummarizedExperiment</code>-like inputs. If your assay and metadata already live in a Bioconductor container, use <code>assay_name</code> and <code>gene_id_col</code> to coerce them into the package contract without manual CSV reshaping. After a run, use <code><a href="reference/as_expranno_se.html">as_expranno_se()</a></code> to move annotated expression, metadata, and available sample-level downstream outputs back into a <code>SummarizedExperiment</code>.</p>
 <p><code>expr_scale</code> and <code>duplicate_strategy</code> control how duplicated symbols are collapsed before downstream analyses. The default <code>"auto"</code> strategy uses <code>"sum"</code> for count-like data and <code>"mean"</code> for abundance or log-scale data.</p>
 </div>
 <div class="section level2">
 <h2 id="input-contract">Input Contract<a class="anchor" aria-label="anchor" href="#input-contract"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_expranno_data.html">example_expranno_data</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><code>expr</code> must be a gene-by-sample table.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">demo</span><span class="op">$</span><span class="va">expr</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
@@ -219,7 +226,7 @@
 </tbody>
 </table>
 <p><code>meta</code> must be a sample metadata table.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">demo</span><span class="op">$</span><span class="va">meta</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
@@ -254,13 +261,15 @@
 <li><code><a href="reference/run_cell_deconvolution.html">run_cell_deconvolution()</a></code></li>
 <li><code><a href="reference/run_signature_analysis.html">run_signature_analysis()</a></code></li>
 <li><code><a href="reference/as_expranno_input.html">as_expranno_input()</a></code></li>
+<li><code><a href="reference/as_expranno_se.html">as_expranno_se()</a></code></li>
 <li><code><a href="reference/list_annotation_presets.html">list_annotation_presets()</a></code></li>
+<li><code><a href="reference/example_annotation_truth.html">example_annotation_truth()</a></code></li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="minimal-example">Minimal Example<a class="anchor" aria-label="anchor" href="#minimal-example"></a>
 </h2>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_expranno_data.html">example_expranno_data</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
@@ -328,11 +337,23 @@
 <p>For signature scoring, also confirm that <code>signature_kcdf</code> matches the expression scale you are using. Count-like inputs usually call for <code>"Poisson"</code>, while continuous log-scale inputs are usually better matched by <code>"Gaussian"</code>.</p>
 </div>
 <div class="section level2">
+<h2 id="presets-and-truth-tables">Presets and Truth Tables<a class="anchor" aria-label="anchor" href="#presets-and-truth-tables"></a>
+</h2>
+<p>The built-in presets are meant to standardize repeated workflows.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/list_annotation_presets.html">list_annotation_presets</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>The bundled truth resources make validation examples reproducible.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_annotation_truth.html">example_annotation_truth</a></span><span class="op">(</span><span class="st">"human"</span><span class="op">)</span></span>
+<span><span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_annotation_truth.html">example_annotation_truth</a></span><span class="op">(</span><span class="st">"mouse"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
 <p>The package website includes:</p>
 <ul>
 <li>a getting started article</li>
+<li>a preset reference article</li>
 <li>a benchmarking and reproducibility article</li>
 <li>human and mouse step-by-step case studies</li>
 <li>a theory and design article</li>
@@ -344,10 +365,10 @@
 <h2 id="backend-smoke-test">Backend Smoke Test<a class="anchor" aria-label="anchor" href="#backend-smoke-test"></a>
 </h2>
 <p>For a local optional-backend smoke test, run:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"scripts"</span>, <span class="st">"run_smoke_optional_backends.R"</span>, package <span class="op">=</span> <span class="st">"expranno"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Or run the installed script directly with an output directory:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">script</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"scripts"</span>, <span class="st">"run_smoke_optional_backends.R"</span>, package <span class="op">=</span> <span class="st">"expranno"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html" class="external-link">R.home</a></span><span class="op">(</span><span class="st">"bin"</span><span class="op">)</span>, <span class="st">"Rscript"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">script</span>, <span class="st">"smoke-outputs"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -369,6 +390,7 @@
     <li><a href="reference/benchmark_annotation_engines.html">Benchmark annotation engines</a></li>
     <li><a href="reference/validate_annotation_engines.html">Validate annotation engines</a></li>
     <li><a href="articles/getting-started.html">Read the getting started guide</a></li>
+    <li><a href="articles/preset-reference.html">Compare annotation presets</a></li>
     <li><a href="articles/benchmarking-and-reproducibility.html">Read the reproducibility guide</a></li>
     <li><a href="articles/case-study-human-rnaseq.html">Follow the human case study</a></li>
     <li><a href="articles/case-study-mouse-rnaseq.html">Follow the mouse case study</a></li>

@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,7 @@
 <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Core</h6></li>
     <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with expranno</a></li>
+    <li><a class="dropdown-item" href="../articles/preset-reference.html">Preset Reference</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Design</h6></li>
     <li><a class="dropdown-item" href="../articles/theory-and-design.html">Theory and Design</a></li>
@@ -183,20 +184,45 @@ species, version stripping, and Ensembl release each time, use one of
 the built-in presets.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_annotation_presets.html">list_annotation_presets</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   annotation_preset species expr_scale annotation_engine strip_version</span></span>
-<span><span class="co">#&gt; 1        human_v102   human       auto            hybrid          TRUE</span></span>
-<span><span class="co">#&gt; 2        mouse_v102   mouse       auto            hybrid          TRUE</span></span>
-<span><span class="co">#&gt; 3    human_tpm_v102   human  abundance            hybrid          TRUE</span></span>
-<span><span class="co">#&gt; 4    mouse_tpm_v102   mouse  abundance            hybrid          TRUE</span></span>
-<span><span class="co">#&gt; 5  human_count_v102   human      count            hybrid          TRUE</span></span>
-<span><span class="co">#&gt; 6  mouse_count_v102   mouse      count            hybrid          TRUE</span></span>
-<span><span class="co">#&gt;   biomart_version</span></span>
-<span><span class="co">#&gt; 1             102</span></span>
-<span><span class="co">#&gt; 2             102</span></span>
-<span><span class="co">#&gt; 3             102</span></span>
-<span><span class="co">#&gt; 4             102</span></span>
-<span><span class="co">#&gt; 5             102</span></span>
-<span><span class="co">#&gt; 6             102</span></span></code></pre></div>
+<span><span class="co">#&gt;   annotation_preset species  recommended_input expr_scale annotation_engine</span></span>
+<span><span class="co">#&gt; 1        human_v102   human                any       auto            hybrid</span></span>
+<span><span class="co">#&gt; 2        mouse_v102   mouse                any       auto            hybrid</span></span>
+<span><span class="co">#&gt; 3    human_tpm_v102   human TPM-like abundance  abundance            hybrid</span></span>
+<span><span class="co">#&gt; 4    mouse_tpm_v102   mouse TPM-like abundance  abundance            hybrid</span></span>
+<span><span class="co">#&gt; 5  human_count_v102   human         raw counts      count            hybrid</span></span>
+<span><span class="co">#&gt; 6  mouse_count_v102   mouse         raw counts      count            hybrid</span></span>
+<span><span class="co">#&gt;   strip_version biomart_version                   symbol_priority</span></span>
+<span><span class="co">#&gt; 1          TRUE             102 hgnc_symbol -&gt; external_gene_name</span></span>
+<span><span class="co">#&gt; 2          TRUE             102  mgi_symbol -&gt; external_gene_name</span></span>
+<span><span class="co">#&gt; 3          TRUE             102 hgnc_symbol -&gt; external_gene_name</span></span>
+<span><span class="co">#&gt; 4          TRUE             102  mgi_symbol -&gt; external_gene_name</span></span>
+<span><span class="co">#&gt; 5          TRUE             102 hgnc_symbol -&gt; external_gene_name</span></span>
+<span><span class="co">#&gt; 6          TRUE             102  mgi_symbol -&gt; external_gene_name</span></span>
+<span><span class="co">#&gt;                                   fallback_order</span></span>
+<span><span class="co">#&gt; 1  biomaRt -&gt; org.Hs.eg.db -&gt; EnsDb.Hsapiens.v86</span></span>
+<span><span class="co">#&gt; 2 biomaRt -&gt; org.Mm.eg.db -&gt; EnsDb.Mmusculus.v79</span></span>
+<span><span class="co">#&gt; 3  biomaRt -&gt; org.Hs.eg.db -&gt; EnsDb.Hsapiens.v86</span></span>
+<span><span class="co">#&gt; 4 biomaRt -&gt; org.Mm.eg.db -&gt; EnsDb.Mmusculus.v79</span></span>
+<span><span class="co">#&gt; 5  biomaRt -&gt; org.Hs.eg.db -&gt; EnsDb.Hsapiens.v86</span></span>
+<span><span class="co">#&gt; 6 biomaRt -&gt; org.Mm.eg.db -&gt; EnsDb.Mmusculus.v79</span></span>
+<span><span class="co">#&gt;                       bundled_truth</span></span>
+<span><span class="co">#&gt; 1 example_annotation_truth('human')</span></span>
+<span><span class="co">#&gt; 2 example_annotation_truth('mouse')</span></span>
+<span><span class="co">#&gt; 3 example_annotation_truth('human')</span></span>
+<span><span class="co">#&gt; 4 example_annotation_truth('mouse')</span></span>
+<span><span class="co">#&gt; 5 example_annotation_truth('human')</span></span>
+<span><span class="co">#&gt; 6 example_annotation_truth('mouse')</span></span></code></pre></div>
+<p>If you want the preset choices in a more explicit comparison table,
+including recommended input scale, backend cascade, and the matching
+bundled truth resource, see the preset reference article.</p>
+<p>The bundled truth resources are useful when you want a reproducible
+validation example without preparing your own table first.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/example_annotation_truth.html">example_annotation_truth</a></span><span class="op">(</span><span class="st">"human"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;              gene_id symbol                        gene_name        biotype</span></span>
+<span><span class="co">#&gt; 1 ENSG00000141510.17   TP53                tumor protein p53 protein_coding</span></span>
+<span><span class="co">#&gt; 2 ENSG00000146648.18   EGFR epidermal growth factor receptor protein_coding</span></span>
+<span><span class="co">#&gt; 3 ENSG00000012048.23  BRCA1      BRCA1 DNA repair associated protein_coding</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="pick-a-species">Pick a species<a class="anchor" aria-label="anchor" href="#pick-a-species"></a>
@@ -205,7 +231,7 @@ the built-in presets.</p>
 and <code>species = "mouse"</code> for <code>ENSMUSG...</code> input
 IDs. If IDs are clean Ensembl IDs, <code>species = "auto"</code> can
 infer this for you.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">human_demo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/example_expranno_data.html">example_expranno_data</a></span><span class="op">(</span><span class="st">"human"</span><span class="op">)</span></span>
 <span><span class="va">mouse_demo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/example_expranno_data.html">example_expranno_data</a></span><span class="op">(</span><span class="st">"mouse"</span><span class="op">)</span></span>
 <span></span>
@@ -260,7 +286,9 @@ long list of arguments. Examples:</p>
 <li><code>annotation_preset = "human_count_v102"</code></li>
 <li><code>annotation_preset = "mouse_count_v102"</code></li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>The preset table above is the quickest way to compare recommended
+input scale, backend order, and bundled truth resource.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annotated</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annotate_expr.html">annotate_expr</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
@@ -273,7 +301,7 @@ long list of arguments. Examples:</p>
 <span>  meta <span class="op">=</span> <span class="va">annotated</span><span class="op">$</span><span class="va">meta_checked</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The all-in-one wrapper is <code><a href="../reference/run_expranno.html">run_expranno()</a></code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
@@ -294,16 +322,38 @@ long list of arguments. Examples:</p>
 <span><span class="co">#&gt;   validation runs: 0</span></span></code></pre></div>
 <p>For a reproducible production-style run, switch to a preset
 explicitly:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
 <span>  annotation_preset <span class="op">=</span> <span class="st">"human_count_v102"</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"results"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>After a run, you can also return to a Bioconductor-native
+container.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">annotated</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annotate_expr.html">annotate_expr</a></span><span class="op">(</span></span>
+<span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
+<span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
+<span>  species <span class="op">=</span> <span class="st">"human"</span>,</span>
+<span>  annotation_engine <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_expranno_se.html">as_expranno_se</a></span><span class="op">(</span><span class="va">annotated</span><span class="op">)</span></span>
+<span><span class="va">se</span></span>
+<span><span class="co">#&gt; class: SummarizedExperiment </span></span>
+<span><span class="co">#&gt; dim: 3 3 </span></span>
+<span><span class="co">#&gt; metadata(1): expranno</span></span>
+<span><span class="co">#&gt; assays(1): expression</span></span>
+<span><span class="co">#&gt; rownames(3): ENSG00000141510 ENSG00000146648 ENSG00000012048</span></span>
+<span><span class="co">#&gt; rowData names(48): gene_id_raw gene_id ... annotation_backend_mirror</span></span>
+<span><span class="co">#&gt;   annotation_date</span></span>
+<span><span class="co">#&gt; colnames(3): sample_a sample_b sample_c</span></span>
+<span><span class="co">#&gt; colData names(4): sample group batch species</span></span></code></pre></div>
 <p>If your data already live in a <code>SummarizedExperiment</code>, you
 can start there directly.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">se</span>,</span>
 <span>  species <span class="op">=</span> <span class="st">"human"</span>,</span>
@@ -342,7 +392,7 @@ the expression scale:</p>
 <p>Some <code>immunedeconv</code> methods require extra arguments. In
 particular, <code>timer</code> and <code>consensus_tme</code> need an
 <code>indications</code> vector with one tumor type per sample.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
@@ -374,7 +424,7 @@ Signature methods will usually be the first places where the problem
 appears.</p>
 <p>If you want to compare engines on the same input before standardizing
 a lab workflow, benchmark them explicitly.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">benchmark</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/benchmark_annotation_engines.html">benchmark_annotation_engines</a></span><span class="op">(</span></span>
 <span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
 <span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
@@ -390,7 +440,7 @@ a lab workflow, benchmark them explicitly.</p>
 <span><span class="co">#&gt; none                     0               0                  0</span></span></code></pre></div>
 <p>If you also have a truth table, you can validate exact matches
 instead of only coverage.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">truth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  gene_id <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span><span class="op">$</span><span class="va">gene_id</span>,</span>
 <span>  symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP53"</span>, <span class="st">"EGFR"</span>, <span class="st">"BRCA1"</span><span class="op">)</span>,</span>
@@ -414,6 +464,22 @@ instead of only coverage.</p>
 <span><span class="co">#&gt; none::symbol             0              0          0                       1</span></span>
 <span><span class="co">#&gt;              mismatch_rate</span></span>
 <span><span class="co">#&gt; none::symbol             0</span></span></code></pre></div>
+<p>For reproducible examples or CI runs, you do not need to write that
+truth table by hand. <code>expranno</code> ships with small human and
+mouse truth resources that line up with the demo Ensembl IDs.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/example_annotation_truth.html">example_annotation_truth</a></span><span class="op">(</span><span class="st">"human"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;              gene_id symbol                        gene_name        biotype</span></span>
+<span><span class="co">#&gt; 1 ENSG00000141510.17   TP53                tumor protein p53 protein_coding</span></span>
+<span><span class="co">#&gt; 2 ENSG00000146648.18   EGFR epidermal growth factor receptor protein_coding</span></span>
+<span><span class="co">#&gt; 3 ENSG00000012048.23  BRCA1      BRCA1 DNA repair associated protein_coding</span></span></code></pre></div>
+<p>If your workflow starts and ends in Bioconductor containers, convert
+the result back into a <code>SummarizedExperiment</code>.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_expranno_se.html">as_expranno_se</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
+<p>That keeps the annotated expression matrix in the assay, writes
+annotation fields to <code>rowData</code>, and appends sample-level
+Deconvolution or Signature outputs to <code>colData</code>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

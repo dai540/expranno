@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,7 @@
 <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Core</h6></li>
     <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with expranno</a></li>
+    <li><a class="dropdown-item" href="../articles/preset-reference.html">Preset Reference</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Design</h6></li>
     <li><a class="dropdown-item" href="../articles/theory-and-design.html">Theory and Design</a></li>
@@ -248,6 +249,10 @@ and run-date tracking</li>
 presets such as <code>human_tpm_v102</code> and
 <code>mouse_tpm_v102</code>. These are meant to make species, Ensembl
 release, and version stripping explicit instead of implicit.</p>
+<p>The preset table exposed by <code><a href="../reference/list_annotation_presets.html">list_annotation_presets()</a></code>
+also documents recommended input scale, symbol priority, fallback order,
+and bundled truth resources so a lab can standardize not only
+annotation, but also its validation examples.</p>
 </div>
 <div class="section level2">
 <h2 id="data-shape-choices">Data shape choices<a class="anchor" aria-label="anchor" href="#data-shape-choices"></a>
@@ -270,6 +275,19 @@ sample-level joins:</p>
 <code><a href="../reference/as_expranno_input.html">as_expranno_input()</a></code> so a <code>SummarizedExperiment</code>
 can be converted into the same strict contract without manual
 reshaping.</p>
+<p>The reverse direction is now supported too.
+<code><a href="../reference/as_expranno_se.html">as_expranno_se()</a></code> converts an <code>expranno_result</code>
+or <code>expranno_annotation</code> into a
+<code>SummarizedExperiment</code> with:</p>
+<ul>
+<li>annotated expression in the main assay</li>
+<li>annotation fields in <code>rowData</code>
+</li>
+<li>sample metadata in <code>colData</code>
+</li>
+<li>optional signature and deconvolution outputs appended as
+sample-level <code>colData</code> columns</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="duplicate-symbol-strategy">Duplicate symbol strategy<a class="anchor" aria-label="anchor" href="#duplicate-symbol-strategy"></a>

@@ -49,7 +49,9 @@ reference:
   - title: Input helpers
     contents:
       - as_expranno_input
+      - as_expranno_se
       - list_annotation_presets
+      - example_annotation_truth
       - validate_expr
       - validate_meta
       - read_genesets
@@ -59,6 +61,7 @@ articles:
     navbar: Core
     contents:
       - getting-started
+      - preset-reference
   - title: Theory and design
     navbar: Design
     contents:

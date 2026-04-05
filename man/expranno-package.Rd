@@ -14,6 +14,11 @@ computes GSVA or ssGSEA signature scores from user-supplied gene sets.
 The package uses a coverage-first annotation strategy that can combine
 \code{biomaRt}, \code{org.*.eg.db}, and optional \code{EnsDb} packages, and it returns
 a compact annotation coverage report to support downstream quality checks.
+
+Built-in helpers such as \code{list_annotation_presets()},
+\code{example_annotation_truth()}, and \code{as_expranno_se()} make it easier to
+standardize fixed human or mouse workflows, reproduce validation runs,
+and move results back into Bioconductor containers.
 }
 \seealso{
 Useful links:

@@ -27,6 +27,7 @@ This article focuses on three things:
 ```{r}
 library(expranno)
 demo <- example_expranno_data("human")
+truth <- example_annotation_truth("human")
 ```
 
 ## Benchmark annotation engines
@@ -71,12 +72,6 @@ Coverage is useful, but a public package also needs a way to ask
 whether recovered labels are actually correct for a known subset.
 
 ```{r}
-truth <- data.frame(
-  gene_id = demo$expr$gene_id,
-  symbol = c("TP53", "EGFR", "BRCA1"),
-  stringsAsFactors = FALSE
-)
-
 validation <- validate_annotation_engines(
   expr = demo$expr,
   meta = demo$meta,
@@ -93,6 +88,11 @@ validation$summary
 In a production run, the same function can be used to compare `biomart`,
 `orgdb`, `ensdb`, and `hybrid` against a curated truth set from the same
 species.
+
+The package-level helpers now make that easy to reproduce in examples:
+
+- `example_annotation_truth("human")`
+- `example_annotation_truth("mouse")`
 
 ## Provenance from annotation
 
@@ -153,3 +153,8 @@ The wrapper now keeps:
 
 These files make it easier to re-run the same workflow later and explain
 which annotation sources were active in a given result directory.
+
+For a more reproducible machine-level setup, `expranno` also ships:
+
+- `inst/scripts/install_optional_backends.R`
+- `inst/docker/Dockerfile`

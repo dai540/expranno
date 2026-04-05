@@ -1,10 +1,8 @@
 bibentry(
   bibtype = "Manual",
   title = "expranno: Expression Annotation, Metadata Integration, Deconvolution, and Signature Analysis",
-  author = c(
-    person(given = "Dai", family = "Dai")
-  ),
+  author = person("Dai", "Dai"),
   year = "2026",
-  note = "R package",
+  note = "R package version 2.2.0",
   url = "https://dai540.github.io/expranno/"
 )
