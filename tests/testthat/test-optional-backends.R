@@ -1,4 +1,4 @@
-optional_backend_packages <- function() {
+core_optional_backend_packages <- function() {
   c(
     "AnnotationDbi",
     "biomaRt",
@@ -7,14 +7,23 @@ optional_backend_packages <- function() {
     "EnsDb.Hsapiens.v86",
     "EnsDb.Mmusculus.v79",
     "GSVA",
-    "immunedeconv",
     "org.Hs.eg.db",
     "org.Mm.eg.db"
   )
 }
 
-skip_if_optional_backends_missing <- function() {
-  for (pkg in optional_backend_packages()) {
+full_optional_backend_packages <- function() {
+  c(core_optional_backend_packages(), "immunedeconv")
+}
+
+skip_if_core_optional_backends_missing <- function() {
+  for (pkg in core_optional_backend_packages()) {
+    testthat::skip_if_not_installed(pkg)
+  }
+}
+
+skip_if_full_optional_backends_missing <- function() {
+  for (pkg in full_optional_backend_packages()) {
     testthat::skip_if_not_installed(pkg)
   }
 }
@@ -31,7 +40,7 @@ real_like_expr_anno <- function(expr_mat) {
 }
 
 test_that("hybrid annotation smoke test works for human and mouse", {
-  skip_if_optional_backends_missing()
+  skip_if_core_optional_backends_missing()
 
   human_demo <- example_expranno_data("human")
   mouse_demo <- example_expranno_data("mouse")
@@ -62,7 +71,7 @@ test_that("hybrid annotation smoke test works for human and mouse", {
 })
 
 test_that("annotation benchmark smoke test summarizes hybrid versus single backends", {
-  skip_if_optional_backends_missing()
+  skip_if_core_optional_backends_missing()
 
   demo <- example_expranno_data("mouse")
   benchmark <- benchmark_annotation_engines(
@@ -79,7 +88,7 @@ test_that("annotation benchmark smoke test summarizes hybrid versus single backe
 })
 
 test_that("truth-based annotation validation works with hybrid human annotation", {
-  skip_if_optional_backends_missing()
+  skip_if_core_optional_backends_missing()
 
   demo <- example_expranno_data("human")
   truth <- data.frame(
@@ -104,7 +113,7 @@ test_that("truth-based annotation validation works with hybrid human annotation"
 })
 
 test_that("real-like deconvolution smoke tests work for human and mouse", {
-  skip_if_optional_backends_missing()
+  skip_if_full_optional_backends_missing()
 
   data("dataset_racle", package = "immunedeconv")
   data("dataset_petitprez", package = "immunedeconv")
@@ -140,7 +149,7 @@ test_that("real-like deconvolution smoke tests work for human and mouse", {
 })
 
 test_that("run_expranno smoke test writes annotation, merge, and signature outputs", {
-  skip_if_optional_backends_missing()
+  skip_if_core_optional_backends_missing()
 
   demo <- example_expranno_data("human")
   outdir <- tempfile("expranno-smoke-")

@@ -40,7 +40,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           source("inst/scripts/install_optional_backends.R")
-          expranno_install_optional_backends(allow_failures = TRUE)
+          expranno_install_optional_backends(profile = "full", allow_failures = TRUE)
 
       - name: Document
         run: roxygen2::roxygenise()

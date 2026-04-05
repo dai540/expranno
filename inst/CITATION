@@ -3,6 +3,6 @@ bibentry(
   title = "expranno: Expression Annotation, Metadata Integration, Deconvolution, and Signature Analysis",
   author = person("Dai", "Dai"),
   year = "2026",
-  note = "R package version 2.3.1",
+  note = "R package version 2.4.0",
   url = "https://dai540.github.io/expranno/"
 )

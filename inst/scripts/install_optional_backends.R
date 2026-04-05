@@ -1,4 +1,8 @@
-expranno_install_optional_backends <- function(allow_failures = TRUE) {
+expranno_install_optional_backends <- function(
+    profile = c("full", "core"),
+    allow_failures = TRUE) {
+  profile <- match.arg(profile)
+
   if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
   }
@@ -8,31 +12,37 @@ expranno_install_optional_backends <- function(allow_failures = TRUE) {
 
   options(repos = BiocManager::repositories())
 
+  core_packages <- c(
+    "AnnotationDbi",
+    "AnnotationFilter",
+    "annotate",
+    "Biobase",
+    "BiocParallel",
+    "biomaRt",
+    "ensembldb",
+    "EnsDb.Hsapiens.v86",
+    "EnsDb.Mmusculus.v79",
+    "genefilter",
+    "GSVA",
+    "preprocessCore",
+    "quantiseqr",
+    "SummarizedExperiment",
+    "S4Vectors",
+    "SingleCellExperiment",
+    "sva",
+    "org.Hs.eg.db",
+    "org.Mm.eg.db"
+  )
+
   BiocManager::install(
-    c(
-      "AnnotationDbi",
-      "AnnotationFilter",
-      "annotate",
-      "Biobase",
-      "BiocParallel",
-      "biomaRt",
-      "ensembldb",
-      "EnsDb.Hsapiens.v86",
-      "EnsDb.Mmusculus.v79",
-      "genefilter",
-      "GSVA",
-      "preprocessCore",
-      "quantiseqr",
-      "SummarizedExperiment",
-      "S4Vectors",
-      "SingleCellExperiment",
-      "sva",
-      "org.Hs.eg.db",
-      "org.Mm.eg.db"
-    ),
+    core_packages,
     ask = FALSE,
     update = FALSE
   )
+
+  if (identical(profile, "core")) {
+    return(invisible(TRUE))
+  }
 
   install_optional_github <- function(repo) {
     if (isTRUE(allow_failures)) {
@@ -78,5 +88,5 @@ expranno_install_optional_backends <- function(allow_failures = TRUE) {
 }
 
 if (identical(environmentName(environment()), "R_GlobalEnv") && !interactive()) {
-  expranno_install_optional_backends(allow_failures = TRUE)
+  expranno_install_optional_backends(profile = "full", allow_failures = TRUE)
 }

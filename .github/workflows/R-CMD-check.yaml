@@ -10,7 +10,52 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
+  metadata:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - name: Validate release metadata
+        shell: Rscript {0}
+        run: |
+          desc <- read.dcf("DESCRIPTION")[1, ]
+          version <- unname(desc[["Version"]])
+
+          news_lines <- readLines("NEWS.md", warn = FALSE)
+          news_headers <- grep("^# expranno\\s+", news_lines, value = TRUE)
+          if (length(news_headers) == 0L) {
+            stop("NEWS.md does not contain a version header.", call. = FALSE)
+          }
+          news_version <- sub("^# expranno\\s+", "", news_headers[[1]])
+          if (!identical(version, news_version)) {
+            stop(sprintf("DESCRIPTION version (%s) does not match NEWS.md (%s).", version, news_version), call. = FALSE)
+          }
+
+          cff_lines <- readLines("CITATION.cff", warn = FALSE)
+          cff_version <- sub("^version:\\s*", "", grep("^version:\\s*", cff_lines, value = TRUE)[[1]])
+          if (!identical(version, cff_version)) {
+            stop(sprintf("DESCRIPTION version (%s) does not match CITATION.cff (%s).", version, cff_version), call. = FALSE)
+          }
+
+          citation_text <- paste(readLines("inst/CITATION", warn = FALSE), collapse = "\n")
+          expected_citation <- sprintf("version %s", version)
+          if (!grepl(expected_citation, citation_text, fixed = TRUE)) {
+            stop("inst/CITATION does not contain the current package version.", call. = FALSE)
+          }
+
+          readme_lines <- readLines("README.md", warn = FALSE)
+          if (any(grepl("expranno_[0-9]+\\.[0-9]", readme_lines))) {
+            stop("README.md contains a hard-coded source tarball version. Use expranno_<version>.tar.gz.", call. = FALSE)
+          }
+
   R-CMD-check:
+    needs: metadata
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
@@ -53,3 +98,42 @@ jobs:
         with:
           upload-snapshots: true
           error-on: '"warning"'
+
+  optional-backend-core:
+    needs: metadata
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+          extra-packages: |
+            any::BiocManager
+            any::remotes
+            any::roxygen2
+            any::testthat
+            any::knitr
+            any::rmarkdown
+
+      - name: Install core optional backends
+        shell: Rscript {0}
+        run: |
+          source("inst/scripts/install_optional_backends.R")
+          expranno_install_optional_backends(profile = "core", allow_failures = FALSE)
+
+      - name: Document
+        run: roxygen2::roxygenise()
+        shell: Rscript {0}
+
+      - name: Run core optional-backend tests
+        run: testthat::test_local(filter = "optional-backends|truth-and-presets")
+        shell: Rscript {0}
