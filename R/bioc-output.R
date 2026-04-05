@@ -76,9 +76,6 @@ as_expranno_se <- function(
     assay_name = "expression",
     include_signatures = TRUE,
     include_deconvolution = TRUE) {
-  require_namespace("SummarizedExperiment", reason = "Bioconductor output support")
-  require_namespace("S4Vectors", reason = "Bioconductor output support")
-
   if (inherits(x, "expranno_result")) {
     annotation <- x$annotation
     signatures <- if (isTRUE(include_signatures)) x$signatures else NULL
@@ -97,6 +94,9 @@ as_expranno_se <- function(
   } else {
     stop("`x` must be an `expranno_result` or `expranno_annotation`.", call. = FALSE)
   }
+
+  require_namespace("SummarizedExperiment", reason = "Bioconductor output support")
+  require_namespace("S4Vectors", reason = "Bioconductor output support")
 
   expr_anno <- annotation$expr_anno
   meta <- annotation$meta_checked
