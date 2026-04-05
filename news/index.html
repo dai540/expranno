@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,12 @@
       <small>Source: <a href="https://github.com/dai540/expranno/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.4.0" id="expranno-240">expranno 2.4.0<a class="anchor" aria-label="anchor" href="#expranno-240"></a></h2>
+<ul><li>Added CI-level release metadata checks so <code>DESCRIPTION</code>, <code>NEWS.md</code>, <code>CITATION.cff</code>, <code>inst/CITATION</code>, and the README tarball example stay aligned.</li>
+<li>Added a required <code>optional-backend-core</code> GitHub Actions job that installs stable optional annotation and signature backends on <code>main</code> and runs the corresponding tests.</li>
+<li>Split optional backend installation into <code>core</code> and <code>full</code> profiles so stable Bioconductor-backed checks can run on every push while the heavier deconvolution stack remains available in the dedicated smoke workflow.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.3.1" id="expranno-231">expranno 2.3.1<a class="anchor" aria-label="anchor" href="#expranno-231"></a></h2>
 <ul><li>Fixed the pkgdown GitHub Actions workflow by allowing <code>pkgdown</code> to install the local package before building reference examples.</li>

@@ -1,5 +1,18 @@
 # Changelog
 
+## expranno 2.4.0
+
+- Added CI-level release metadata checks so `DESCRIPTION`, `NEWS.md`,
+  `CITATION.cff`, `inst/CITATION`, and the README tarball example stay
+  aligned.
+- Added a required `optional-backend-core` GitHub Actions job that
+  installs stable optional annotation and signature backends on `main`
+  and runs the corresponding tests.
+- Split optional backend installation into `core` and `full` profiles so
+  stable Bioconductor-backed checks can run on every push while the
+  heavier deconvolution stack remains available in the dedicated smoke
+  workflow.
+
 ## expranno 2.3.1
 
 - Fixed the pkgdown GitHub Actions workflow by allowing `pkgdown` to
