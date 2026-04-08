@@ -1,6 +1,5 @@
 ^docs$
 ^_pkgdown\.yml$
-^pkgdown$
 ^README\.md$
 ^NEWS\.md$
 ^\.github$

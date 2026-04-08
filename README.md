@@ -62,21 +62,15 @@ BiocManager::install(c(
   "ensembldb",
   "EnsDb.Hsapiens.v86",
   "EnsDb.Mmusculus.v79",
-  "immunedeconv",
   "GSVA"
 ))
 ```
 
-Or use the bundled installer script after the package is installed:
+Install `immunedeconv` separately from GitHub if you need deconvolution:
 
 ```r
-source(system.file("scripts", "install_optional_backends.R", package = "expranno"))
-expranno_install_optional_backends()
+remotes::install_github("omnideconv/immunedeconv")
 ```
-
-For containerized and reproducible installs, `expranno` also ships a
-starter Dockerfile at `system.file("docker", "Dockerfile", package =
-"expranno")`.
 
 Then load the package:
 

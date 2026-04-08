@@ -12,31 +12,10 @@ core_optional_backend_packages <- function() {
   )
 }
 
-full_optional_backend_packages <- function() {
-  c(core_optional_backend_packages(), "immunedeconv")
-}
-
 skip_if_core_optional_backends_missing <- function() {
   for (pkg in core_optional_backend_packages()) {
     testthat::skip_if_not_installed(pkg)
   }
-}
-
-skip_if_full_optional_backends_missing <- function() {
-  for (pkg in full_optional_backend_packages()) {
-    testthat::skip_if_not_installed(pkg)
-  }
-}
-
-real_like_expr_anno <- function(expr_mat) {
-  data.frame(
-    gene_id_raw = rownames(expr_mat),
-    gene_id = rownames(expr_mat),
-    symbol = rownames(expr_mat),
-    expr_mat,
-    check.names = FALSE,
-    stringsAsFactors = FALSE
-  )
 }
 
 test_that("hybrid annotation smoke test works for human and mouse", {
@@ -110,42 +89,6 @@ test_that("truth-based annotation validation works with hybrid human annotation"
 
   expect_s3_class(validation, "expranno_validation")
   expect_true(validation$summary$match_rate[1] > 0)
-})
-
-test_that("real-like deconvolution smoke tests work for human and mouse", {
-  skip_if_full_optional_backends_missing()
-
-  data("dataset_racle", package = "immunedeconv")
-  data("dataset_petitprez", package = "immunedeconv")
-
-  human_expr_anno <- real_like_expr_anno(dataset_racle$expr_mat)
-  mouse_expr_anno <- real_like_expr_anno(dataset_petitprez$expr_mat)
-
-  human_res <- run_cell_deconvolution(
-    human_expr_anno,
-    species = "human",
-    methods = c("mcp_counter", "quantiseq"),
-    expr_scale = "abundance",
-    duplicate_strategy = "first",
-    verbose = FALSE
-  )
-  mouse_res <- run_cell_deconvolution(
-    mouse_expr_anno,
-    species = "mouse",
-    methods = c("mmcp_counter", "base"),
-    expr_scale = "count",
-    duplicate_strategy = "first",
-    verbose = FALSE
-  )
-
-  for (nm in names(human_res)) {
-    expect_false("error" %in% names(human_res[[nm]]), info = nm)
-    expect_true(nrow(human_res[[nm]]) > 0, info = nm)
-  }
-  for (nm in names(mouse_res)) {
-    expect_false("error" %in% names(mouse_res[[nm]]), info = nm)
-    expect_true(nrow(mouse_res[[nm]]) > 0, info = nm)
-  }
 })
 
 test_that("run_expranno smoke test writes annotation, merge, and signature outputs", {

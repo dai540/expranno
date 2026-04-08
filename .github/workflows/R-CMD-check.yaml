@@ -118,7 +118,6 @@ jobs:
           dependencies: '"hard"'
           extra-packages: |
             any::BiocManager
-            any::remotes
             any::roxygen2
             any::testthat
             any::knitr
@@ -127,8 +126,31 @@ jobs:
       - name: Install core optional backends
         shell: Rscript {0}
         run: |
-          source("inst/scripts/install_optional_backends.R")
-          expranno_install_optional_backends(profile = "core", allow_failures = FALSE)
+          BiocManager::install(
+            c(
+              "AnnotationDbi",
+              "AnnotationFilter",
+              "annotate",
+              "Biobase",
+              "BiocParallel",
+              "biomaRt",
+              "ensembldb",
+              "EnsDb.Hsapiens.v86",
+              "EnsDb.Mmusculus.v79",
+              "genefilter",
+              "GSVA",
+              "preprocessCore",
+              "quantiseqr",
+              "SummarizedExperiment",
+              "S4Vectors",
+              "SingleCellExperiment",
+              "sva",
+              "org.Hs.eg.db",
+              "org.Mm.eg.db"
+            ),
+            ask = FALSE,
+            update = FALSE
+          )
 
       - name: Document
         run: roxygen2::roxygenise()

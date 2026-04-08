@@ -1,5 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: expranno documentation
-    url: https://dai540.github.io/expranno/
-    about: Check the pkgdown site and vignettes before opening an issue.

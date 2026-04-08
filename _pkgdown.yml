@@ -10,8 +10,6 @@ url: https://dai540.github.io/expranno
 home:
   title: expranno
   description: Expression annotation, metadata integration, Deconvolution, and Signature analysis for human and mouse RNA-seq data.
-  sidebar:
-    html: pkgdown/home-sidebar.html
 
 repo:
   url:
