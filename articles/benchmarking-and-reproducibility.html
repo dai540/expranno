@@ -6,11 +6,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Benchmarking and Reproducibility • expranno</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
-<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
-<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="icon" sizes="any" href="../favicon.ico">
-<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -25,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -185,7 +180,7 @@ ambiguity directly.</p>
 <span><span class="co">#&gt;   source species dataset package_name backend_release host mirror genes_queried</span></span>
 <span><span class="co">#&gt; 1   none   human    none         none            &lt;NA&gt; &lt;NA&gt;   &lt;NA&gt;             3</span></span>
 <span><span class="co">#&gt;   rows_returned annotation_date  status</span></span>
-<span><span class="co">#&gt; 1             0      2026-04-05 skipped</span></span>
+<span><span class="co">#&gt; 1             0      2026-04-08 skipped</span></span>
 <span><span class="co">#&gt;                                      message</span></span>
 <span><span class="co">#&gt; 1 Annotation lookup skipped by user request.</span></span>
 <span><span class="va">annotation</span><span class="op">$</span><span class="va">ambiguity_report</span></span>
@@ -238,12 +233,9 @@ files by default.</p>
 <p>These files make it easier to re-run the same workflow later and
 explain which annotation sources were active in a given result
 directory.</p>
-<p>For a more reproducible machine-level setup, <code>expranno</code>
-also ships:</p>
-<ul>
-<li><code>inst/scripts/install_optional_backends.R</code></li>
-<li><code>inst/docker/Dockerfile</code></li>
-</ul>
+<p>For reproducible annotation and validation runs, keep the package
+version, backend package versions, and the generated provenance files
+alongside your output directory.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

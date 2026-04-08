@@ -110,7 +110,7 @@ annotation$provenance
 #>   source species dataset package_name backend_release host mirror genes_queried
 #> 1   none   human    none         none            <NA> <NA>   <NA>             3
 #>   rows_returned annotation_date  status
-#> 1             0      2026-04-05 skipped
+#> 1             0      2026-04-08 skipped
 #>                                      message
 #> 1 Annotation lookup skipped by user request.
 annotation$ambiguity_report
@@ -167,7 +167,6 @@ The wrapper now keeps:
 These files make it easier to re-run the same workflow later and explain
 which annotation sources were active in a given result directory.
 
-For a more reproducible machine-level setup, `expranno` also ships:
-
-- `inst/scripts/install_optional_backends.R`
-- `inst/docker/Dockerfile`
+For reproducible annotation and validation runs, keep the package
+version, backend package versions, and the generated provenance files
+alongside your output directory.

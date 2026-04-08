@@ -103,9 +103,9 @@ anno$expr_anno
 #> 2                       <NA>                    <NA>                      <NA>
 #> 3                       <NA>                    <NA>                      <NA>
 #>   annotation_date sample_a sample_b sample_c
-#> 1      2026-04-05      120      140      118
-#> 2      2026-04-05       80       77       91
-#> 3      2026-04-05       25       30       21
+#> 1      2026-04-08      120      140      118
+#> 2      2026-04-08       80       77       91
+#> 3      2026-04-08       25       30       21
 ```
 
 ## Step 4: Inspect `expr_anno.csv`
@@ -311,15 +311,15 @@ merged
 #> 8                       <NA>                    <NA>                      <NA>
 #> 9                       <NA>                    <NA>                      <NA>
 #>   annotation_date expression   group batch species
-#> 1      2026-04-05        120    case    b1   human
-#> 2      2026-04-05         80    case    b1   human
-#> 3      2026-04-05         25    case    b1   human
-#> 4      2026-04-05        140 control    b1   human
-#> 5      2026-04-05         77 control    b1   human
-#> 6      2026-04-05         30 control    b1   human
-#> 7      2026-04-05        118    case    b2   human
-#> 8      2026-04-05         91    case    b2   human
-#> 9      2026-04-05         21    case    b2   human
+#> 1      2026-04-08        120    case    b1   human
+#> 2      2026-04-08         80    case    b1   human
+#> 3      2026-04-08         25    case    b1   human
+#> 4      2026-04-08        140 control    b1   human
+#> 5      2026-04-08         77 control    b1   human
+#> 6      2026-04-08         30 control    b1   human
+#> 7      2026-04-08        118    case    b2   human
+#> 8      2026-04-08         91    case    b2   human
+#> 9      2026-04-08         21    case    b2   human
 ```
 
 ## Step 9: Inspect a simple sample summary
