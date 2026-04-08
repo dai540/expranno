@@ -1,7 +1,7 @@
 Package: expranno
 Type: Package
 Title: Expression Annotation, Metadata Integration, Deconvolution, and Signature Analysis
-Version: 2.5.0
+Version: 2.5.1
 Authors@R: c(
     person(
       given = "Dai",

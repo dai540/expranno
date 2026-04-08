@@ -1,3 +1,9 @@
+# expranno 2.5.1
+
+- Reworked the source `README.md` and `_pkgdown.yml` so the package
+  presentation matches the simpler `heteff`-style structure used across
+  the repository set.
+
 # expranno 2.5.0
 
 - Added CI-level release metadata checks so `DESCRIPTION`, `NEWS.md`,

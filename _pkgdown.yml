@@ -5,11 +5,13 @@ template:
 development:
   mode: release
 
-url: https://dai540.github.io/expranno
+url: https://dai540.github.io/expranno/
 
 home:
   title: expranno
   description: Expression annotation, metadata integration, Deconvolution, and Signature analysis for human and mouse RNA-seq data.
+  sidebar:
+    structure: []
 
 repo:
   url:
@@ -34,8 +36,25 @@ navbar:
       href: https://github.com/dai540/expranno
       aria-label: GitHub repository
 
+articles:
+  - title: Core tutorials
+    navbar: Core
+    contents:
+      - getting-started
+      - theory-and-design
+  - title: Annotation workflows
+    navbar: Annotation
+    contents:
+      - preset-reference
+      - benchmarking-and-reproducibility
+  - title: Case studies
+    navbar: Case Studies
+    contents:
+      - case-study-human-rnaseq
+      - case-study-mouse-rnaseq
+
 reference:
-  - title: Main workflows
+  - title: Core workflows
     contents:
       - run_expranno
       - annotate_expr
@@ -44,7 +63,7 @@ reference:
       - merge_expr_meta
       - run_cell_deconvolution
       - run_signature_analysis
-  - title: Input helpers
+  - title: Input and output helpers
     contents:
       - as_expranno_input
       - as_expranno_se
@@ -54,19 +73,3 @@ reference:
       - validate_meta
       - read_genesets
       - example_expranno_data
-articles:
-  - title: Core tutorials
-    navbar: Core
-    contents:
-      - getting-started
-      - preset-reference
-  - title: Theory and design
-    navbar: Design
-    contents:
-      - theory-and-design
-      - benchmarking-and-reproducibility
-  - title: Case studies
-    navbar: Case Studies
-    contents:
-      - case-study-human-rnaseq
-      - case-study-mouse-rnaseq
