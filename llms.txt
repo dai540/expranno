@@ -203,9 +203,12 @@ The tutorial site is organized around:
 - `R/run.R`: end-to-end wrapper
 - `R/signature.R`: GSVA and ssGSEA scoring
 - `R/deconvolution.R`: deconvolution wrapper
-- `R/validation.R`: benchmark and truth-table validation
-- `R/interop.R`: Bioconductor input coercion
-- `R/bioc-output.R`: Bioconductor output conversion
+- `R/benchmark.R` and `R/validation.R`: benchmark and truth-table
+  validation
+- `R/bioconductor.R`: Bioconductor input/output helpers
+- `R/data-helpers.R`: built-in examples, truth tables, and preset
+  listing
+- `R/io.R`: strict input validation and expression-metadata merging
 - `vignettes/`: getting-started, design, and case-study articles
 - `inst/extdata/`: bundled demo GMT and truth tables
 

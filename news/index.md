@@ -1,5 +1,14 @@
 # Changelog
 
+## expranno 2.5.2
+
+- Reduced source-level file fragmentation by merging small helper
+  modules into `R/data-helpers.R`, `R/bioconductor.R`, and `R/io.R`.
+- Removed remaining non-package repository clutter so the tracked source
+  tree stays closer to a minimal R package layout.
+- Updated package metadata, README, and generated documentation pointers
+  to match the simplified layout.
+
 ## expranno 2.5.1
 
 - Reworked the source `README.md` and `_pkgdown.yml` so the package
