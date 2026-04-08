@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">expranno</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,10 +40,10 @@
 <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Core</h6></li>
     <li><a class="dropdown-item" href="articles/getting-started.html">Getting Started with expranno</a></li>
-    <li><a class="dropdown-item" href="articles/preset-reference.html">Preset Reference</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Design</h6></li>
     <li><a class="dropdown-item" href="articles/theory-and-design.html">Theory and Design</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Annotation</h6></li>
+    <li><a class="dropdown-item" href="articles/preset-reference.html">Preset Reference</a></li>
     <li><a class="dropdown-item" href="articles/benchmarking-and-reproducibility.html">Benchmarking and Reproducibility</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Case Studies</h6></li>
@@ -69,16 +69,21 @@
 <img src="logo.svg" class="logo" alt=""><h1 id="expranno-">expranno <a class="anchor" aria-label="anchor" href="#expranno-"></a>
 </h1>
 </div>
-<p><a href="https://dai540.github.io/expranno/"><img src="https://img.shields.io/badge/docs-pkgdown-315c86" alt="pkgdown"></a> <a href="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://github.com/dai540/expranno/releases" class="external-link"><img src="https://img.shields.io/github/v/release/dai540/expranno" alt="GitHub release"></a> <a href="LICENSE.txt"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a></p>
-<p><code>expranno</code> is a downstream RNA-seq orchestration package for human and mouse expression matrices that already exist as an Ensembl-ID table plus sample metadata. It focuses on four jobs:</p>
+<p><a href="https://dai540.github.io/expranno/"><img src="https://img.shields.io/badge/docs-pkgdown-315c86" alt="pkgdown"></a> <a href="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/dai540/expranno/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://github.com/dai540/expranno/releases" class="external-link"><img src="https://img.shields.io/github/v/release/dai540/expranno" alt="GitHub release"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a></p>
+<p><code>expranno</code> is an R package for downstream RNA-seq workflows built around Ensembl-ID expression matrices and sample metadata. It standardizes four core steps:</p>
+<p><a href="https://dai540.github.io/expranno/" class="uri">https://dai540.github.io/expranno/</a></p>
 <ul>
-<li>gene annotation</li>
-<li>metadata integration</li>
-<li>Deconvolution with <code>immunedeconv</code>
-</li>
-<li>Signature analysis with GSVA or ssGSEA</li>
+<li>
+<code><a href="reference/annotate_expr.html">annotate_expr()</a></code> for human or mouse gene annotation</li>
+<li>
+<code><a href="reference/merge_expr_meta.html">merge_expr_meta()</a></code> for stable expression-metadata integration</li>
+<li>
+<code><a href="reference/run_cell_deconvolution.html">run_cell_deconvolution()</a></code> for <code>immunedeconv</code>-based deconvolution</li>
+<li>
+<code><a href="reference/run_signature_analysis.html">run_signature_analysis()</a></code> for GSVA or ssGSEA signature scoring</li>
 </ul>
-<p>The input contract is intentionally strict:</p>
+<p>The package is intentionally narrow. It does not handle alignment, quantification, QC, or differential expression. Instead, it standardizes annotation presets, validation tables, provenance files, and downstream outputs once an expression matrix already exists.</p>
+<p>It is designed for analysts working with bulk RNA-seq matrices where:</p>
 <ul>
 <li>
 <code>expr</code>: first column is <code>gene_id</code>, remaining columns are samples</li>
@@ -90,22 +95,21 @@
 <div class="float">
 <img src="reference/figures/workflow-overview.svg" alt="expranno workflow"><div class="figcaption">expranno workflow</div>
 </div>
-<p>The package validates inputs, annotates genes, records coverage and provenance, merges expression with metadata, and can optionally run Deconvolution and Signature scoring.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Install from GitHub with <code>pak</code>:</p>
+<p>Install from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"dai540/expranno"</span><span class="op">)</span></span></code></pre></div>
-<p>or <code>remotes</code>:</p>
+<p>Or:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"dai540/expranno"</span><span class="op">)</span></span></code></pre></div>
 <p>Or install from a source tarball:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"path/to/expranno_&lt;version&gt;.tar.gz"</span>, repos <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span></code></pre></div>
-<p>Optional backends can be installed with Bioconductor:</p>
+<p>Optional annotation and signature backends:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"biomaRt"</span>,</span>
@@ -117,7 +121,7 @@
 <span>  <span class="st">"EnsDb.Mmusculus.v79"</span>,</span>
 <span>  <span class="st">"GSVA"</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Install <code>immunedeconv</code> separately from GitHub if you need deconvolution:</p>
+<p>Optional deconvolution backend:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"omnideconv/immunedeconv"</span><span class="op">)</span></span></code></pre></div>
 <p>Then load the package:</p>
@@ -125,25 +129,47 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dai540/expranno" class="external-link">expranno</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="minimal-example">Minimal Example<a class="anchor" aria-label="anchor" href="#minimal-example"></a>
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<p><code><a href="reference/run_expranno.html">run_expranno()</a></code> is the main wrapper:</p>
+<p>If you use <code>expranno</code>, cite the package as:</p>
+<blockquote>
+<p>Dai (2026). <em>expranno: Expression Annotation, Metadata Integration, Deconvolution, and Signature Analysis</em>. R package. <a href="https://dai540.github.io/expranno/" class="uri">https://dai540.github.io/expranno/</a></p>
+</blockquote>
+<p>You can also retrieve the citation from R:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_expranno_data.html">example_expranno_data</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
-<span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
-<span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
-<span>  annotation_preset <span class="op">=</span> <span class="st">"human_tpm_v102"</span>,</span>
-<span>  expr_scale <span class="op">=</span> <span class="st">"abundance"</span>,</span>
-<span>  duplicate_strategy <span class="op">=</span> <span class="st">"mean"</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  run_deconvolution <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  run_signature <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"expranno"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="core-functions">Core Functions<a class="anchor" aria-label="anchor" href="#core-functions"></a>
+<h2 id="what-expranno-does">What expranno does<a class="anchor" aria-label="anchor" href="#what-expranno-does"></a>
+</h2>
+<p><code>expranno</code> does four things.</p>
+<ul>
+<li>Annotates Ensembl IDs with fixed-release human or mouse presets</li>
+<li>Benchmarks and validates annotation against truth tables</li>
+<li>Merges annotated expression with metadata into stable CSV outputs</li>
+<li>Runs deconvolution and signature scoring from the same annotated matrix</li>
+</ul>
+<p>In practice, the package is doing this:</p>
+<ul>
+<li>
+<code><a href="reference/annotate_expr.html">annotate_expr()</a></code> writes <code>expr_anno.csv</code> plus coverage, ambiguity, and provenance tables</li>
+<li>
+<code><a href="reference/validate_annotation_engines.html">validate_annotation_engines()</a></code> compares predicted fields against truth tables</li>
+<li>
+<code><a href="reference/merge_expr_meta.html">merge_expr_meta()</a></code> writes <code>expr_meta_merged.csv</code>
+</li>
+<li>
+<code><a href="reference/run_cell_deconvolution.html">run_cell_deconvolution()</a></code> writes <code>cell_deconv_&lt;method&gt;.csv</code>
+</li>
+<li>
+<code><a href="reference/run_signature_analysis.html">run_signature_analysis()</a></code> writes <code>signature_gsva.csv</code> and <code>signature_ssgsea.csv</code>
+</li>
+<li>
+<code><a href="reference/run_expranno.html">run_expranno()</a></code> orchestrates the full workflow and keeps the output layout stable</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="main-functions">Main functions<a class="anchor" aria-label="anchor" href="#main-functions"></a>
 </h2>
 <ul>
 <li><code><a href="reference/run_expranno.html">run_expranno()</a></code></li>
@@ -158,12 +184,10 @@
 <li><code><a href="reference/list_annotation_presets.html">list_annotation_presets()</a></code></li>
 <li><code><a href="reference/example_annotation_truth.html">example_annotation_truth()</a></code></li>
 </ul>
-<p><code><a href="reference/annotate_expr.html">annotate_expr()</a></code> and <code><a href="reference/run_expranno.html">run_expranno()</a></code> also accept <code>SummarizedExperiment</code>-like inputs through <code><a href="reference/as_expranno_input.html">as_expranno_input()</a></code>. To move annotated results back into Bioconductor containers, use <code><a href="reference/as_expranno_se.html">as_expranno_se()</a></code>.</p>
 </div>
 <div class="section level2">
-<h2 id="main-outputs">Main Outputs<a class="anchor" aria-label="anchor" href="#main-outputs"></a>
+<h2 id="stable-outputs">Stable outputs<a class="anchor" aria-label="anchor" href="#stable-outputs"></a>
 </h2>
-<p>Stable outputs include:</p>
 <ul>
 <li><code>expr_anno.csv</code></li>
 <li><code>annotation_report.csv</code></li>
@@ -179,60 +203,75 @@
 </ul>
 </div>
 <div class="section level2">
-<h2 id="presets-and-truth-tables">Presets and Truth Tables<a class="anchor" aria-label="anchor" href="#presets-and-truth-tables"></a>
+<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/list_annotation_presets.html">list_annotation_presets</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_annotation_truth.html">example_annotation_truth</a></span><span class="op">(</span><span class="st">"human"</span><span class="op">)</span></span>
-<span><span class="fu">expranno</span><span class="fu">::</span><span class="fu"><a href="reference/example_annotation_truth.html">example_annotation_truth</a></span><span class="op">(</span><span class="st">"mouse"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dai540/expranno" class="external-link">expranno</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/example_expranno_data.html">example_expranno_data</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_expranno.html">run_expranno</a></span><span class="op">(</span></span>
+<span>  expr <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">expr</span>,</span>
+<span>  meta <span class="op">=</span> <span class="va">demo</span><span class="op">$</span><span class="va">meta</span>,</span>
+<span>  annotation_preset <span class="op">=</span> <span class="st">"human_tpm_v102"</span>,</span>
+<span>  expr_scale <span class="op">=</span> <span class="st">"abundance"</span>,</span>
+<span>  duplicate_strategy <span class="op">=</span> <span class="st">"mean"</span>,</span>
+<span>  output_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  run_deconvolution <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  run_signature <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">annotation</span><span class="op">$</span><span class="va">report</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+<h2 id="tutorials">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials"></a>
 </h2>
-<p>Website: <a href="https://dai540.github.io/expranno/" class="uri">https://dai540.github.io/expranno/</a></p>
-</div>
-<div class="section level2">
-<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
-</h2>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"expranno"</span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-  </main><aside class="col-md-3"><div class="links">
-<h2 data-toc-skip>Links</h2>
-<ul class="list-unstyled">
-<li><a href="https://github.com/dai540/expranno" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/dai540/expranno/issues" class="external-link">Report a bug</a></li>
+<p>The tutorial site is organized around:</p>
+<ul>
+<li><code>Getting Started</code></li>
+<li>preset reference</li>
+<li>benchmarking and reproducibility</li>
+<li>human case study</li>
+<li>mouse case study</li>
+<li>function reference</li>
 </ul>
 </div>
-
-<div class="license">
-<h2 data-toc-skip>License</h2>
-<ul class="list-unstyled">
+<div class="section level2">
+<h2 id="what-expranno-cannot-do-yet">What expranno cannot do yet<a class="anchor" aria-label="anchor" href="#what-expranno-cannot-do-yet"></a>
+</h2>
+<ul>
+<li>It does not perform alignment, quantification, or read-level QC</li>
+<li>It does not replace native <code>immunedeconv</code> or <code>GSVA</code> method-specific tuning</li>
+<li>It does not provide a CRAN or Bioconductor release yet</li>
+<li>It does not implement a full reporting layer beyond CSV outputs, vignettes, and pkgdown docs</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="package-layout">Package layout<a class="anchor" aria-label="anchor" href="#package-layout"></a>
+</h2>
+<ul>
 <li>
-<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
-</li>
+<code>R/annotate.R</code>: annotation workflows and backends</li>
+<li>
+<code>R/run.R</code>: end-to-end wrapper</li>
+<li>
+<code>R/signature.R</code>: GSVA and ssGSEA scoring</li>
+<li>
+<code>R/deconvolution.R</code>: deconvolution wrapper</li>
+<li>
+<code>R/validation.R</code>: benchmark and truth-table validation</li>
+<li>
+<code>R/interop.R</code>: Bioconductor input coercion</li>
+<li>
+<code>R/bioc-output.R</code>: Bioconductor output conversion</li>
+<li>
+<code>vignettes/</code>: getting-started, design, and case-study articles</li>
+<li>
+<code>inst/extdata/</code>: bundled demo GMT and truth tables</li>
 </ul>
 </div>
-
-
-<div class="citation">
-<h2 data-toc-skip>Citation</h2>
-<ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing expranno</a></li>
-</ul>
 </div>
-
-<div class="developers">
-<h2 data-toc-skip>Developers</h2>
-<ul class="list-unstyled">
-<li>Dai Dai <br><small class="roles"> Author, maintainer </small>   </li>
-</ul>
-</div>
-
-
-
-  </aside>
+  </main><aside class="col-md-3"></aside>
 </div>
 
 

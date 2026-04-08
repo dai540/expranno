@@ -1,6 +1,6 @@
 # Package index
 
-## Main workflows
+## Core workflows
 
 - [`run_expranno()`](https://dai540.github.io/expranno/reference/run_expranno.md)
   : Run the full expranno workflow
@@ -17,7 +17,7 @@
 - [`run_signature_analysis()`](https://dai540.github.io/expranno/reference/run_signature_analysis.md)
   : Run GSVA or ssGSEA signature scoring
 
-## Input helpers
+## Input and output helpers
 
 - [`as_expranno_input()`](https://dai540.github.io/expranno/reference/as_expranno_input.md)
   : Coerce Bioconductor containers to expranno inputs
