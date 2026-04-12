@@ -1,5 +1,8 @@
-docs/
-*.tar.gz
+.Rproj.user
+.Rhistory
+.RData
 *.Rcheck/
-expranno-smoke-*/
-.DS_Store
+*.tar.gz
+tmp_*
+docs/
+

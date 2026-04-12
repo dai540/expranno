@@ -1,0 +1,55 @@
+---
+title: "Guide: Analysis Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Guide: Analysis Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+`expranno` treats deconvolution and signature scoring as optional downstream
+steps.
+
+## Deconvolution
+
+`run_cell_deconvolution()` expects an annotated matrix and uses the `symbol`
+column to build a gene-by-sample matrix. By default it uses a small method set
+to keep behavior predictable:
+
+- human: `quantiseq`, `mcp_counter`, `xcell`
+- mouse: `mmcp_counter`
+
+The function only runs when `immunedeconv` is installed.
+
+## Signature scoring
+
+`run_signature_analysis()` accepts either:
+
+- a named list of gene sets
+- a GMT file path
+
+The package does not bundle large gene-set resources. That is intentional.
+Large signature databases should remain external so the package stays small.
+
+```{r}
+library(expranno)
+
+demo <- example_expranno_data("human")
+anno <- annotate_expr(demo$expr, annotation_engine = "none")
+
+genesets <- list(
+  toy_signal = c("TP53", "EGFR"),
+  toy_dna_repair = c("BRCA1", "TP53")
+)
+
+genesets
+```
+
+This package example stops before scoring because `annotation_engine = "none"`
+does not produce usable symbols. In a real run, use a real annotation backend
+first, then call `run_signature_analysis()` or `run_cell_deconvolution()`.
+

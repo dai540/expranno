@@ -5,9 +5,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 permissions:
   contents: write
 
@@ -32,18 +29,13 @@ jobs:
             any::roxygen2
             any::knitr
             any::rmarkdown
-            any::S4Vectors
-            any::SummarizedExperiment
-            any::SingleCellExperiment
 
       - name: Document
         run: roxygen2::roxygenise()
         shell: Rscript {0}
 
       - name: Build site
-        run: |
-          unlink("docs", recursive = TRUE, force = TRUE)
-          pkgdown::build_site(pkg = ".", new_process = FALSE, install = TRUE)
+        run: pkgdown::build_site(pkg = ".", new_process = FALSE, install = TRUE)
         shell: Rscript {0}
 
       - name: Deploy site
@@ -51,3 +43,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
+

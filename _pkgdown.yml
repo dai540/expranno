@@ -1,3 +1,5 @@
+url: https://dai540.github.io/expranno/
+
 template:
   bootstrap: 5
   bootswatch: flatly
@@ -5,71 +7,40 @@ template:
 development:
   mode: release
 
-url: https://dai540.github.io/expranno/
-
 home:
   title: expranno
-  description: Expression annotation, metadata integration, Deconvolution, and Signature analysis for human and mouse RNA-seq data.
+  description: Minimal annotation-first RNA-seq workflows for human and mouse expression matrices.
   sidebar:
     structure: []
 
-repo:
-  url:
-    home: https://github.com/dai540/expranno
-    source: https://github.com/dai540/expranno/blob/main
-    issue: https://github.com/dai540/expranno/issues/
-    user: https://github.com/
-
 navbar:
-  structure:
-    left: [intro, reference, articles]
-    right: [github, search]
-  components:
-    intro:
-      text: Get Started
-      href: index.html
-    reference:
-      text: Reference
-      href: reference/index.html
-    github:
-      icon: fa-github
-      href: https://github.com/dai540/expranno
-      aria-label: GitHub repository
-
-articles:
-  - title: Core tutorials
-    navbar: Core
-    contents:
-      - getting-started
-      - theory-and-design
-  - title: Annotation workflows
-    navbar: Annotation
-    contents:
-      - preset-reference
-      - benchmarking-and-reproducibility
-  - title: Case studies
-    navbar: Case Studies
-    contents:
-      - case-study-human-rnaseq
-      - case-study-mouse-rnaseq
+  left:
+    - text: Getting Started
+      href: articles/getting-started.html
+    - text: Guides
+      menu:
+        - text: Annotation workflow
+          href: articles/guides-annotation.html
+        - text: Analysis workflow
+          href: articles/guides-analysis.html
+    - text: Tutorials
+      menu:
+        - text: Human and mouse walkthrough
+          href: articles/tutorial-human-mouse.html
+    - reference
 
 reference:
-  - title: Core workflows
+  - title: Core workflow
     contents:
       - run_expranno
       - annotate_expr
-      - benchmark_annotation_engines
-      - validate_annotation_engines
       - merge_expr_meta
       - run_cell_deconvolution
       - run_signature_analysis
-  - title: Input and output helpers
+  - title: Inputs and helpers
     contents:
-      - as_expranno_input
-      - as_expranno_se
-      - list_annotation_presets
-      - example_annotation_truth
       - validate_expr
       - validate_meta
       - read_genesets
       - example_expranno_data
+

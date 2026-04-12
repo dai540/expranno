@@ -1,0 +1,47 @@
+---
+title: "Guide: Annotation Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Guide: Annotation Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+`annotate_expr()` supports four modes.
+
+- `"hybrid"`: `biomaRt` first, `OrgDb` fallback
+- `"biomart"`: `biomaRt` only
+- `"orgdb"`: `OrgDb` only
+- `"none"`: no external annotation
+
+Use `"none"` for tests, documentation, and environments where optional
+annotation packages are not installed. Use `"hybrid"` for normal production
+work when both backends are available.
+
+```{r}
+library(expranno)
+
+demo <- example_expranno_data("mouse")
+anno <- annotate_expr(demo$expr, annotation_engine = "none")
+anno$expr_anno
+anno$report
+```
+
+The annotation columns are:
+
+- `gene_id_raw`
+- `gene_id`
+- `symbol`
+- `gene_name`
+- `annotation_source`
+- `annotation_status`
+
+When `output_dir` is supplied, `annotate_expr()` writes:
+
+- `expr_anno.csv`
+- `annotation_report.csv`
+

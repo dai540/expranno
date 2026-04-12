@@ -1,24 +1,15 @@
 Package: expranno
 Type: Package
-Title: Expression Annotation, Metadata Integration, Deconvolution, and Signature Analysis
-Version: 2.5.2
-Authors@R: c(
-    person(
-      given = "Dai",
-      family = "Dai",
-      role = c("aut", "cre"),
-      email = "daik54015@gmail.com"
-    )
-  )
-Author: Dai Dai [aut, cre]
-Maintainer: Dai Dai <daik54015@gmail.com>
-Description: Provides a reproducible RNA-seq workflow that starts from an
-    expression matrix with Ensembl gene identifiers and sample metadata,
-    annotates genes for human and mouse with a coverage-first hybrid strategy,
-    aligns and merges expression with metadata, reports annotation coverage,
-    runs cell deconvolution through immunedeconv, and computes pathway or
-    signature scores with GSVA or ssGSEA using user-supplied gene set
-    databases.
+Title: Lightweight Annotation-First RNA-Seq Workflows
+Version: 3.0.0
+Author: Dai [aut, cre]
+Maintainer: Dai <daik54015@gmail.com>
+Description: Provides a minimal downstream RNA-seq workflow for expression
+    matrices whose first column is Ensembl gene identifiers and metadata
+    tables whose first column is sample identifiers. The package annotates
+    human or mouse genes, merges annotated expression with metadata, and can
+    optionally run deconvolution and GSVA or ssGSEA signature scoring when
+    the required backends are installed.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -30,11 +21,7 @@ Imports:
     utils
 Suggests:
     AnnotationDbi,
-    AnnotationFilter,
     biomaRt,
-    ensembldb,
-    EnsDb.Hsapiens.v86,
-    EnsDb.Mmusculus.v79,
     GSVA,
     immunedeconv,
     knitr,
@@ -42,12 +29,10 @@ Suggests:
     org.Mm.eg.db,
     pkgdown,
     rmarkdown,
-    S4Vectors,
-    SingleCellExperiment,
-    SummarizedExperiment,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Config/Needs/website: pkgdown
 VignetteBuilder: knitr
 URL: https://github.com/dai540/expranno, https://dai540.github.io/expranno/
 BugReports: https://github.com/dai540/expranno/issues
+

@@ -1,363 +1,56 @@
 ---
-title: "Getting Started with expranno"
+title: "Getting Started"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting Started with expranno}
+  %\VignetteIndexEntry{Getting Started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
+
+`expranno` is designed for a narrow input contract.
+
+- `expr`: first column is `gene_id`
+- `meta`: first column is `sample`
 
 ```{r}
 library(expranno)
-demo <- example_expranno_data()
+
+demo <- example_expranno_data("human")
+demo$expr
+demo$meta
 ```
 
-`expranno` expects:
-
-- an expression matrix-like data frame with `gene_id` in the first column
-- sample columns after `gene_id`
-- a metadata table with `sample` in the first column
-
-<style>
-.mermaid {
-  margin: 1.5rem auto 2rem auto;
-  max-width: 980px;
-  padding: 0.75rem;
-  background: #f7f9fc;
-  border: 1px solid #d9e4ef;
-  border-radius: 16px;
-}
-</style>
-<pre class="mermaid">
-flowchart TB
-  subgraph inputs["Inputs"]
-    expr["expr<br/>gene x sample table"]
-    meta["meta<br/>sample x metadata table"]
-  end
-
-  subgraph core["Core workflow"]
-    validate["Validate<br/>check required columns"]
-    annotate["Annotation<br/>normalize Ensembl IDs<br/>hybrid human or mouse mapping"]
-    report["Coverage report<br/>annotation_rate by field"]
-    merge["Merge<br/>combine expr_anno and meta"]
-  end
-
-  subgraph outputs["Saved outputs"]
-    expranno["expr_anno.csv"]
-    merged["expr_meta_merged.csv"]
-  end
-
-  subgraph downstream["Downstream analyses"]
-    deconv["Deconvolution<br/>immunedeconv<br/>one CSV per method"]
-    signature["Signature<br/>GSVA or ssGSEA<br/>one CSV per method"]
-  end
-
-  expr --> validate
-  meta --> validate
-  validate --> annotate
-  annotate --> expranno
-  annotate --> report
-  expranno --> merge
-  meta --> merge
-  merge --> merged
-  merged --> deconv
-  merged --> signature
-
-  classDef input fill:#eef5fb,stroke:#315c86,color:#17324d,stroke-width:1.5px;
-  classDef process fill:#ffffff,stroke:#315c86,color:#17324d,stroke-width:1.5px;
-  classDef output fill:#eaf6ef,stroke:#3c7a57,color:#17324d,stroke-width:1.5px;
-
-  class expr,meta input;
-  class validate,annotate,report,merge,deconv,signature process;
-  class expranno,merged output;
-</pre>
-<script src="../deps/mermaid/mermaid.min.js"></script>
-<script>
-if (window.mermaid) {
-  window.mermaid.initialize({
-    startOnLoad: true,
-    securityLevel: "loose",
-    theme: "base",
-    themeVariables: {
-      primaryColor: "#ffffff",
-      primaryTextColor: "#17324d",
-      primaryBorderColor: "#315c86",
-      lineColor: "#315c86",
-      secondaryColor: "#eef5fb",
-      tertiaryColor: "#eaf6ef",
-      clusterBkg: "#f7f9fc",
-      clusterBorder: "#cfddeb",
-      fontFamily: "Lato, Arial, sans-serif"
-    },
-    flowchart: {
-      curve: "basis",
-      htmlLabels: true
-    }
-  });
-  window.mermaid.run({ querySelector: ".mermaid" });
-}
-</script>
-
-## The workflow at a glance
-
-The workflow is easiest to read in five checkpoints:
-
-1. validate the input contract
-2. annotate genes and inspect coverage
-3. inspect provenance and ambiguity
-4. merge expression with metadata
-5. run Deconvolution or Signature analyses from the merged table
-
-If you want fixed human or mouse defaults instead of manually setting
-species, version stripping, and Ensembl release each time, use one of
-the built-in presets.
-
-```{r}
-list_annotation_presets()
-```
-
-If you want the preset choices in a more explicit comparison table,
-including recommended input scale, backend cascade, and the matching
-bundled truth resource, see the preset reference article.
-
-The bundled truth resources are useful when you want a reproducible
-validation example without preparing your own table first.
-
-```{r}
-example_annotation_truth("human")
-```
-
-## Pick a species
-
-Use `species = "human"` for `ENSG...` input IDs and `species = "mouse"`
-for `ENSMUSG...` input IDs. If IDs are clean Ensembl IDs, `species = "auto"`
-can infer this for you.
-
-```{r}
-human_demo <- example_expranno_data("human")
-mouse_demo <- example_expranno_data("mouse")
-
-head(human_demo$expr$gene_id)
-head(mouse_demo$expr$gene_id)
-```
-
-## Pick an annotation engine
-
-`expranno` exposes five annotation modes:
-
-- `"hybrid"`: recommended production mode
-- `"biomart"`: use only `biomaRt`
-- `"orgdb"`: use only `org.Hs.eg.db` or `org.Mm.eg.db`
-- `"ensdb"`: use only `EnsDb`
-- `"none"`: skip annotation lookup and keep the normalized IDs only
-
-`"hybrid"` is the default because it is the most coverage-oriented mode.
-It uses a cascade:
-
-1. `biomaRt` with a fixed Ensembl release (`v102` by default)
-2. species-specific `orgdb`
-3. species-specific `EnsDb`
-
-That mirrors a practical manual workflow: query Ensembl first, fill
-unmapped IDs from `org.Hs.eg.db` or `org.Mm.eg.db`, then use `EnsDb` to
-enrich structural fields such as biotype and coordinates.
-
-For lightweight docs and tests, the examples below use `"none"`.
-
-For real runs, a reproducible preset is often easier to share than a
-long list of arguments. Examples:
-
-- `annotation_preset = "human_tpm_v102"`
-- `annotation_preset = "mouse_tpm_v102"`
-- `annotation_preset = "human_count_v102"`
-- `annotation_preset = "mouse_count_v102"`
-
-The preset table above is the quickest way to compare recommended input
-scale, backend order, and bundled truth resource.
-
-```{r}
-annotated <- annotate_expr(
-  expr = demo$expr,
-  meta = demo$meta,
-  species = "human",
-  annotation_engine = "none"
-)
-
-merged <- merge_expr_meta(
-  expr_anno = annotated$expr_anno,
-  meta = annotated$meta_checked
-)
-```
-
-The all-in-one wrapper is `run_expranno()`.
+The lightest end-to-end run uses `annotation_engine = "none"`. This keeps the
+example independent of optional annotation backends.
 
 ```{r}
 result <- run_expranno(
   expr = demo$expr,
   meta = demo$meta,
-  species = "human",
   annotation_engine = "none",
-  output_dir = tempdir(),
   run_deconvolution = FALSE,
   run_signature = FALSE
 )
-
-result
 ```
 
-For a reproducible production-style run, switch to a preset explicitly:
-
-```{r, eval = FALSE}
-run_expranno(
-  expr = demo$expr,
-  meta = demo$meta,
-  annotation_preset = "human_count_v102",
-  output_dir = "results"
-)
-```
-
-After a run, you can also return to a Bioconductor-native container.
+The annotation layer returns an annotated table and a compact report.
 
 ```{r}
-annotated <- annotate_expr(
-  expr = demo$expr,
-  meta = demo$meta,
-  species = "human",
-  annotation_engine = "none",
-  verbose = FALSE
-)
-
-if (requireNamespace("SummarizedExperiment", quietly = TRUE)) {
-  se <- as_expranno_se(annotated)
-  se
-} else {
-  "Install SummarizedExperiment to use as_expranno_se()."
-}
+result$annotation$expr_anno
+result$annotation$report
 ```
 
-If your data already live in a `SummarizedExperiment`, you can start
-there directly.
-
-```{r, eval = FALSE}
-result <- run_expranno(
-  expr = se,
-  species = "human",
-  assay_name = "counts",
-  gene_id_col = "gene_id",
-  annotation_engine = "hybrid"
-)
-```
-
-## Control duplicate symbols and score kernels
-
-Downstream methods usually operate on gene symbols, so duplicated symbols
-have to be collapsed. `expranno` now makes that rule explicit.
-
-- `expr_scale = "count"` usually pairs with `duplicate_strategy = "sum"`
-- `expr_scale = "abundance"` or `"log"` usually pairs with `duplicate_strategy = "mean"`
-
-For signature scoring, `signature_kcdf` should also match the expression
-scale:
-
-- use `"Poisson"` for count-like input
-- use `"Gaussian"` for continuous log-scale input
-- use `"auto"` if you want GSVA to choose
-
-## Method-specific deconvolution arguments
-
-Some `immunedeconv` methods require extra arguments. In particular,
-`timer` and `consensus_tme` need an `indications` vector with one tumor
-type per sample.
-
-```{r, eval = FALSE}
-run_expranno(
-  expr = demo$expr,
-  meta = demo$meta,
-  species = "human",
-  annotation_engine = "hybrid",
-  output_dir = "results",
-  run_deconvolution = TRUE,
-  deconv_args = list(indications = c("SKCM", "SKCM")),
-  run_signature = TRUE,
-  geneset_file = "hallmark.gmt",
-  signature_method = "both",
-  signature_kcdf = "Gaussian"
-)
-```
-
-## What to inspect after a run
-
-For a production analysis with `"hybrid"`, the first things to check are:
-
-- `expr_anno.csv`
-- `annotation_report.csv`
-- `annotation_ambiguity.csv`
-- `annotation_provenance.csv`
-- `expr_meta_merged.csv`
-
-If `symbol` coverage is weak, downstream Deconvolution and Signature
-methods will usually be the first places where the problem appears.
-
-If you want to compare engines on the same input before standardizing a
-lab workflow, benchmark them explicitly.
+The merged output is a long-format table that joins expression values to sample
+metadata.
 
 ```{r}
-benchmark <- benchmark_annotation_engines(
-  expr = demo$expr,
-  meta = demo$meta,
-  species = "human",
-  engines = c("none"),
-  verbose = FALSE
-)
-
-benchmark$summary
+head(result$expr_meta_merged)
 ```
 
-If you also have a truth table, you can validate exact matches instead of
-only coverage.
+For real annotation, switch `annotation_engine` to `"hybrid"`, `"biomart"`, or
+`"orgdb"` after installing the required optional packages.
 
-```{r}
-truth <- data.frame(
-  gene_id = demo$expr$gene_id,
-  symbol = c("TP53", "EGFR", "BRCA1"),
-  stringsAsFactors = FALSE
-)
-
-validation <- validate_annotation_engines(
-  expr = demo$expr,
-  meta = demo$meta,
-  truth = truth,
-  species = "human",
-  engines = "none",
-  fields = "symbol",
-  verbose = FALSE
-)
-
-validation$summary
-```
-
-For reproducible examples or CI runs, you do not need to write that
-truth table by hand. `expranno` ships with small human and mouse truth
-resources that line up with the demo Ensembl IDs.
-
-```{r}
-example_annotation_truth("human")
-```
-
-If your workflow starts and ends in Bioconductor containers, convert the
-result back into a `SummarizedExperiment`.
-
-```{r, eval = FALSE}
-se <- as_expranno_se(result)
-```
-
-That keeps the annotated expression matrix in the assay, writes
-annotation fields to `rowData`, and appends sample-level Deconvolution or
-Signature outputs to `colData`.

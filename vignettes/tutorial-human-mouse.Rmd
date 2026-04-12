@@ -1,0 +1,48 @@
+---
+title: "Tutorial: Human and Mouse Walkthrough"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial: Human and Mouse Walkthrough}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+This tutorial uses the tiny built-in tables so the package remains small.
+
+## Human
+
+```{r}
+library(expranno)
+
+human <- example_expranno_data("human")
+human_anno <- annotate_expr(human$expr, annotation_engine = "none")
+human_merged <- merge_expr_meta(human_anno$expr_anno, human$meta)
+
+human_anno$expr_anno
+head(human_merged)
+```
+
+## Mouse
+
+```{r}
+mouse <- example_expranno_data("mouse")
+mouse_anno <- annotate_expr(mouse$expr, annotation_engine = "none")
+mouse_merged <- merge_expr_meta(mouse_anno$expr_anno, mouse$meta)
+
+mouse_anno$expr_anno
+head(mouse_merged)
+```
+
+## Next step
+
+To move from the toy workflow to a real workflow:
+
+1. install `biomaRt` and the relevant `OrgDb`
+2. rerun `annotate_expr()` with `annotation_engine = "hybrid"`
+3. add `immunedeconv` and `GSVA` only if you need deconvolution or signature
+   scoring
+
